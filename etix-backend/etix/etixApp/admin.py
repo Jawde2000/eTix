@@ -18,7 +18,7 @@ class CustomerModel(admin.ModelAdmin):
 @admin.register(Vendor)
 class VendorModel(admin.ModelAdmin):
     list_filter = ('vendorID', 'vendorContact_Number', 'vendorStatus')
-    list_display = ('vendorID', 'vendorContact_Number', 'vendorStatus')
+    list_display = ('vendorStatus')
 
 @admin.register(Admin)
 class AdminModel(admin.ModelAdmin):
