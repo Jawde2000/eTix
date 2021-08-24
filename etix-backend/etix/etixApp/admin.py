@@ -18,7 +18,7 @@ class CustomerModel(admin.ModelAdmin):
 @admin.register(Vendor)
 class VendorModel(admin.ModelAdmin):
     list_filter = ('vendorID', 'vendorContact_Number', 'vendorStatus')
-    list_display = ('vendorStatus')
+    list_display = ('vendorID', 'vendorStatus')
 
 @admin.register(Admin)
 class AdminModel(admin.ModelAdmin):
@@ -32,5 +32,5 @@ class BusinessModel(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('ticketID', 'ticketName', 'ticketOwn_by')
-    list_display = ('ticketID', 'ticketName', 'ticketOwn_by')
+    list_filter = ('ticketID', 'ticketName')
+    list_display = ('ticketID', 'ticketName')
