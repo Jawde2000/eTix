@@ -68,8 +68,8 @@ def generate_ticket_id():
 
 class User(AbstractUser):
 
-    userID = models.TextField(default=
-        generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
+    userID = models.TextField(
+        default=generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
     username = models.CharField(max_length=100, blank=True, unique=True)
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
@@ -139,12 +139,11 @@ class Admin(models.Model):
     created_by = models.OneToOneField(
         User, related_name="admin", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    adminID = models.TextField(default=generate_admin_id , primary_key=True, unique=True, editable=False, max_length=8)
+    adminID = models.TextField(
+        default=generate_admin_id, primary_key=True, unique=True, editable=False, max_length=8)
 
 
 class Ticket(models.Model):
-    ticketOwn_by = models.ForeignKey(
-        Customer, related_name='ticket', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     ticketID = models.TextField(
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)

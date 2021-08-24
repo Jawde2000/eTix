@@ -32,5 +32,5 @@ class BusinessModel(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('ticketID', 'ticketName', 'ticketOwn_by')
-    list_display = ('ticketID', 'ticketName', 'ticketOwn_by')
+    list_filter = ('ticketID', 'ticketName')
+    list_display = ('ticketID', 'ticketName')
