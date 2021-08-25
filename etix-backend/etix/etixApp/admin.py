@@ -72,7 +72,7 @@ class TicketModel(admin.ModelAdmin):
 @admin.register(Services)
 class TicketModel(admin.ModelAdmin):
     list_filter = ('serviceID', 'serviceStatus')
-    list_display = ('serviceID', 'serviceName', 'serviceDesc', 'serviceMedia',
+    list_display = ('serviceID', 'serviceName', 'serviceDesc',
                     'serviceRowCapacity', 'destination', 'serviceStatus', 'vendor')
 
 

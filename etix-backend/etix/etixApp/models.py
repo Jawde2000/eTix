@@ -199,7 +199,6 @@ class Services(models.Model):
     serviceID = models.AutoField(primary_key=True, editable=False)
     serviceName = models.TextField(max_length=1000)
     serviceDesc = models.TextField(max_length=10000)
-    serviceMedia = models.ImageField(null=True, blank=True)
     serviceStatus = models.CharField(max_length=2, choices=service_status)
     serviceRowCapacity = models.IntegerField(blank=True, null=True)
     destination = models.ForeignKey(
