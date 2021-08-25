@@ -68,8 +68,8 @@ def generate_ticket_id():
 
 class User(AbstractUser):
 
-    userID = models.TextField(default=
-        generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
+    userID = models.TextField(
+        default=str(generate_user_id), primary_key=True, unique=True, editable=False, max_length=8)
     username = models.CharField(max_length=100, blank=True, unique=True)
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
@@ -139,15 +139,89 @@ class Admin(models.Model):
     created_by = models.OneToOneField(
         User, related_name="admin", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    adminID = models.TextField(default=generate_admin_id , primary_key=True, unique=True, editable=False, max_length=8)
+    adminID = models.TextField(
+        default=generate_admin_id, primary_key=True, unique=True, editable=False, max_length=8)
 
 
 class Ticket(models.Model):
-    ticketOwn_by = models.ForeignKey(
-        Customer, related_name='ticket', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     ticketID = models.TextField(
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
     ticketName = models.TextField(max_length=100)
     # add sitID
     # add serviceID
+
+
+class HelpDesk(models.Model):
+    help_desk_status = [
+        ("OP", "Open"),
+        ("CL", "Close")
+    ]
+    helpdeskID = models.AutoField(primary_key=True, editable=False)
+    helpdeskTitle = models.TextField(
+        max_length=200, null=True
+    )
+    helpdeskMessage = models.TextField(
+        max_length=10000, null=True, blank=True
+    )
+    helpdeskDateTime = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(
+        Customer, on_delete=models.SET_NULL, null=True)
+    helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
+
+
+class HelpResponse(models.Model):
+    helpResponseID = models.AutoField(primary_key=True, editable=False)
+    helpdesk = models.ForeignKey(
+        HelpDesk, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    helpResponseDateTime = models.DateTimeField(auto_now_add=True)
+    helpResponseMessage = models.TextField(
+        max_length=10000, null=True, blank=True
+    )
+
+
+class Destination(models.Model):
+    destinationID = models.AutoField(primary_key=True, editable=False)
+    destinationTimeDeparture = models.TimeField(blank=True, null=True)
+    destinationOnwardDate = models.DateField()
+    destinationStartName = models.TextField(max_length=1000)
+    destinationEndName = models.TextField(max_length=1000)
+    destinationFrom = models.TextField(max_length=1000)
+    destinationTo = models.TextField(max_length=1000)
+
+
+class Services(models.Model):
+    service_status = [
+        ("AC", "active"),
+        ("DC", "Disactive")
+    ]
+    serviceID = models.AutoField(primary_key=True, editable=False)
+    serviceName = models.TextField(max_length=1000)
+    serviceDesc = models.TextField(max_length=10000)
+    serviceMedia = models.ImageField(null=True, blank=True)
+    serviceStatus = models.CharField(max_length=2, choices=service_status)
+    serviceRowCapacity = models.IntegerField(blank=True, null=True)
+    destination = models.ForeignKey(
+        Destination, on_delete=models.SET_NULL, null=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+
+
+class Cart(models.Model):
+    cartID = models.AutoField(primary_key=True, editable=False)
+    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
+    cartTotal = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    customer = models.ForeignKey(
+        Customer, on_delete=models.SET_NULL, null=True)
+
+
+class Payment(models.Model):
+    payment_status = [
+        ("UP", "UnPaid"),
+        ("CP", "Complete")
+    ]
+    paymentID = models.AutoField(primary_key=True, editable=False)
+    cart = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    paymentStatus = models.CharField(max_length=2, choices=payment_status)
+    paymentDateTime = models.DateTimeField(auto_now_add=True)
