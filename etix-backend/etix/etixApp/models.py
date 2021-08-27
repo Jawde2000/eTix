@@ -134,7 +134,6 @@ class Vendor(models.Model):
     def __str__(self):
         return self.vendorID
 
-
 class Admin(models.Model):
     created_by = models.OneToOneField(
         User, related_name="admin", on_delete=models.CASCADE)
@@ -142,15 +141,58 @@ class Admin(models.Model):
     adminID = models.TextField(
         default=generate_admin_id, primary_key=True, unique=True, editable=False, max_length=8)
 
+class Destination(models.Model):
+    destinationID = models.AutoField(primary_key=True, editable=False)
+    destinationTimeDeparture = models.TimeField(blank=True, null=True)
+    destinationOnwardDate = models.DateField()
+    destinationStartName = models.TextField(max_length=1000)
+    destinationEndName = models.TextField(max_length=1000)
+    destinationFrom = models.TextField(max_length=1000)
+    destinationTo = models.TextField(max_length=1000)
+
+class Services(models.Model):
+    service_status = [
+        ("AC", "active"),
+        ("DC", "Disactive")
+    ]
+    serviceID = models.AutoField(primary_key=True, editable=False)
+    serviceName = models.TextField(max_length=1000)
+    serviceDesc = models.TextField(max_length=10000)
+    serviceStatus = models.CharField(max_length=2, choices=service_status)
+    serviceRowCapacity = models.IntegerField(blank=True, null=True)
+    destination = models.ForeignKey(
+        Destination, on_delete=models.SET_NULL, null=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+
+class SeatType(models.Model):
+    seatTypeID = models.AutoField(primary_key=True, editable=False)
+    seatTypeName = models.TextField(max_length=1000)
+    seatTypePrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    seatTypeQuantity = models.IntegerField()
+    # FK
+    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
+
+class Row(models.Model):
+    rowID = models.AutoField(primary_key=True, editable=False)
+    capacity = models.IntegerField()
+    # FK
+    destination = models.ForeignKey(Destination, on_delete=models.SET_NULL, null=True)
+
+class Seat(models.Model):
+    seatID = models.AutoField(primary_key=True, editable=False)
+    # status changed to boolean because it looks more feasable 
+    status = models.BooleanField()
+    # FK
+    seatType = models.ForeignKey(SeatType, on_delete=models.SET_NULL, null=True)
+    row = models.ForeignKey(Row, on_delete=models.SET_NULL, null=True)
 
 class Ticket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     ticketID = models.TextField(
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
     ticketName = models.TextField(max_length=100)
-    # add sitID
-    # add serviceID
-
+    seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
 
 class HelpDesk(models.Model):
     help_desk_status = [
@@ -169,7 +211,6 @@ class HelpDesk(models.Model):
         Customer, on_delete=models.SET_NULL, null=True)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
 
-
 class HelpResponse(models.Model):
     helpResponseID = models.AutoField(primary_key=True, editable=False)
     helpdesk = models.ForeignKey(
@@ -180,32 +221,6 @@ class HelpResponse(models.Model):
         max_length=10000, null=True, blank=True
     )
 
-
-class Destination(models.Model):
-    destinationID = models.AutoField(primary_key=True, editable=False)
-    destinationTimeDeparture = models.TimeField(blank=True, null=True)
-    destinationOnwardDate = models.DateField()
-    destinationStartName = models.TextField(max_length=1000)
-    destinationEndName = models.TextField(max_length=1000)
-    destinationFrom = models.TextField(max_length=1000)
-    destinationTo = models.TextField(max_length=1000)
-
-
-class Services(models.Model):
-    service_status = [
-        ("AC", "active"),
-        ("DC", "Disactive")
-    ]
-    serviceID = models.AutoField(primary_key=True, editable=False)
-    serviceName = models.TextField(max_length=1000)
-    serviceDesc = models.TextField(max_length=10000)
-    serviceStatus = models.CharField(max_length=2, choices=service_status)
-    serviceRowCapacity = models.IntegerField(blank=True, null=True)
-    destination = models.ForeignKey(
-        Destination, on_delete=models.SET_NULL, null=True)
-    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
-
-
 class Cart(models.Model):
     cartID = models.AutoField(primary_key=True, editable=False)
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
@@ -213,7 +228,6 @@ class Cart(models.Model):
         max_digits=10, decimal_places=2, null=True, blank=True)
     customer = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True)
-
 
 class Payment(models.Model):
     payment_status = [
@@ -224,30 +238,6 @@ class Payment(models.Model):
     cart = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     paymentStatus = models.CharField(max_length=2, choices=payment_status)
     paymentDateTime = models.DateTimeField(auto_now_add=True)
-
-class SeatType(models.Model):
-    seatTypeID = models.AutoField(primary_key=True, editable=False)
-    seatTypeName = models.TextField(max_length=1000)
-    seatTypePrice = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
-    seatTypeQuantity = models.IntegerField()
-    # FK
-    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
-
-
-class Row(models.Model):
-    rowID = models.AutoField(primary_key=True, editable=False)
-    capacity = models.IntegerField()
-    # FK
-    destination = models.ForeignKey(Destination, on_delete=models.SET_NULL, null=True)
-
-class Seat(models.Model):
-    seatID = models.AutoField(primary_key=True, editable=False)
-    # status changed to boolean because it looks more feasable 
-    status = models.BooleanField()
-    # FK
-    seatType = models.ForeignKey(SeatType, on_delete=models.SET_NULL, null=True)
-    row = models.ForeignKey(Row, on_delete=models.SET_NULL, null=True)
 
 
     
