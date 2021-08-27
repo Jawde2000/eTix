@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Customer, Vendor, Admin, Business, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
 
 # Register your models here.
 #
@@ -21,20 +21,13 @@ class CustomerModel(admin.ModelAdmin):
 @admin.register(Vendor)
 class VendorModel(admin.ModelAdmin):
     list_filter = ('vendorID', 'vendorContact_Number', 'vendorStatus')
-    list_display = ('vendorID', 'vendorStatus')
+    list_display = ('vendorID', 'vendorContact_Number', 'vendorStatus', 'vendorName', 'vendorBankAcc', 'vendorRegistrationNo')
 
 
 @admin.register(Admin)
 class AdminModel(admin.ModelAdmin):
     list_filter = ('adminID', 'created_by')
     list_display = ('adminID', 'created_by')
-
-
-@admin.register(Business)
-class BusinessModel(admin.ModelAdmin):
-    list_filter = ('businessID', 'businessName', 'businessBankAcc')
-    list_display = ('businessID', 'businessName',
-                    'businessBankAcc', 'businessDocument')
 
 
 @admin.register(Ticket)

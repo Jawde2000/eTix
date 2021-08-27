@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Customer
-from .serializers import UserSerializer, CustomerSerializer, VendorSerializer, AdminSerializer, BusinessSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, DestinationSerializer, SeatSerializer, SeatTypeSerializer, RowSerializer
+from .serializers import UserSerializer, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, DestinationSerializer, SeatSerializer, SeatTypeSerializer, RowSerializer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -31,13 +31,6 @@ class VendorViewSet(viewsets.ModelViewSet):
 class AdminViewSet(viewsets.ModelViewSet):
     queryset = AdminSerializer.object.all()
     serializer_class = AdminSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = (TokenAuthentication, )
-
-
-class BusinessViewSet(viewsets.ModelViewSet):
-    queryset = BusinessSerializer.object.all()
-    serializer_class = BusinessSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = (TokenAuthentication, )
 

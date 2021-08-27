@@ -107,16 +107,6 @@ class Customer(models.Model):
         return self.customerID
 
 
-class Business(models.Model):
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    businessID = models.TextField(
-        default=generate_business_id, primary_key=True, unique=True, editable=False, max_length=8)
-    businessName = models.CharField(max_length=100)
-    businessDocument = models.FileField()
-    businessBankAcc = models.CharField(max_length=15)
-
-
 class Vendor(models.Model):
     created_by = models.OneToOneField(
         User, related_name="vendor", on_delete=models.CASCADE)
@@ -125,8 +115,10 @@ class Vendor(models.Model):
         default=generate_vendor_id, primary_key=True, unique=True, editable=False, max_length=8)
     vendorContact_Number = models.TextField(max_length=11)
     vendorStatus = models.BooleanField(default=False)
-    vendorBusinessDoc = models.ForeignKey(
-        Business, related_name='business', on_delete=models.CASCADE)
+    vendorName = models.CharField(max_length=100)
+    vendorBankAcc = models.CharField(max_length=15)
+    vendorRegistrationNo = models.CharField(max_length=15)
+
 
     class Meta:
         ordering = ['vendorID']
