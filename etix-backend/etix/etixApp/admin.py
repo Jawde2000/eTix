@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Customer, Vendor, Admin, Business, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination
+from .models import User, Customer, Vendor, Admin, Business, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
 
 # Register your models here.
 #
@@ -81,3 +81,18 @@ class TicketModel(admin.ModelAdmin):
     list_filter = ('destinationID', 'destinationFrom')
     list_display = ('destinationID', 'destinationTimeDeparture', 'destinationOnwardDate',
                     'destinationStartName', 'destinationEndName', 'destinationFrom', 'destinationTo')
+
+@admin.register(Seat)
+class TicketModel(admin.ModelAdmin):
+    list_filter = ('seatID', 'status')
+    list_display = ('seatID', 'status')
+
+@admin.register(SeatType)
+class TicketModel(admin.ModelAdmin):
+    list_filter = ('seatTypeID', 'seatTypeName')
+    list_display = ('seatTypeID', 'seatTypeName', 'seatTypePrice', 'seatTypeQuantity')
+
+@admin.register(Row)
+class TicketModel(admin.ModelAdmin):
+    list_filter = ('rowID', 'capacity')
+    list_display = ('rowID', 'capacity')

@@ -224,3 +224,30 @@ class Payment(models.Model):
     cart = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     paymentStatus = models.CharField(max_length=2, choices=payment_status)
     paymentDateTime = models.DateTimeField(auto_now_add=True)
+
+class SeatType(models.Model):
+    seatTypeID = models.AutoField(primary_key=True, editable=False)
+    seatTypeName = models.TextField(max_length=1000)
+    seatTypePrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    seatTypeQuantity = models.IntegerField()
+    # FK
+    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
+
+
+class Row(models.Model):
+    rowID = models.AutoField(primary_key=True, editable=False)
+    capacity = models.IntegerField()
+    # FK
+    destination = models.ForeignKey(Destination, on_delete=models.SET_NULL, null=True)
+
+class Seat(models.Model):
+    seatID = models.AutoField(primary_key=True, editable=False)
+    # status changed to boolean because it looks more feasable 
+    status = models.BooleanField()
+    # FK
+    seatType = models.ForeignKey(SeatType, on_delete=models.SET_NULL, null=True)
+    row = models.ForeignKey(Row, on_delete=models.SET_NULL, null=True)
+
+
+    
