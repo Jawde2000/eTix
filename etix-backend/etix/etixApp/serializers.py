@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Customer, Vendor, Admin, Business, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination
+from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
 from django.contrib.auth.models import User
 from rest_framework.authtoken.views import Token
 
@@ -30,7 +30,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
-        fields = ['vendorID', 'vendorContact_Number', 'vendorStatus']
+        fields = ['vendorID', 'vendorContact_Number', 'vendorStatus', 'vendorName', 'vendorBankAcc', 'vendorRegistrationNo']
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -90,4 +90,19 @@ class ServicesSerializer(serializers.ModelSerializer):
 class DestinationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Destination
+        fields = '__all__'
+
+class SeatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seat
+        fields = '__all__'
+
+class SeatTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SeatType
+        fields = '__all__'
+
+class RowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Row
         fields = '__all__'
