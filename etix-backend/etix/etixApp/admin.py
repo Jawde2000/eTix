@@ -39,15 +39,14 @@ class TicketModel(admin.ModelAdmin):
 @admin.register(HelpDesk)
 class TicketModel(admin.ModelAdmin):
     list_filter = ('helpdeskID', 'helpdeskStatus')
-    list_display = ('helpdeskID', 'helpdeskMessage', 'helpdeskTitle',
+    list_display = ('helpdeskID', 'helpdeskTitle',
                     'helpdeskDateTime', 'helpdeskStatus', 'customer')
 
 
 @admin.register(HelpResponse)
 class TicketModel(admin.ModelAdmin):
     list_filter = ('helpResponseID', 'helpResponseDateTime')
-    list_display = ('helpResponseID', 'helpResponseMessage',
-                    'helpdesk', 'helpResponseDateTime', 'user')
+    list_display = ('helpResponseID', 'helpdesk', 'helpResponseDateTime', 'user')
 
 
 @admin.register(Cart)

@@ -44,13 +44,6 @@ class AdminSerializer(serializers.ModelSerializer):
         return admin
 
 
-class BusinessSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Business
-        fields = ['businessID', 'businessName',
-                  'businessDocument', 'businessBankAcc']
-
-
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket

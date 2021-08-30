@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import random
 
 
@@ -43,16 +43,6 @@ def generate_admin_id():
     return code
 
 
-def generate_business_id():
-
-    while True:
-        code = "E" + str(random.randint(100000, 999999)) + "B"
-        if Business.objects.filter(businessID=code).count() == 0:
-            break
-
-    return code
-
-
 def generate_ticket_id():
 
     while True:
@@ -63,16 +53,132 @@ def generate_ticket_id():
 
     return code
 
+
+def generate_service_id():
+
+    while True:
+        code = "E" + str(random.randint(100000, 999999)) + "S"
+        if Services.objects.filter(serviceID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_destination_id():
+
+    while True:
+        code = "E" + str(random.randint(100000, 999999)) + "D"
+        if Destination.objects.filter(destinationID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_seattype_id():
+
+    while True:
+        code = "E" + str(random.randint(10000, 99999)) + "ST"
+        if Destination.objects.filter(destinationID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_row_id():
+
+    while True:
+        code = "E" + str(random.randint(100000, 999999)) + "R"
+        if Row.objects.filter(rowID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_seat_id():
+
+    while True:
+        code = "E" + str(random.randint(10000, 99999)) + "SE"
+        if Seat.objects.filter(seatID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_helpdesk_id():
+
+    while True:
+        code = "E" + str(random.randint(10000, 99999)) + "HD"
+        if HelpDesk.objects.filter(helpdeskID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_help_response_id():
+
+    while True:
+        code = "E" + str(random.randint(10000, 99999)) + "HR"
+        if HelpResponse.objects.filter(helpResponseID=code).count() == 0:
+            break
+
+    return code
+
+def generate_cart_id():
+
+    while True:
+        code = "E" + str(random.randint(100000, 999999)) + "C"
+        if Cart.objects.filter(cartID=code).count() == 0:
+            break
+
+    return code
+
+
+def generate_payment_id():
+
+    while True:
+        code = "E" + str(random.randint(100000, 999999)) + "P"
+        if Payment.objects.filter(paymentID=code).count() == 0:
+            break
+
+    return code
+
 # Create your models here.
 
+class MyUserManager(BaseUserManager):
+    def create_customer(self, email, username, password=None):
+        if not email:
+            raise ValueError("User must have an email address")
+        if not username:
+            raise ValueError("User must have a username")
+        
+        user = self.model(
+            email = self.normalize_email(email),
+            username = username,
+        )
 
-class User(AbstractUser):
+        user.set_password(password)
+        user.save(user=self._db)
+        return user
+
+    def create_superuser(self, email, username, password):
+        user = self.model(
+            email = self.normalize_email(email),
+            password = password,
+            username = username,
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser):
 
     userID = models.TextField(
-        default=str(generate_user_id), primary_key=True, unique=True, editable=False, max_length=8)
+        default=generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
     username = models.CharField(max_length=100, blank=True, unique=True)
     password = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
+    email = models.EmailField(max_length=100, unique=True)
     Last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
     is_active = models.BooleanField(default=True)  # can login #vendor status
     is_customer = models.BooleanField(default=False)
@@ -81,6 +187,19 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)  # superuser
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', ]
+
+    objects = MyUserManager()
+
+    def __str__(self) -> str:
+        return self.email
+
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+
+    def has_module_perms(self, app_Label):
+        return True
 
 class Customer(models.Model):
     genderChoices = [
@@ -134,7 +253,8 @@ class Admin(models.Model):
         default=generate_admin_id, primary_key=True, unique=True, editable=False, max_length=8)
 
 class Destination(models.Model):
-    destinationID = models.AutoField(primary_key=True, editable=False)
+    destinationID = models.TextField(
+        default=generate_destination_id, primary_key=True, unique=True, editable=False, max_length=8)
     destinationTimeDeparture = models.TimeField(blank=True, null=True)
     destinationOnwardDate = models.DateField()
     destinationStartName = models.TextField(max_length=1000)
@@ -147,7 +267,9 @@ class Services(models.Model):
         ("AC", "active"),
         ("DC", "Disactive")
     ]
-    serviceID = models.AutoField(primary_key=True, editable=False)
+    serviceID = models.TextField(
+        default=generate_service_id, primary_key=True, unique=True, editable=False, max_length=8)
+    destinationTimeDeparture = models.TimeField(blank=True, null=True)
     serviceName = models.TextField(max_length=1000)
     serviceDesc = models.TextField(max_length=10000)
     serviceStatus = models.CharField(max_length=2, choices=service_status)
@@ -157,7 +279,9 @@ class Services(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
 
 class SeatType(models.Model):
-    seatTypeID = models.AutoField(primary_key=True, editable=False)
+    seatTypeID = models.TextField(
+        default=generate_seattype_id, primary_key=True, unique=True, editable=False, max_length=8)
+    destinationTimeDeparture = models.TimeField(blank=True, null=True)
     seatTypeName = models.TextField(max_length=1000)
     seatTypePrice = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
@@ -166,13 +290,15 @@ class SeatType(models.Model):
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
 
 class Row(models.Model):
-    rowID = models.AutoField(primary_key=True, editable=False)
+    rowID = models.TextField(
+        default=generate_row_id, primary_key=True, unique=True, editable=False, max_length=8)
     capacity = models.IntegerField()
     # FK
     destination = models.ForeignKey(Destination, on_delete=models.SET_NULL, null=True)
 
 class Seat(models.Model):
-    seatID = models.AutoField(primary_key=True, editable=False)
+    seatID = models.TextField(
+        default=generate_seat_id, primary_key=True, unique=True, editable=False, max_length=8)
     # status changed to boolean because it looks more feasable 
     status = models.BooleanField()
     # FK
@@ -191,7 +317,8 @@ class HelpDesk(models.Model):
         ("OP", "Open"),
         ("CL", "Close")
     ]
-    helpdeskID = models.AutoField(primary_key=True, editable=False)
+    helpdeskID = models.TextField(
+        default=generate_helpdesk_id, primary_key=True, unique=True, editable=False, max_length=8)
     helpdeskTitle = models.TextField(
         max_length=200, null=True
     )
@@ -204,7 +331,8 @@ class HelpDesk(models.Model):
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
 
 class HelpResponse(models.Model):
-    helpResponseID = models.AutoField(primary_key=True, editable=False)
+    helpResponseID = models.TextField(
+        default=generate_help_response_id, primary_key=True, unique=True, editable=False, max_length=8)
     helpdesk = models.ForeignKey(
         HelpDesk, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -214,7 +342,8 @@ class HelpResponse(models.Model):
     )
 
 class Cart(models.Model):
-    cartID = models.AutoField(primary_key=True, editable=False)
+    cartID = models.TextField(
+        default=generate_cart_id, primary_key=True, unique=True, editable=False, max_length=8)
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     cartTotal = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
@@ -226,7 +355,8 @@ class Payment(models.Model):
         ("UP", "UnPaid"),
         ("CP", "Complete")
     ]
-    paymentID = models.AutoField(primary_key=True, editable=False)
+    paymentID = models.TextField(
+        default=generate_payment_id, primary_key=True, unique=True, editable=False, max_length=8)
     cart = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     paymentStatus = models.CharField(max_length=2, choices=payment_status)
     paymentDateTime = models.DateTimeField(auto_now_add=True)
