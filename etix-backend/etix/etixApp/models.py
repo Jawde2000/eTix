@@ -145,7 +145,6 @@ def generate_payment_id():
 
 # Create your models here.
 
-
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **other_fields):
         """
