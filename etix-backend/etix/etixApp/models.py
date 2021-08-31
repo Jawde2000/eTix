@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import random
 
 
@@ -123,6 +123,7 @@ def generate_help_response_id():
 
     return code
 
+
 def generate_cart_id():
 
     while True:
@@ -144,27 +145,32 @@ def generate_payment_id():
 
 # Create your models here.
 
-class MyUserManager(BaseUserManager):
-    def create_customer(self, email, username, password=None):
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, username, password=None, **other_fields):
+        """
+        Creates and saves a User with the given email and password.
+        """
         if not email:
-            raise ValueError("User must have an email address")
-        if not username:
-            raise ValueError("User must have a username")
-        
+            raise ValueError('Users must have an email address')
+
         user = self.model(
-            email = self.normalize_email(email),
-            username = username,
+            email=self.normalize_email(email),
+            username=username, **other_fields
         )
 
         user.set_password(password)
-        user.save(user=self._db)
+        user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password):
-        user = self.model(
-            email = self.normalize_email(email),
-            password = password,
-            username = username,
+    def create_superuser(self, email, username, password, **other_fields):
+        """
+        Creates and saves a superuser with the given email and password.
+        """
+        user = self.create_user(
+            email,
+            username=username,
+            password=password, **other_fields
         )
         user.is_staff = True
         user.is_superuser = True
@@ -172,7 +178,7 @@ class MyUserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
 
     userID = models.TextField(
         default=generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -190,16 +196,21 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', ]
 
-    objects = MyUserManager()
+    objects = UserManager()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        return self.is_staff
-
-    def has_module_perms(self, app_Label):
+        # "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
         return True
+
+    def has_module_perms(self, app_label):
+        # "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
+
 
 class Customer(models.Model):
     genderChoices = [
@@ -238,12 +249,12 @@ class Vendor(models.Model):
     vendorBankAcc = models.CharField(max_length=15)
     vendorRegistrationNo = models.CharField(max_length=15)
 
-
     class Meta:
         ordering = ['vendorID']
 
     def __str__(self):
         return self.vendorID
+
 
 class Admin(models.Model):
     created_by = models.OneToOneField(
@@ -251,6 +262,7 @@ class Admin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     adminID = models.TextField(
         default=generate_admin_id, primary_key=True, unique=True, editable=False, max_length=8)
+
 
 class Destination(models.Model):
     destinationID = models.TextField(
@@ -261,6 +273,7 @@ class Destination(models.Model):
     destinationEndName = models.TextField(max_length=1000)
     destinationFrom = models.TextField(max_length=1000)
     destinationTo = models.TextField(max_length=1000)
+
 
 class Services(models.Model):
     service_status = [
@@ -278,6 +291,7 @@ class Services(models.Model):
         Destination, on_delete=models.SET_NULL, null=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
 
+
 class SeatType(models.Model):
     seatTypeID = models.TextField(
         default=generate_seattype_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -289,21 +303,26 @@ class SeatType(models.Model):
     # FK
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
 
+
 class Row(models.Model):
     rowID = models.TextField(
         default=generate_row_id, primary_key=True, unique=True, editable=False, max_length=8)
     capacity = models.IntegerField()
     # FK
-    destination = models.ForeignKey(Destination, on_delete=models.SET_NULL, null=True)
+    destination = models.ForeignKey(
+        Destination, on_delete=models.SET_NULL, null=True)
+
 
 class Seat(models.Model):
     seatID = models.TextField(
         default=generate_seat_id, primary_key=True, unique=True, editable=False, max_length=8)
-    # status changed to boolean because it looks more feasable 
+    # status changed to boolean because it looks more feasable
     status = models.BooleanField()
     # FK
-    seatType = models.ForeignKey(SeatType, on_delete=models.SET_NULL, null=True)
+    seatType = models.ForeignKey(
+        SeatType, on_delete=models.SET_NULL, null=True)
     row = models.ForeignKey(Row, on_delete=models.SET_NULL, null=True)
+
 
 class Ticket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -311,6 +330,7 @@ class Ticket(models.Model):
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
     ticketName = models.TextField(max_length=100)
     seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
+
 
 class HelpDesk(models.Model):
     help_desk_status = [
@@ -330,6 +350,7 @@ class HelpDesk(models.Model):
         Customer, on_delete=models.SET_NULL, null=True)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
 
+
 class HelpResponse(models.Model):
     helpResponseID = models.TextField(
         default=generate_help_response_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -341,6 +362,7 @@ class HelpResponse(models.Model):
         max_length=10000, null=True, blank=True
     )
 
+
 class Cart(models.Model):
     cartID = models.TextField(
         default=generate_cart_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -349,6 +371,7 @@ class Cart(models.Model):
         max_digits=10, decimal_places=2, null=True, blank=True)
     customer = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True)
+
 
 class Payment(models.Model):
     payment_status = [
@@ -360,6 +383,3 @@ class Payment(models.Model):
     cart = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     paymentStatus = models.CharField(max_length=2, choices=payment_status)
     paymentDateTime = models.DateTimeField(auto_now_add=True)
-
-
-    
