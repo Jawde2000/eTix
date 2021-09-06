@@ -77,7 +77,7 @@ function Footer() {
                         eTix &reg;{new Date().getFullYear()} 
                     </Box>
                     <Box textAlign="center" pb={{xs:5, sm:0}}>
-                        All Rights Reserved By Pangeema Technology
+                        All Rights Reserved By Pengeema Technologies
                     </Box>
                 </Container>
             </Box>

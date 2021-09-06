@@ -1,11 +1,10 @@
 import React from 'react'
-
+import { Operators } from './operators/Operators'
 function Homepage() {
     return (
         <div>
-            hello
-            bye
-            <p>bye</p>
+            
+            <Operators />
         </div>
     )
 }
