@@ -43,9 +43,8 @@ function NavBar() {
     });
   });
 
-    return (
-      <div>
-        <body className="nav">
+  return (
+      <div className="nav">
           <header className="head">
             <div>
             <Link href="#" style={{ textDecoration: 'none' }}>
@@ -84,7 +83,7 @@ function NavBar() {
 
             <Tooltip title="searchbar">
             <div className="search-box" >
-              <input type="text" placeholder="Search"></input>
+              <input type="text" placeholder="Search" id="reset"></input>
               <span></span>
             </div>
             </Tooltip>
@@ -97,9 +96,9 @@ function NavBar() {
             </Tooltip>
             </div>
           </header>
-        </body>
       </div>
-    );
-  }
+  );
+
+}
 
 export default NavBar;
