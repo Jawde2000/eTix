@@ -84,7 +84,7 @@ function NavBar() {
 
             <Tooltip title="searchbar">
             <div className="search-box" >
-              <input type="text" placeholder=" "></input>
+              <input type="text" placeholder="Search"></input>
               <span></span>
             </div>
             </Tooltip>

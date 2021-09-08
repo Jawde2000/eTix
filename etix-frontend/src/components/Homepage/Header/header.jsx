@@ -51,7 +51,7 @@ function Header() {
         <AppBar className={defaultStyle.customizeAppbar}>
                 
             <div>
-                <Tooltip title="Register/Login">
+                <Tooltip title="User">
                <IconButton className={defaultStyle.LoginButton} >
                    
                    <AccountCircle htmlColor="#FFFFFF" className={defaultStyle.iconSize}/>
