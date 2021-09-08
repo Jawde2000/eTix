@@ -9,7 +9,8 @@ const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
         minHeight: 30,
         background: 'hsla(60, 1%, 14%, 1)',
-        position: 'relative'
+        position: 'relative',
+        paddingRight: 150
     },
     customizeText: {
         paddingLeft: 20,
@@ -39,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
     },
     iconSize: {
         fontSize: 'medium'
+    },
+    headPosition: {
+        
     }
 }));
 
@@ -47,7 +51,7 @@ function Header() {
 
     const defaultStyle = useStyles();
     return (
-    <div>
+    <div className={defaultStyle.headPosition}>
         <AppBar className={defaultStyle.customizeAppbar}>
                 
             <div>
