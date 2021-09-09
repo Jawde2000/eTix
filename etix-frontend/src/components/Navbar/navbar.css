@@ -1,7 +1,7 @@
 @import url("http://fonts.googleapis.com/css?family=Raleway:400,400i,700");
 
 .nav {
-    background: hsla(60, 1%, 14%, 1);
+    /* background: linear-gradient(180deg, rgba(36,36,35,1) 10%, rgba(36,36,35,1) 25%, rgba(36,36,35,0.6979768786127167) 80%, rgba(36,36,35,0) 100%); */
     position: relative;
     box-sizing: border-box;
 }
@@ -85,7 +85,7 @@
 .search-box span::before, .search-box span::after {
     content: " ";
     height: 20px;
-    border-left: solid 5px rgb(236, 20, 20);
+    border-left: solid 5px #fecc00;
     position: absolute;
     transform: rotate(-45deg);
 }

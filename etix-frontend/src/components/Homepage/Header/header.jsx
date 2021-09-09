@@ -4,20 +4,24 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import './header.css';
 
 const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
         minHeight: 30,
-        background: 'hsla(60, 1%, 14%, 1)',
+        background: 'rgb(36,36,35)',
         position: 'relative',
-        paddingRight: 150
+        paddingRight: 150,
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        boxShadow: 'none'
     },
     customizeText: {
-        paddingLeft: 20,
-        color: '#CFDBD5',
+        paddingLeft: 5,
+        color: '#F5CB5C',
         font: 'robo',
-        fontSize: 10,
-        fontWeight: 'bold'
+        fontSize: 13,
+        fontWeight: 'bold',
+        fontFamily: ['rubik', 'sans-serif'].join(','),
     },
     LoginButton: {
         float: 'right',
@@ -26,20 +30,21 @@ const useStyles = makeStyles((theme) => ({
         float: 'right'
     },
     customizePartner: {
-        fontSize: 10,
-        font: 'robo',
-        color: '#CFDBD5',
+        fontSize: 13,
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        color: '#F5CB5C',
     },
     customizeHelp: {
-        fontSize: 10,
-        font: 'robo',
-        color: '#CFDBD5',
+        fontSize: 13,
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        color: '#F5CB5C',
     },
     customizeRight: {
         float: 'right',
     },
     iconSize: {
-        fontSize: 'medium'
+        fontSize: 25,
+        paddingLeft: 30
     },
     headPosition: {
         
@@ -58,7 +63,7 @@ function Header() {
                 <Tooltip title="User">
                <IconButton className={defaultStyle.LoginButton} >
                    
-                   <AccountCircle htmlColor="#FFFFFF" className={defaultStyle.iconSize}/>
+                   <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconSize}/>
                    <Typography className={defaultStyle.customizeText}>
                    Register/Login
                    </Typography>
@@ -67,19 +72,19 @@ function Header() {
 
                <Tooltip title="notification">
                <IconButton className={defaultStyle.customizeNoti}>
-                    <NotificationsIcon htmlColor="#FFFFFF" className={defaultStyle.iconSize}/>
+                    <NotificationsIcon htmlColor="#F5CB5C" className={defaultStyle.iconSize}/>
                 </IconButton>
                 </Tooltip>
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                    <GroupWorkIcon htmlColor="#FFFFFF" fontSize="small"/>
+                    <GroupWorkIcon htmlColor="#F5CB5C" fontSize="25"/>
                     <Typography className={defaultStyle.customizePartner}>
                         Partner with eTix
                     </Typography>
                 </IconButton>
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                    <HelpCenterIcon htmlColor="#FFFFFF" fontSize="small" />
+                    <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" />
                     <Typography className={defaultStyle.customizeHelp}>
                         Help Centre
                     </Typography>

@@ -6,7 +6,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 
 const useStyles = makeStyles((theme) => ({
   liAButton: {
-    fontFamily: 'robo',
+    fontFamily: ['rubik', 'sans-serif'].join(','),
     fontWeight: 'bold',
     fontSize: 20,
     color: '#CFDBD5',
@@ -24,9 +24,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 50,
     fontWeight: 15,
     color: '#CFDBD5',
+    fontFamily: ['rubik', 'sans-serif'].join(','),
   },
   iconSize: {
-    fontSize: 35,
+    fontSize: 40,
     color: '#CFDBD5',
     paddingRight: 30,
     paddingLeft: 30,
