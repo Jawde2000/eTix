@@ -42,12 +42,13 @@ const useStyles = makeStyles((theme) => ({
     customizeRight: {
         float: 'right',
     },
-    iconSize: {
+    iconNoti: {
         fontSize: 25,
-        paddingLeft: 30
+        paddingLeft: 30,
+        paddingRight: 30
     },
-    headPosition: {
-        
+    iconUser: {
+        fontSize: 25,
     }
 }));
 
@@ -63,7 +64,7 @@ function Header() {
                 <Tooltip title="User">
                <IconButton className={defaultStyle.LoginButton} >
                    
-                   <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconSize}/>
+                   <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                    <Typography className={defaultStyle.customizeText}>
                    Register/Login
                    </Typography>
@@ -72,7 +73,7 @@ function Header() {
 
                <Tooltip title="notification">
                <IconButton className={defaultStyle.customizeNoti}>
-                    <NotificationsIcon htmlColor="#F5CB5C" className={defaultStyle.iconSize}/>
+                    <NotificationsIcon htmlColor="#F5CB5C" className={defaultStyle.iconNoti}/>
                 </IconButton>
                 </Tooltip>
 
