@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import {AppBar, Toolbar, Typography, Button, IconButton, MenuIcon, makeStyles, colors, Tooltip} from "@material-ui/core";
+import {AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, MenuIcon, makeStyles, colors, Tooltip} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import GroupWorkIcon from '@mui/icons-material/GroupWork';
+//import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+//import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import './header.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -49,6 +49,11 @@ const useStyles = makeStyles((theme) => ({
     },
     iconUser: {
         fontSize: 25,
+    },
+    menuItem: {
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        color: '#F5CB5C',
+        backgroundColor: '#242423'
     }
 }));
 
@@ -56,36 +61,64 @@ const useStyles = makeStyles((theme) => ({
 function Header() {
 
     const defaultStyle = useStyles();
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
     <div className={defaultStyle.headPosition}>
         <AppBar className={defaultStyle.customizeAppbar}>
                 
             <div>
-                <Tooltip title="User">
-               <IconButton className={defaultStyle.LoginButton} >
-                   
+                {/*<Tooltip title="User">*/}
+               <IconButton aria-controls="account" aria-haspopup="true" onClick={handleClick} className={defaultStyle.LoginButton} >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                    <Typography className={defaultStyle.customizeText}>
                    Register/Login
                    </Typography>
                </IconButton>
-               </Tooltip>
+               <Menu
+                    id="account"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    <MenuItem className={defaultStyle.menuItem} onClick={handleClose}>Register/Login</MenuItem>
+                </Menu>
+               {/*</Tooltip>*/}
 
-               <Tooltip title="notification">
-               <IconButton className={defaultStyle.customizeNoti}>
+               {/*<Tooltip title="notification">*/}
+               <IconButton aria-controls="account" aria-haspopup="true" onClick={handleClick} className={defaultStyle.customizeNoti}>
                     <NotificationsIcon htmlColor="#F5CB5C" className={defaultStyle.iconNoti}/>
                 </IconButton>
-                </Tooltip>
+                <Menu
+                    id="account"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    <MenuItem className={defaultStyle.menuItem} onClick={handleClose}>No notifications</MenuItem>
+                </Menu>
+                {/*</Tooltip>*/}
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                    <GroupWorkIcon htmlColor="#F5CB5C" fontSize="25"/>
+                   {/* <GroupWorkIcon htmlColor="#F5CB5C" fontSize="25"/> */}
                     <Typography className={defaultStyle.customizePartner}>
                         Partner with eTix
                     </Typography>
                 </IconButton>
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                    <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" />
+                    {/* <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" /> */}
                     <Typography className={defaultStyle.customizeHelp}>
                         Help Centre
                     </Typography>
