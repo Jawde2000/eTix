@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundColor: "rgba(255,255,255,0.5)",
-    backgroundBlendMode: "lighten"
-
+    backgroundBlendMode: "lighten",
+    fontFamily: ['rubik', 'sans-serif'].join(',')
   }
 }));
 
