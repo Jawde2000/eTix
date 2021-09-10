@@ -15,7 +15,7 @@
 }
 
 .search-box {
-    border: solid 1px #CFDBD5;
+    border: solid 3px #fecc00;
     display: inline-block;
     position: relative;
     border-radius: 50px;
@@ -26,14 +26,13 @@
 .search-box input[type="text"] {
     font-family: Raleway, sans-serif;
     font-size: 15px;
-    font-weight: bold;
     width: 25px;
     height: 25px;
     padding: 2px 20px 2px 5px;
     border: none;
     box-sizing: border-box;
     border-radius: 50px;
-    background: #CFDBD5;
+    background: #fff;
     color: black;
     transition: width 800ms cubic-bezier(
         0.5, -0.5, 0.5, 0.5
