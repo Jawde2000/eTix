@@ -1,17 +1,19 @@
 import './App.css';
 import React from 'react';
 import Homepage from './components/Homepage/Homepage';
-import Footer from './components/Footer/Footer';
+
+import { makeStyles } from "@material-ui/core";
+
 
 function App() {
+
   return (
-    <div className="Customer">
-      <div className="Customer-Homepage">
+
+    <div> 
+      <div>
         <Homepage />
       </div>
-      <footer>
-        <Footer />
-      </footer>
+
         
     </div>
 
