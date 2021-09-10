@@ -11,12 +11,12 @@ function Footer() {
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1}>Customer Service</Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     Help Center
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     How to Purchase
                                 </Link>
                             </Box>
@@ -24,12 +24,12 @@ function Footer() {
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1}>About eTix</Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     About Us
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     Privacy Policy
                                 </Link>
                             </Box>
@@ -37,17 +37,17 @@ function Footer() {
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1}>Follow Us</Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     Twitter
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     Facebook
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/" color="inherit">
+                                <Link href="/" color="inherit" underline={'none'}>
                                     Instagram
                                 </Link>
                             </Box>
