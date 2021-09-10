@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, MenuIcon, makeStyles, colors, Tooltip} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import HelpIcon from '@material-ui/icons/Help';
+// import HelpIcon from '@material-ui/icons/Help';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import './header.css';
 
@@ -118,7 +119,7 @@ function Header() {
                 </IconButton>
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                    <HelpIcon htmlColor="#F5CB5C" fontSize="25" />
+                    <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" />
                     <Typography className={defaultStyle.customizeHelp}>
                         Help Centre
                     </Typography>
