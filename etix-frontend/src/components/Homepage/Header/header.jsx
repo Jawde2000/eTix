@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, MenuIcon, makeStyles, colors, Tooltip} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
-//import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-//import GroupWorkIcon from '@mui/icons-material/GroupWork';
+import HelpIcon from '@material-ui/icons/Help';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import './header.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -111,14 +111,14 @@ function Header() {
                 {/*</Tooltip>*/}
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                   {/* <GroupWorkIcon htmlColor="#F5CB5C" fontSize="25"/> */}
+                   <GroupWorkIcon htmlColor="#F5CB5C" fontSize="25"/>
                     <Typography className={defaultStyle.customizePartner}>
                         Partner with eTix
                     </Typography>
                 </IconButton>
 
                 <IconButton className={defaultStyle.customizeRight}> 
-                    {/* <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" /> */}
+                    <HelpIcon htmlColor="#F5CB5C" fontSize="25" />
                     <Typography className={defaultStyle.customizeHelp}>
                         Help Centre
                     </Typography>
