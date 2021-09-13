@@ -5,7 +5,7 @@ import PaymentIcon from 'react-payment-icons'
 function Footer() {
     return (
         <footer>
-            <Box bgcolor="#CFDBD5" px={{xs: 3, sm:10}} py={{xs:5, sm:10}}>
+            <Box bgcolor="#CFDBD5" px={{xs: 3, sm:7}} py={{xs:5, sm:7}}>
                 <Container maxWidth="lg">
                     <Grid container spacing={5}>
                         <Grid item xs={12} sm={3}>
