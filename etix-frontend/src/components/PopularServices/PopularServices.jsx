@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         fontFamily: ['rubik', 'sans-serif'].join(','),
     },
     card: {
-        maxWidth: "80%",
+        maxWidth: "100%",
     },
     media: {
         height: 200,
