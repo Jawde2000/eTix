@@ -4,8 +4,7 @@ import Homepage from './components/Homepage/Homepage';
 import Header from './components/Homepage/Header/header'
 import NavBar from './components/Navbar/navbar'
 import Footer from './components/Footer/Footer'
-import { PopularServices } from './components/PopularServices/PopularServices';
-import PrivacyPolicy from './components/PrivacyPolicy/PrivacyPolicy';
+import { PopularAttractions } from './components/PopularAttractions/PopularAttractions';
 
 import { makeStyles } from "@material-ui/core";
 
@@ -18,7 +17,7 @@ function App() {
       <div>
         <Header/>
         <NavBar/>
-        <PopularServices />
+        <PopularAttractions />
         <Footer />
       </div>
 
