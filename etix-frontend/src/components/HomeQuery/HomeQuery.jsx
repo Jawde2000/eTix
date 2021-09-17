@@ -19,7 +19,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: "cover",
     backgroundColor: "rgba(255,255,255,0.5)",
     backgroundBlendMode: "lighten",
-    fontFamily: ['rubik', 'sans-serif'].join(',')
+    fontFamily: ['rubik', 'sans-serif'].join(','),
+  },
+  inside: {
+    paddingTop: '5%',
+    paddingBottom: '5%'
   }
 }));
 
@@ -27,7 +31,7 @@ function homeQuery() {
   const classes = useStyles();
   return (
     <Box className={classes.whole}>
-      <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2}>
+      <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2} className={classes.inside}>
         <Grid item>
           <Typography variant="h4">the best prices, at every time</Typography>
         </Grid>
