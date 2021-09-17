@@ -5,17 +5,14 @@ import HomeQuery from '../HomeQuery/HomeQuery'
 import Footer from '../Footer/Footer'
 import React from 'react'
 import { Operators } from './operators/Operators'
+import Passport from '../Passport/Passport'
             
             
 
 function Homepage() {
     return (
         <div>
-            <Header />
-            <NavBar />
-            <HomeQuery />
-            <Operators />
-            <Footer />
+            <Passport />
         </div>
     )
 }

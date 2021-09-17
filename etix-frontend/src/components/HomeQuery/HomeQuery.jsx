@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundSize: "cover",
     backgroundColor: "rgba(255,255,255,0.5)",
     backgroundBlendMode: "lighten",
-    fontFamily: ['rubik', 'sans-serif'].join(','),
+    fontFamily: ['rubik', 'sans-serif'].join(',')
   },
   inside: {
     paddingTop: '5%',
