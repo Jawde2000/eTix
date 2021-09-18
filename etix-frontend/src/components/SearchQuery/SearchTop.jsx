@@ -42,7 +42,7 @@ export const SearchTop = () =>{
     return (
         <Box className={classes.root} >
             <Grid container spacing={3} justify="center" direction="column">
-                <Grid item xs={12}  container alignItems="center">
+                <Grid item xs={12}  container>
                     <Grid item xs={12} sm={3} >
                         <TextField
                                 varient="outlined"
@@ -66,7 +66,7 @@ export const SearchTop = () =>{
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} container>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={10}>
                             <TextField
                                     varient="outlined"
                                     type="date"
@@ -86,7 +86,7 @@ export const SearchTop = () =>{
                                     style={{marginRight:10}}
                                     InputLabelProps={{ shrink: true, required: false }}/>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={2}>
                             <Button variant="contained" className={classes.searchButton} startIcon={<SearchIcon />}>Search</Button>
                         </Grid>
                     </Grid>
