@@ -124,7 +124,6 @@ function Header() {
                         Help Centre
                     </Typography>
                 </IconButton>
-
            </div>
         </AppBar>
     </div>
