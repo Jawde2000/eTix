@@ -1,6 +1,11 @@
 import './App.css';
 import React from 'react';
 import Homepage from './components/Homepage/Homepage';
+import Header from './components/Homepage/Header/header'
+import NavBar from './components/Navbar/navbar'
+import Footer from './components/Footer/Footer'
+import { SearchQuery } from './components/SearchQuery/SearchQuery';
+import Verification from './components/verification_form/Verification'
 
 import { makeStyles } from "@material-ui/core";
 
@@ -11,7 +16,10 @@ function App() {
 
     <div> 
       <div>
-        <Homepage />
+        <Header/>
+        <NavBar/>
+        <SearchQuery />
+        <Footer />
       </div>
 
         
