@@ -118,12 +118,13 @@ function Header() {
                     </Typography>
                 </IconButton>
 
-                <IconButton className={defaultStyle.customizeRight}> 
+                <IconButton className={defaultStyle.customizeRight} href="/helpcentre"> 
                     <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" />
                     <Typography className={defaultStyle.customizeHelp}>
                         Help Centre
                     </Typography>
                 </IconButton>
+
            </div>
         </AppBar>
     </div>

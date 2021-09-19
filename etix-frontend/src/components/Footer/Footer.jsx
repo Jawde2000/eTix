@@ -11,7 +11,7 @@ function Footer() {
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1} >Customer Service</Box>
                             <Box style={{paddingTop: 10, paddingBottom: 5}}>
-                                <Link href="/" color="inherit" underline={'none'}>
+                                <Link href="/helpcentre" color="inherit" underline={'none'}>
                                     Help Center
                                 </Link>
                             </Box>
@@ -29,7 +29,7 @@ function Footer() {
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/" color="inherit" underline={'none'}>
+                                <Link href="/privacyPolicy" color="inherit" underline={'none'}>
                                     Privacy Policy
                                 </Link>
                             </Box>

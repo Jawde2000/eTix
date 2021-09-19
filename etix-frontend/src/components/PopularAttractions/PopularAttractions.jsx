@@ -208,3 +208,5 @@ export const PopularAttractions = () =>{
         </Container>
     )
 }
+
+export default PopularAttractions;

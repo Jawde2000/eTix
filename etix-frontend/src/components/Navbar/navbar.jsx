@@ -48,7 +48,7 @@ function NavBar() {
       <div className="nav">
           <header className="head">
             <div>
-            <Link href="#" style={{ textDecoration: 'none' }}>
+            <Link href="/" style={{ textDecoration: 'none' }}>
             <IconButton>
             <img src={eTixLogo} className={defaultStyle.resizePic}/>
             <Typography className={defaultStyle.resizeLogo}>
@@ -59,7 +59,7 @@ function NavBar() {
             </div>
 
             <div>
-            <Link style={{ textDecoration: 'none' }}>          
+            <Link href="/" style={{ textDecoration: 'none' }}>          
             <Button className={defaultStyle.liAButton}>
               HOME
             </Button>
@@ -67,7 +67,7 @@ function NavBar() {
             </div>
 
             <div>
-            <Link style={{ textDecoration: 'none' }}>
+            <Link style={{ textDecoration: 'none' }} href="/attractions">
             <Button className={defaultStyle.liAButton}>
               ATTRACTIONS
             </Button>
@@ -75,7 +75,7 @@ function NavBar() {
             </div>
 
             <div>
-            <Link style={{ textDecoration: 'none' }}>
+            <Link style={{ textDecoration: 'none' }} href="/services">
             <Button className={defaultStyle.liAButton}>
               SERVICES
             </Button>
@@ -103,4 +103,3 @@ function NavBar() {
 }
 
 export default NavBar;
-
