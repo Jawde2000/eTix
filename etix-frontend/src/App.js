@@ -17,6 +17,8 @@ import PopularAttractions from '../src/components/PopularAttractions/PopularAttr
 import PopularServices from '../src/components/PopularServices/PopularServices'
 import HelpCenter from '../src/components/HelpCenter/Landing'
 import Messaging from '../src/components/HelpCenter/Messaging'
+import Profile from './components/Profile/Profile';
+import Cart from './components/Cart/Cart'
 import { makeStyles } from "@material-ui/core";
 
 function Router() {
@@ -41,12 +43,6 @@ function Router() {
         <Route path="/homequery" exact>
             <HomeQuery />
         </Route>
-        <Route path="/verification" exact>
-            <Verification />
-        </Route>
-        <Route path="/verification" exact>
-            <Verification />
-        </Route>
         <Route path="/attractions" exact>
             <PopularAttractions />
         </Route>
@@ -70,6 +66,12 @@ function Router() {
         </Route>
         <Route path="/helpcentre/messaging" exact>
             <Messaging />
+        </Route>
+        <Route path="/profile" exact>
+            <Profile />
+        </Route>
+        <Route path="/cart" exact>
+            <Cart />
         </Route>
     </Switch>
     <Footer />

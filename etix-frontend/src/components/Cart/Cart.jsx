@@ -3,8 +3,9 @@ import {Box, makeStyles, Typography, Container, Grid, Button} from "@material-ui
 import dubai from '../cities/dubai.jpg'
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
 import { alpha } from '@material-ui/core/styles/colorManipulator';
-import ActivitiesResults from './ActivitiesResults';
-import { ActivitiesPagination } from './ActivitiesPagination';
+import CartResults from './CartResults';
+import { CartPagination } from './CartPagination';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -18,13 +19,13 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         fontFamily: ['rubik', 'sans-serif'].join(',')
     },
-    activities: {
+    Cart: {
         display: "flex",
         fontSize: 40,
         alignItems: "center",
         flexWrap: "wrap",
     },
-    activitiesIcon: {
+    CartIcon: {
         display: "flex",
         fontSize: 40,
         alignItems: "center",
@@ -37,16 +38,12 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
     },
     menufont: {
-        fontSize: 30,
+        fontSize: 20,
         fontFamily: ['rubik', 'sans-serif'].join(','),
         alignItems: "center",
         color: '#CFDBD5',
         fontWeight: "bold",
-        '&:hover': {
-            color: '#F5CB5C',
-            fontWeight: "bold",
-            cursor: "pointer",
-        },
+        opacity: 1,
     },
     listContainer: {
         paddingTop: theme.spacing(5),
@@ -97,41 +94,41 @@ function Activities() {
                     <Grid container  className={defaultStyle.iconComponent} direction="column">
                     <Grid item xs={12} container>
                     <Grid item xs={3}>
-                    <Typography className={defaultStyle.activities}>
-                        <LocalActivityIcon className={defaultStyle.activitiesIcon}/>
-                        Activities
+                    <Typography className={defaultStyle.Cart}>
+                        <ShoppingCartIcon className={defaultStyle.CartIcon}/>
+                        Cart
                     </Typography>
+                    </Grid>            
                     </Grid>
-                            
-                    </Grid>
+
                     <Grid item xs={12} container>
-                    <Grid item xs={3} container>
+                    <Grid item xs={4} container>
                     <Box className={defaultStyle.listContainer}>
+                   
                     <Grid item xs={3} className={defaultStyle.menulist}>
-                       <Grid item xs={12}>
-                            <Typography className={defaultStyle.menufont}>
-                            ALL
+                    <Grid item xs={12}>
+                        <Typography className={defaultStyle.menufont}>
+                            TICKET: 1
                             </Typography>
                             </Grid>
                     </Grid>
                     <Grid item xs={3} className={defaultStyle.menulist}>
                     <Grid item xs={12}>
                         <Typography className={defaultStyle.menufont}>
-                            TO PAY
+                            RM: 37.00
                             </Typography>
                             </Grid>
                     </Grid>
                     <Grid item xs={3} className={defaultStyle.menulist}>
                     <Grid item xs={12}>
                         <Typography className={defaultStyle.menufont}>
-                            TO BOARD
-                            </Typography>
-                            </Grid>
-                    </Grid>
-                    <Grid item xs={3} className={defaultStyle.menulist}>
-                    <Grid item xs={12}>
+                            SST (6%)
+                        </Typography>
                         <Typography className={defaultStyle.menufont}>
-                            COMPLETED
+                            RM: 3.00
+                        </Typography>
+                        <Typography className={defaultStyle.menufont}>
+                            TOTAL: RM 40.00
                         </Typography>
                         </Grid>
                     </Grid>
@@ -139,10 +136,10 @@ function Activities() {
                     </Grid>
                     
                        
-                    <Grid item xs={9} container>                
-                        <ActivitiesResults posts={currentPosts} loading={loading}/>
+                    <Grid item xs={8} container>                
+                        <CartResults posts={currentPosts} loading={loading}/>
                         <Grid item xs={12}>
-                            <ActivitiesPagination postsPerPage={postsPerPage} totalPosts={posts.length} paginate={paginate}/>  
+                            <CartPagination postsPerPage={postsPerPage} totalPosts={posts.length} paginate={paginate}/>  
                         </Grid>     
                     </Grid>    
                         
