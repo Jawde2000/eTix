@@ -1,30 +1,29 @@
 import React, { Component, useState, useEffect} from 'react'
 import {Box, makeStyles, Typography, Container, Grid, Button} from "@material-ui/core"
-import dubai from '../cities/dubai.jpg'
+import moscow from '../cities/moscow.jpg'
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
 import { alpha } from '@material-ui/core/styles/colorManipulator';
-import ActivitiesResults from './ActivitiesResults';
-import { ActivitiesPagination } from './ActivitiesPagination';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
-        backgroundImage: 'url('+ dubai +')',
+        backgroundImage: 'url('+ moscow +')',
         backgroundRepeat: "no-repeat",
         position: "center",
         paddingBottom: 130,
-        height: 900,
+        height: 700,
         backgroundSize: "cover",
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
         fontFamily: ['rubik', 'sans-serif'].join(',')
     },
-    activities: {
+    account: {
         display: "flex",
-        fontSize: 40,
+        fontSize: 35,
         alignItems: "center",
         flexWrap: "wrap",
     },
-    activitiesIcon: {
+    accountIcon: {
         display: "flex",
         fontSize: 40,
         alignItems: "center",
@@ -53,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: theme.spacing(5),
         backgroundColor: "black",
         opacity: 0.5,
+        height: "100%"
     },
     activity: {
         backgroundColor: "black",
@@ -62,32 +62,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Activities() {
+function Profile() {
     const defaultStyle = useStyles();
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [postsPerPage] = useState(4);
-
-    useEffect(() =>{
-        const fetchPost = async () => {
-            setLoading(true);
-            const res = await fetch('https://jsonplaceholder.typicode.com/posts');
-            const data = await res.json();
-            setPosts(data);
-            setLoading(false);
-        }
-
-        fetchPost();
-    },[]);
-
-    //get current posts
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-    //change page
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <div>
@@ -97,9 +73,9 @@ function Activities() {
                     <Grid container  className={defaultStyle.iconComponent} direction="column">
                     <Grid item xs={12} container>
                     <Grid item xs={3}>
-                    <Typography className={defaultStyle.activities}>
-                        <LocalActivityIcon className={defaultStyle.activitiesIcon}/>
-                        Activities
+                    <Typography className={defaultStyle.account}>
+                        <AccountBoxIcon className={defaultStyle.accountIcon}/>
+                        PROFILE
                     </Typography>
                     </Grid>
                             
@@ -110,43 +86,42 @@ function Activities() {
                     <Grid item xs={3} className={defaultStyle.menulist}>
                        <Grid item xs={12}>
                             <Typography className={defaultStyle.menufont}>
-                            ALL
+                            CHANGE
                             </Typography>
                             </Grid>
                     </Grid>
                     <Grid item xs={3} className={defaultStyle.menulist}>
                     <Grid item xs={12}>
                         <Typography className={defaultStyle.menufont}>
-                            TO PAY
+                            EMAIL
                             </Typography>
                             </Grid>
                     </Grid>
                     <Grid item xs={3} className={defaultStyle.menulist}>
                     <Grid item xs={12}>
                         <Typography className={defaultStyle.menufont}>
-                            TO BOARD
+                            PASSWORD
                             </Typography>
                             </Grid>
                     </Grid>
                     <Grid item xs={3} className={defaultStyle.menulist}>
                     <Grid item xs={12}>
                         <Typography className={defaultStyle.menufont}>
-                            COMPLETED
+                            BILLING 
                         </Typography>
                         </Grid>
                     </Grid>
                     </Box> 
                     </Grid>
-                    
-                       
-                    <Grid item xs={9} container>                
-                        <ActivitiesResults posts={currentPosts} loading={loading}/>
-                        <Grid item xs={12}>
-                            <ActivitiesPagination postsPerPage={postsPerPage} totalPosts={posts.length} paginate={paginate}/>  
-                        </Grid>     
+                         
+                    <Grid item xs={9} container>       
+                    <Grid item xs={12}>         
+                        <Box className={defaultStyle.listContainer}>
+
+                        </Box>
+                    </Grid>
                     </Grid>    
                         
-
                     </Grid> 
                     </Grid>
                 </Container>
@@ -156,4 +131,4 @@ function Activities() {
     );
 }
 
-export default Activities;
+export default Profile;

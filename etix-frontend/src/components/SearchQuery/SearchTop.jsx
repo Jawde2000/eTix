@@ -58,7 +58,7 @@ export const SearchTop = () =>{
                         <TextField
                                 varient="outlined"
                                 type="text"
-                                value="KL jibai"
+                                value="KL"
                                 label="To"
                                 InputProps={{
                                     className: classes.multilineColor1
