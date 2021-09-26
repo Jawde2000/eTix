@@ -1,9 +1,10 @@
 import './App.css';
+import DataGenerationService from './components/DataGeneration/DataGenerationService';
 
 function App() {
   return (
     <div className="App">
-      hello
+      <DataGenerationService />
     </div>
   );
 }
