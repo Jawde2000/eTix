@@ -6,10 +6,17 @@ import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
+import DownloadIcon from '@mui/icons-material/Download';
+//a npm package for generating PDF tables 
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 const useStyles = makeStyles((theme) => ({
     root: {
         minHeight: 500,
+    },
+    table: {
+        marginTop: 50,
     },
 }));
 
@@ -38,6 +45,7 @@ const rows = [
     createData(10, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 10:20", "ACTIVE", 752000.00, 7520.00, 520.00),
     createData(11, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 14:00", "ACTIVE", 752000.00, 7520.00, 520.00),
 ]
+
 
 function descendingComparator(a,b,orderBy){
     if (b[orderBy] < a[orderBy]) {
@@ -81,7 +89,7 @@ const headCells = [
         label: 'Route',
     },
     {
-        id: 'Date_Time',
+        id: 'date_time',
         numeric: false,
         disablePadding: true,
         label: 'Date/Time',
@@ -93,19 +101,19 @@ const headCells = [
         label: 'Status',
     },
     {
-        id: 'net_vendor',
+        id: 'NetIncome_vendor',
         numeric: true,
         disablePadding: true,
         label: 'Net income (Vendor) (MYR)',
     },
     {
-        id: 'net_etix',
+        id: 'NetIncome_eTix',
         numeric: true,
         disablePadding: true,
         label: 'Net Income (eTix) (MYR)',
     },
     {
-        id: 'tax',
+        id: 'Taxation',
         numeric: true,
         disablePadding: true,
         label: 'Taxation (MYR)',
@@ -169,6 +177,17 @@ EnhancedTableHead.propTypes = {
 
 const EnhancedTableToolbar = (props) => {
     const {numSelected} = props;
+
+    //function to export pdf file
+    const downloadPDF =()=>{
+        const doc = new jsPDF()
+        doc.text("Services Data",20,10)
+        doc.autoTable({
+            columns: headCells.map(head=>({header:head.label, dataKey:head.id})),
+            body: rows,
+        })
+        doc.save("ServicesData.pdf")
+    }
     
     return (
         <Toolbar
@@ -208,7 +227,14 @@ const EnhancedTableToolbar = (props) => {
                 </IconButton>
                 </Tooltip>
             ) : (
-                null
+                <Tooltip title="Export to PDF file">
+                    <IconButton>
+                        <DownloadIcon
+                            onClick={() => downloadPDF()}
+                            style={{cursor: 'pointer'}}
+                        />
+                    </IconButton>
+                </Tooltip>
             )}
         </Toolbar>
     );
@@ -283,7 +309,7 @@ const DataGenerationService = () =>{
     return (
         <Container className={classes.root}>
             <Box sx={{width: '100%'}}>
-                <Paper sx={{width:'100%', mb: 2}}>
+                <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <EnhancedTableToolbar numSelected={selected.length} />
                     <TableContainer>
                         <Table
