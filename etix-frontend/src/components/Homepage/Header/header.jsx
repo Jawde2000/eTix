@@ -1,11 +1,50 @@
 import React, { Component } from 'react';
-import {AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, MenuIcon, makeStyles, colors, Tooltip} from "@material-ui/core";
+import {AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, MenuIcon, makeStyles, colors, Tooltip, withStyles, Link} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 // import HelpIcon from '@material-ui/icons/Help';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import './header.css';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+const StyledMenu = withStyles({
+    paper: {
+      border: '1px solid #d3d4d5',
+    },
+  })((props) => (
+    <Menu
+      elevation={0}
+      getContentAnchorEl={null}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      {...props}
+    />
+  ));
+
+  const StyledMenuItem = withStyles((theme) => ({
+    root: {
+      '&:focus': {
+        backgroundColor: "#F5CB5C",
+        '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+          color: theme.palette.common.white,
+        },
+      },
+    },
+  }))(MenuItem);
 
 const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
@@ -55,6 +94,9 @@ const useStyles = makeStyles((theme) => ({
         fontFamily: ['rubik', 'sans-serif'].join(','),
         color: '#F5CB5C',
         backgroundColor: '#242423'
+    },
+    menu: {
+        textDecoration: "none"
     }
 }));
 
@@ -85,19 +127,47 @@ function Header() {
                    Register/Login
                    </Typography>
                </IconButton>
-               <Menu
-                    id="account"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    <MenuItem className={defaultStyle.menuItem} onClick={handleClose}>Register/Login</MenuItem>
-                </Menu>
+               <StyledMenu
+        id="customized-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+          <Link href="/profile" style={{textDecoration: 'none'}}>
+        <StyledMenuItem >
+          
+          <ListItemIcon>            
+            <AccountBoxIcon fontSize="small" />
+          </ListItemIcon>
+          
+          <ListItemText primary="View Profile" />
+          
+        </StyledMenuItem>
+        </Link>
+        <Link href="/activities" style={{textDecoration: 'none'}}>
+        <StyledMenuItem>
+            
+          <ListItemIcon>
+            <LocalActivityIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Activities" />
+          
+        </StyledMenuItem>
+        </Link>
+        <Link style={{textDecoration: 'none'}}>
+        <StyledMenuItem>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </StyledMenuItem>
+        </Link>
+      </StyledMenu>
                {/*</Tooltip>*/}
 
                {/*<Tooltip title="notification">*/}
-               <IconButton aria-controls="account" aria-haspopup="true" onClick={handleClick} className={defaultStyle.customizeNoti}>
+               {/* <IconButton aria-controls="account" aria-haspopup="true" onClick={handleClick} className={defaultStyle.customizeNoti}>
                     <NotificationsIcon htmlColor="#F5CB5C" className={defaultStyle.iconNoti}/>
                 </IconButton>
                 <Menu
@@ -108,7 +178,7 @@ function Header() {
                     onClose={handleClose}
                 >
                     <MenuItem className={defaultStyle.menuItem} onClick={handleClose}>No notifications</MenuItem>
-                </Menu>
+                </Menu> */}
                 {/*</Tooltip>*/}
 
                 <IconButton className={defaultStyle.customizeRight}> 
@@ -118,7 +188,7 @@ function Header() {
                     </Typography>
                 </IconButton>
 
-                <IconButton className={defaultStyle.customizeRight}> 
+                <IconButton className={defaultStyle.customizeRight} href="/helpcentre"> 
                     <HelpCenterIcon htmlColor="#F5CB5C" fontSize="25" />
                     <Typography className={defaultStyle.customizeHelp}>
                         Help Centre

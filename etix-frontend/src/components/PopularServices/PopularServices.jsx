@@ -208,3 +208,5 @@ export const PopularServices = () =>{
         </Container>
     )
 }
+
+export default PopularServices;

@@ -33,7 +33,7 @@ function homeQuery() {
     <Box className={classes.whole}>
       <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2} className={classes.inside}>
         <Grid item>
-          <Typography variant="h4">the best prices, at every time</Typography>
+          <Typography variant="h4">Lowest Price, Greatest Experience</Typography>
         </Grid>
         <Grid item>
           <Grid container direction="row" spacing={8}>
