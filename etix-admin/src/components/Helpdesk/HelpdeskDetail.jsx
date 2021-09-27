@@ -97,7 +97,7 @@ const HelpdeskDetail = ({props}) => {
                 <Grid container spacing={3} direction="column" style={{paddingLeft:30}}>
                     <Grid item xs={12} container>
                         {/* first column */}
-                        <Grid item xs={12} sm={6} container>
+                        <Grid item xs={12} sm={5} container>
                             {/* username */}
                             <Grid item xs={12} container>
                                 <Grid item xs={3}>
@@ -167,8 +167,9 @@ const HelpdeskDetail = ({props}) => {
                             </Grid>
 
                         </Grid>
+                        <Grid item xs={12} sm={1} />
                         {/* second column */}
-                        <Grid item xs={12} sm={6} container>
+                        <Grid item xs={12} sm={5} container>
                             {/* status container */}
                             <Grid item xs={12} container>
                                 <Grid item xs={2}>
@@ -275,12 +276,9 @@ const HelpdeskDetail = ({props}) => {
                             <Grid item xs={12} />
                             <Grid item xs={12} />
                             <Grid item xs={12} />
-                            <Grid item xs={12} />
-                            
-
-
-                            
+                            <Grid item xs={12} />                            
                         </Grid>
+                        <Grid item xs={12} sm={1} />
                     </Grid>
                 </Grid>
             </Box>
