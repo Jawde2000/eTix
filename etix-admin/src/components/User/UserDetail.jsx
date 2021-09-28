@@ -283,7 +283,18 @@ const UserDetail = ({props}) => {
                                         null
                                     )
                                 }
+                                <Grid item xs={12} container>
+                                    <Grid item xs={3} style={{fontWeight: 'bold'}}>
+                                        Help Messages: 
+                                    </Grid>
+                                    <Grid item xs={9} style={{textAlign: 'left'}}>
+                                        {user.helpMessage}
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        {user.helpMessage>0?(<Button href="http://localhost:5000/helpdesk" variant="text">Click Here To View all Message</Button>):null}
+                                    </Grid>
                                     
+                                </Grid>    
                             </Grid>    
                         </Grid>
                         <Grid item xs={12} sm={1} />
