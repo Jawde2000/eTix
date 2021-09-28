@@ -4,6 +4,7 @@
     /* background: linear-gradient(180deg, rgba(36,36,35,1) 10%, rgba(36,36,35,1) 25%, rgba(36,36,35,0.6979768786127167) 80%, rgba(36,36,35,0) 100%); */
     position: relative;
     box-sizing: border-box;
+    display: grid !important;
 }
 
 .head {
