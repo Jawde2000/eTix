@@ -53,7 +53,7 @@ const rows = [
     createData('', 8, 'NEED HELP PLSPLSPLSP', 'GIVEMEDISCOUNTPLSTHXHS', '1/10/2021 16:20', 'ACTIVE'),
   ];
 
-function HelpOffice() {
+function Help() {
     const classes = useStyles();
     return (
         <Box className={classes.whole}>
@@ -133,4 +133,4 @@ function HelpOffice() {
     );
 }
 
-export default HelpOffice
+export default Help
