@@ -68,7 +68,7 @@ const Service = ({props}) => {
         <Container className={classes.root}>
             <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
                 <Grid item xs={12} className={classes.action} container>
-                    <Grid item xs={7}>
+                    <Grid item xs={4}>
                         <Tooltip title="Back">
                             {/* Should change it to Link after having the router setting */}
                             <IconButton  href="/services">
@@ -76,7 +76,10 @@ const Service = ({props}) => {
                             </IconButton>
                         </Tooltip>
                     </Grid>
-                    <Grid item xs={5} textAlign="right">
+                    <Grid item xs={4} textAlign="center" style={{fontSize:20}}>
+                        Service ID: {service.serviceID}
+                    </Grid>
+                    <Grid item xs={4} textAlign="right">
                         <Tooltip title="Edit Service">
                             {/* Set onclick edit here  with props*/}
                             <IconButton onClick={() => setEditing(!editing)}>
