@@ -1,10 +1,8 @@
-
+import Service from "./components/Service/Service";
 
 function App() {
   return (
-    <div className="App">
-      a
-    </div>
+    <Service />
   );
 }
 
