@@ -109,9 +109,9 @@ function LoginForm() {
            autoFocus
            
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
-           startIcon={<ArrowForwardIosIcon style={{fontSize: 25}}/>}
+           startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
            >
-          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(',')}}>
+          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
             Login
           </Typography>
           </Button>
