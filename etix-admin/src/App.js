@@ -11,7 +11,7 @@ import UserManagement from './components/userManagement/UserManagement';
 import DataGeneration from './components/DataGeneration/DataGenerationService';
 import Helpdesk from './components/Helpdesk/HelpdeskDetail';
 import HelpMan from './components/HelpMan/Help';
-import Sales from './components/Sales/Sales';
+import Sales from './components/Sales/Sales'
 import Service from './components/Service/Service';
 import ServiceMan from './components/ServiceMan/Service'
 import User from './components/User/UserDetail'

@@ -9,8 +9,12 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import '../Header/header.css';
 
 const useStyles = makeStyles((theme) => ({
+  text: {
+    fontFamily: ['rubik', 'sans-serif'].join(','),
+  },
   inputbackground: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -44,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
   forgot: {
     display: "flex",
+    fontFamily: ['rubik', 'sans-serif'].join(','),
     padding: 10,
     justifyContent: "flex-start",
     '&:hover': {
@@ -54,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
   create: {
     display: "flex",
+    fontFamily: ['rubik', 'sans-serif'].join(','),
     padding: 10,
     justifyContent: "flex-start",
     '&:hover': {
@@ -96,7 +102,7 @@ function LoginForm() {
         </Grid>
         <Grid container  xs={12} >        
         <FormControl sx={{ m: 1, width: '35ch' }} variant="filled" className={defaultStyle.inputbackground}>
-          <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
+          <InputLabel htmlFor="filled-adornment-password" >Password</InputLabel>
           <FilledInput         
             disableUnderline="true"
             variant="filled"

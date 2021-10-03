@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom'
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
     minHeight: 130,
-    background: 'linear-gradient(to right, rgb(65, 41, 90), rgb(47, 7, 67), #ec38bc)',
+    background: 'linear-gradient(to right, #0f0c29, #302b63, #24243e)',
     position: 'relative',
     paddingRight: 150,
     fontFamily: ['rubik', 'sans-serif'].join(','),
