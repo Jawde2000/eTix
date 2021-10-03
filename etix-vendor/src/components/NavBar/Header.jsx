@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: 30,
     background: 'linear-gradient(to right, rgb(65, 41, 90), rgb(47, 7, 67))',
     position: 'relative',
+   
     fontFamily: ['rubik', 'sans-serif'].join(','),
     boxShadow: 'none'
   },

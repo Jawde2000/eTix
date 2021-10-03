@@ -14,6 +14,8 @@ import HelpMan from './components/HelpMan/Help';
 import Sales from './components/Sales/Sales';
 import Service from './components/Service/Service';
 import ServiceMan from './components/ServiceMan/Service'
+import User from './components/User/UserDetail'
+import DataGenerationService from './components/DataGeneration/DataGenerationService';
 
 function Router() {
 
@@ -28,6 +30,18 @@ function Router() {
     <Switch>
     <Route path="/" exact>
       <Login />
+    </Route>
+    <Route path="/query" exact>
+      <Service />
+    </Route>
+    <Route path="/data" exact>
+      <DataGenerationService />
+    </Route>
+    <Route path="/helpdesk" exact>
+      <Helpdesk />
+    </Route>
+    <Route path="/user" exact>
+      <User />
     </Route>
     <Route path="/menu" exact>
       <AdminMenu />

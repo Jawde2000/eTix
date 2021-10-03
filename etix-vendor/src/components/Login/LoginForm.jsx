@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme} from '@mui/material';
+import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
 import React, {useState} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -41,6 +41,26 @@ const useStyles = makeStyles((theme) => ({
   loginButton: {
     display: "flex",
     justifyContent: "flex-end"
+  },
+  forgot: {
+    display: "flex",
+    padding: 10,
+    justifyContent: "flex-start",
+    '&:hover': {
+      textDecorationLine: 'underline',
+      color: '#F5CB5C'
+    },
+    cursor: "pointer"
+  },
+  create: {
+    display: "flex",
+    padding: 10,
+    justifyContent: "flex-start",
+    '&:hover': {
+      textDecorationLine: 'underline',
+      color: '#F5CB5C'
+    },
+    cursor: "pointer"
   }
 }));
 
@@ -99,22 +119,35 @@ function LoginForm() {
           />
         </FormControl>
         </Grid>
-        <Grid item xs={12} className={defaultStyle.loginButton}>
+        <Grid item xs={12}>
+          <Grid item xs={12} className={defaultStyle.loginButton}>
           <Button 
            sx={{ m: 1 }}
            id="new-sumbit"
            type="submit"
            color='primary'
            variant="contained"
-           autoFocus
-           
+           href="/menu"
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
            >
-          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
+          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}} >
             Login
           </Typography>
           </Button>
+          </Grid>
+          <Grid item xs={12} >
+            <Link className={defaultStyle.forgot} style={{textDecoration: "none",}} href="/forgotpassword">
+              Forgot Password?
+            </Link>
+          </Grid>
+          <Grid item xs={12}>
+            <Box>
+            <Link className={defaultStyle.create} style={{textDecoration: "none",}} href="/register">
+              Create a new account?
+            </Link>
+            </Box>
+          </Grid>
         </Grid>
       </Container>
   );
