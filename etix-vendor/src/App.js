@@ -1,10 +1,10 @@
-
+import Service from "./components/Service/Service";
+import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
+import Profile from "./components/Profile/Profile";
 
 function App() {
   return (
-    <div className="App">
-      a
-    </div>
+    <Profile />
   );
 }
 
