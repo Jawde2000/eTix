@@ -35,4 +35,10 @@
   to {
     transform: rotate(360deg);
   }
+} */
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap%27');
+
+.nav {
+  background: linear-gradient(180deg, rgba(36,36,35,1) 10%, rgba(36,36,35,1) 25%, rgba(36,36,35,0.6979768786127167) 80%, rgba(36,36,35,0) 100%);
+  font-family: 'Rubik', sans-serif;
 }
