@@ -39,6 +39,12 @@ function Router() {
     <Route path="/datageneration" exact>
       <DataGeneration />
     </Route>
+    <Route path='/profile' exact>
+      <Profile />
+    </Route>
+    <Route path='/profile' exact>
+      <Profile />
+    </Route>
     <Footer />
     </BrowserRouter>
   )
