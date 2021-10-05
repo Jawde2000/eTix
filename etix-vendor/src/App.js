@@ -11,6 +11,9 @@ import Register from './components/Register/Register';
 import RegistrationSuccess from './components/Register/RegisterSuccess'
 import VendorMenu from './components/VendorMenu/VendorMenu'
 import DataGeneration from './components/DataGeneration/DataGeneration'
+import Service from "./components/Service/Service";
+import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
+import Profile from "./components/Profile/Profile";
 
 function Router() {
 
@@ -40,6 +43,8 @@ function Router() {
     </BrowserRouter>
   )
 }
+
+
 
 function App() {
 
