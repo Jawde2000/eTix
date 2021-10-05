@@ -52,7 +52,9 @@ function UserManagement() {
                 <Paper>
                 <Grid xs={12}>
                     <Grid xs={12}>
-                    <UserDataGrid />
+                    <Paper elevation={24} >
+                        <UserDataGrid padding={12}/>
+                    </Paper>
                     </Grid>
                 </Grid>
                 </Paper>

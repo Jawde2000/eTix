@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
-import { Button} from '@mui/material';
+import { Button, Paper} from '@mui/material';
 
 
 function CustomToolbar() {

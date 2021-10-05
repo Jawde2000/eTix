@@ -15,11 +15,12 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useHistory } from "react-router-dom";
+import '../Header/header.css';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
     minHeight: 30,
-    background: 'linear-gradient(to right, rgb(65, 41, 90), rgb(47, 7, 67))',
+    background: 'linear-gradient(to right, #0f0c29, #302b63, #24243e)',
     position: 'relative',
     fontFamily: ['rubik', 'sans-serif'].join(','),
     boxShadow: 'none'
@@ -30,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
   },
   rightItem: {
     float: "right"
-  },customizeText: {
+  },
+  customizeText: {
     paddingLeft: 5,
     color: '#F5CB5C',
     font: 'robo',
@@ -115,7 +117,7 @@ function Header() {
                 onClick={handleClick}
                 >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
-                   <Typography className={defaultStyle.customizeText}>
+                   <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}>
                    Zhipeng
                    </Typography>
                 </Button>

@@ -181,7 +181,7 @@ function Header() {
                 </Menu> */}
                 {/*</Tooltip>*/}
 
-                <IconButton className={defaultStyle.customizeRight}> 
+                <IconButton className={defaultStyle.customizeRight} href="http://localhost:3500/"> 
                    <GroupWorkIcon htmlColor="#F5CB5C" fontSize="25"/>
                     <Typography className={defaultStyle.customizePartner}>
                         Partner with eTix
