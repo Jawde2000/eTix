@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-*t^!%79pbh1#hsz^8!@zjxt5pl9z00g2gpf-2lqq(@+sy)g4_o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.43.129']
 
 AUTH_USER_MODEL = 'etixApp.User'
 
