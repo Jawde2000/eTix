@@ -1,10 +1,8 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper} from '@mui/material';
+import { Grid, Box, Paper} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React from 'react';
 import moscow from '../globalAssets/moscow.jpg'
 import Searchbar from './Searchbar';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import PrintIcon from '@mui/icons-material/Print';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
