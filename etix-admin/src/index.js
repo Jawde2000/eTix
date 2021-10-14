@@ -3,10 +3,28 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {CookiesProvider} from 'react-cookie';
+import {Route, BrowserRouter, useHistory, Switch} from 'react-router-dom';
+import Login from './components/Login/Login';
+import Footer from './components/Footer/Footer';
+import Topbar from './components/NavBar/Topbar';
+
 
 ReactDOM.render(
+  
   <React.StrictMode>
-    <App />
+    <CookiesProvider>
+     
+        <BrowserRouter>
+          <Topbar />
+            <Switch>
+              <Route exact path="/" component={Login} />
+              <Route exact path="/menu" component={App}  />
+            </Switch>
+            <Footer />
+            
+          </BrowserRouter>
+    </CookiesProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

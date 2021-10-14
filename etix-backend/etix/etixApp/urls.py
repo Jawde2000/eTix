@@ -1,13 +1,14 @@
 from django.urls import path, include
-from etixApp.views import DestinationViewSet, PaymentViewSet, RowViewSet, SeatTypeViewSet, SeatViewSet, ServicesViewSet, UserViewSet, CustomerViewSet, VendorViewSet, AdminViewSet, TicketViewSet, HelpDeskViewSet, HelpResponseViewSet, CartViewSet
+from etixApp.views import DestinationViewSet, PaymentViewSet, RowViewSet, SeatTypeViewSet, SeatViewSet, ServicesViewSet, CustomerViewSet, VendorViewSet, AdminViewSet, TicketViewSet, HelpDeskViewSet, HelpResponseViewSet, CartViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
 from rest_framework import routers, serializers, viewsets
+from . import views
 user = settings.AUTH_USER_MODEL
 
 router = DefaultRouter()
-router.register('users', UserViewSet, basename='users')
+# router.register('users', UserViewSet, basename='users')
 router.register('destination', DestinationViewSet, basename='destination')
 router.register('payment', PaymentViewSet, basename='payment')
 router.register('row', RowViewSet, basename='row')
@@ -25,4 +26,16 @@ router.register('cart', CartViewSet, basename='cart')
 
 urlpatterns = [
     path('api/', include(router.urls)),
+
+    # api path for login, method post
+    path('api/users/login/', views.MyTokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
+    # api path for register new user, method post
+    path('api/users/register/', views.registerUser, name='register'),
+
+    # api path for get all users, method get (only admin can access)
+    path('api/users/', views.getUsers, name="users-profile"),
+    # api path to get user profile (must be logged in first)
+    path('api/users/profile/', views.getUserProfile, name="user-profile")
+
 ]
