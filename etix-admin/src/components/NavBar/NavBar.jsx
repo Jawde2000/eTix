@@ -1,5 +1,6 @@
-import { AppBar, Grid,  Link, Typography} from '@mui/material';
+import { AppBar, Grid,   Typography} from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import {Link} from 'react-router-dom';
 import React, { useState } from 'react';
 import etixLogo from '../globalAssets/eTixLogo.png'
 import Clock from 'react-live-clock'
@@ -51,7 +52,7 @@ function NavBar() {
            
               <Grid xs={12} container justify="center" direction="row" alignItems="center">
               <Grid item>
-              <Link href={value}           
+              <Link to={value}           
                 style={{ textDecorationLine: 'none', display: "flex",}}>        
                   <img src={etixLogo} alt="etixLogo" className={defaultStyle.resizePic}/>
                   <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>

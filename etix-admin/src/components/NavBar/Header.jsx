@@ -3,17 +3,7 @@ import { makeStyles, withStyles} from '@mui/styles';
 import React from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
-// import HelpIcon from '@material-ui/icons/Help';
-// import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-// import GroupWorkIcon from '@material-ui/icons/GroupWork';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-// import ListItemText from '@material-ui/core/ListItemText';
-// import InboxIcon from '@material-ui/icons/MoveToInbox';
-// import DraftsIcon from '@material-ui/icons/Drafts';
-// import SendIcon from '@material-ui/icons/Send';
-// import AccountBoxIcon from '@mui/icons-material/AccountBox';
-// import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-// import LogoutIcon from '@mui/icons-material/Logout';
+import {useCookies} from 'react-cookie'
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -76,14 +66,9 @@ menu: {
   
 }));
 
-function logout() {
-  localStorage.clear();
-  window.location.href = '/';
-}
-
-function Header() {
+const Header = () => {
   const defaultStyle = useStyles();
-  
+  const [token, setToken, removeToken] = useCookies(['mytoken'])
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -96,8 +81,7 @@ function Header() {
   let history = useHistory();
 
   function handleLogOut() {
-    sessionStorage.setItem("userToken", '');
-    sessionStorage.clear();
+    removeToken(['mytoken'])
     history.push("/"); // whichever component you want it to route to
   }
 
@@ -129,7 +113,6 @@ function Header() {
                 onClose={handleClose}
                 TransitionComponent={Fade}
                 >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>

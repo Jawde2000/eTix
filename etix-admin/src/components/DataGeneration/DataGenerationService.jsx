@@ -6,6 +6,7 @@ import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
+import moscow from '../globalAssets/moscow.jpg';
 import DownloadIcon from '@mui/icons-material/Download';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
@@ -13,6 +14,13 @@ import 'jspdf-autotable'
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundImage: `url(${moscow})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundBlendMode: "lighten",
+        paddingTop: 3,
+        paddingBottom: 3,
         minHeight: 500,
     },
     table: {
@@ -307,8 +315,8 @@ const DataGenerationService = () =>{
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
     
     return (
-        <Container className={classes.root}>
-            <Box sx={{width: '100%'}}>
+        <Container className={classes.root} maxWidth="Fixed">
+            <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <EnhancedTableToolbar numSelected={selected.length} />
                     <TableContainer>
@@ -396,7 +404,6 @@ const DataGenerationService = () =>{
                     />
                 </Paper>
             </Box>
-
         </Container>
     );
 }

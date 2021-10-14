@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles';
 import { Grid, Box, Typography, TextField} from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import DateRangePicker from '@mui/lab/DateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -17,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
         fontFamily: ['rubik', 'sans-serif'].join(','),
+        minHeight: 500,
     },
     icons: {
         width: '120px',
@@ -107,8 +109,9 @@ function Sales() {
                                     <Typography variant="h5">Data Generation</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h6">by Service</Typography>
-                                    <Typography variant="h6">by Customer</Typography>
+                                    <Link to="/menu/sales/data" style={{color: '#66FCF1', textDecoration: "none"}}>
+                                        <Typography variant="h6">View Data Table</Typography>
+                                    </Link>
                                 </Grid>
                             </Grid>
                         </Grid>
