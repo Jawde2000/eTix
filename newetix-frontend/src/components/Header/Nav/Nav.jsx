@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button,} from '@mui/material';
+import React from 'react';
+import { AppBar, Grid, IconButton, Link, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import etixLogo from '../../globalAssets/eTixLogo.png'
@@ -57,7 +57,7 @@ function Nav() {
                 <Grid item>
                     <Link href='http://localhost:3000/'         
                         style={{ textDecorationLine: 'none', display: "flex",}}>        
-                        <img src={etixLogo} className={defaultStyle.resizePic}/>
+                        <img src={etixLogo} className={defaultStyle.resizePic} alt="eTix Logo"/>
                         <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
                             eTix 
                         </Typography>

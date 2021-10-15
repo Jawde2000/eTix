@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
-import { makeStyles, withStyles} from '@mui/styles';
+import { AppBar, Grid, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -100,7 +100,7 @@ function Top() {
                 <Grid xs={12}>
                     <Grid item className={defaultStyle.rightItem} direction="row" display="flex">   
                         <Grid item className={defaultStyle.rightItem}>
-                            <Link href='' style={{ textDecorationLine: 'none', color: 'white', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
+                            <Link href='' style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
                         </Grid>   
                         <Grid item className={defaultStyle.rightItem}>
                             <div>
