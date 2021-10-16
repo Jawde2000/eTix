@@ -75,6 +75,7 @@ function LoginForm() {
 
   const [values, setValues] = useState({
     password: '',
+    email: '',
     showPassword: false,
   });
 
@@ -93,11 +94,20 @@ function LoginForm() {
     event.preventDefault();
   };
 
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log(values.email);
+    console.log(values.password);
+    console.log("submitted");
+  };
+
   return (
       <Container>
+        <form onSubmit={handleSubmit}>
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
-          label={'Username/Email'} variant="filled" InputProps={{ disableUnderline: true }}
+          label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
+          type="email" value={values.email} onChange={handleChange('email')}
           ></TextField>
         </Grid>
         <Grid container  xs={12} >        
@@ -129,12 +139,11 @@ function LoginForm() {
           <Grid item xs={12} className={defaultStyle.loginButton}>
           <Button 
            sx={{ m: 1 }}
-           id="new-sumbit"
            type="submit"
-           color='primary'
+           color='success'
            variant="contained"
-           href="/menu"
-           style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
+          //  href="/menu"
+           style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
            >
           <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}} >
@@ -155,6 +164,7 @@ function LoginForm() {
             </Box>
           </Grid>
         </Grid>
+        </form>
       </Container>
   );
 
