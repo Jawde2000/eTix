@@ -7,12 +7,12 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { makeStyles } from '@mui/styles';
 
 import SearchIcon from '@mui/icons-material/Search';
-import Locations from './../globalAssets/strings';
-import moscow from '../globalAssets/moscow.jpg'
+import Locations from './../globalAssets/scripts/strings';
+import images from '../globalAssets/scripts/bgchange';
 
 const homeStyles = makeStyles((theme) => ({
   whole: {
-    backgroundImage: `url(${moscow})`,
+    backgroundImage: `url(${images()})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundBlendMode: "lighten",
@@ -36,12 +36,6 @@ const homeStyles = makeStyles((theme) => ({
 
 function HomeQuery() {
   const classes = homeStyles();
-
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
 
   const [value, setValue] = React.useState([null, null]);
 

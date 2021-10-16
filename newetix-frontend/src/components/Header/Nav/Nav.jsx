@@ -66,8 +66,8 @@ function Nav() {
                 <Grid item className={defaultStyle.menuContainer}>
                     <Grid xs={12} container justify="center" direction="row" alignItems="center">
                         <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/popular/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/popular/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
+                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
                     </Grid>
                 </Grid>
                 <Grid item className={defaultStyle.auxContainer}>

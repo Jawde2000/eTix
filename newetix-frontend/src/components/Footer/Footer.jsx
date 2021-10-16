@@ -1,8 +1,6 @@
 import React from 'react'
 import { Link, Container, Grid, Box } from '@mui/material'
 
-import PaymentIcon from '@mui/icons-material/Payment';
-
 function Footer() {
     return (
         <footer>
