@@ -3,7 +3,6 @@ import { Box ,Container, Grid, Typography, Card, CardContent, CardActionArea, Ca
 import { makeStyles } from '@mui/styles';
 
 import images from '../globalAssets/scripts/bgchange';
-import Locations from '../globalAssets/scripts/strings';
 
 import JDT from '../globalAssets/images/attractions/jdt.jpg';
 import KDN from '../globalAssets/images/attractions/kdn.jpg';
