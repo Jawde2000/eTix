@@ -1,12 +1,15 @@
 import React from 'react';
-import Top from './Header/Top/Top'
-import Nav from './Header/Nav/Nav'
+import HomeQuery from './HomeServices/HomeQuery';
+import Header from './Header/Header';
+import Operators from './HomeServices/Operators';
+import Footer from './Footer/Footer';
 
 function Test(){
     return(
         <div>
-            <Top></Top>
-            <Nav></Nav>
+            <Header></Header>
+            <Operators />
+            <Footer></Footer>
         </div>
     )
 }

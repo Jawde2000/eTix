@@ -40,6 +40,9 @@ function Router() {
                 <Route path="/attractions" exact>
                     <Attractions />
                 </Route>
+                <Route path="/testing" exact>
+                    <Test />
+                </Route>
             </Switch>
             <Footer />
         </BrowserRouter>
