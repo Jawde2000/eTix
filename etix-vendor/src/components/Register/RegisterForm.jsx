@@ -76,9 +76,14 @@ const useStyles = makeStyles((theme) => ({
 
 function RegisterForm() {
   const defaultStyle = useStyles();
+  const [phone, setPhone] = useState();
 
   const [values, setValues] = useState({
+    username: '',
+    email: '',
+    businessId: '',
     password: '',
+    confirmPassword: '',
     showPassword: false,
   });
 
@@ -97,26 +102,40 @@ function RegisterForm() {
     event.preventDefault();
   };
 
+  const display = (event) => {
+    event.preventDefault();
+    console.log(values.username);
+    console.log(values.email);
+    console.log(values.businessId);
+    console.log(phone);
+    console.log(values.password);
+    console.log(values.confirmPassword);
+  }
+
   return (
       <Container>
+        <form onSubmit={display}>
         <Grid xs={12} container padding={2} justifyContent="center" justifyItems="center">
             <Typography style={{fontSize: 15, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
                 Create your eTix business account 
             </Typography>
         </Grid>
         <Grid xs={12} container padding={2}>
-          <TextField sx={{ m: 1, width: '35ch', height: "5.8ch"}} className={defaultStyle.inputbackground}
+          <TextField sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Username'} variant="filled" InputProps={{ disableUnderline: true }}
+          value={values.username} onChange={handleChange('username')}
           ></TextField>
         </Grid>
         <Grid xs={12} container padding={2}>
-          <TextField sx={{ m: 1, width: '35ch', height: "5.8ch"}} className={defaultStyle.inputbackground}
+          <TextField sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'email'} variant="filled" InputProps={{ disableUnderline: true }}
+          value={values.email} onChange={handleChange('email')}
           ></TextField>
         </Grid>  
         <Grid xs={12} container padding={2}>
-          <TextField sx={{ m: 1, width: '35ch', height: "5.8ch"}} className={defaultStyle.inputbackground}
+          <TextField sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Business Number'} variant="filled" InputProps={{ disableUnderline: true }}
+          value={values.businessId} onChange={handleChange('businessId')}
           ></TextField>
         </Grid>  
         <Grid xs={12} container direction="column" padding={2}>   
@@ -126,12 +145,14 @@ function RegisterForm() {
         data-cy="user-phone"
         defaultCountry={"my"}
         onlyCountries={["my", "sg"]}
-        sx={{ m: 1, width: '35ch', height: "5.8ch"}} className={defaultStyle.phonebackground}
+        value={phone}
+        onChange={setPhone}
+        sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.phonebackground}
           label={'Phone Number'} variant="filled" InputProps={{ disableUnderline: true }}
         />
         </Grid>
         <Grid container  xs={12} padding={2}>        
-        <FormControl sx={{ m: 1, width: '35ch', height: "5.8ch"}} variant="filled" className={defaultStyle.inputbackground}>
+        <FormControl sx={{ m: 1, width: '35ch', height: "5.6ch"}} variant="filled" className={defaultStyle.inputbackground}>
           <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
           <FilledInput         
             disableUnderline="true"
@@ -156,15 +177,15 @@ function RegisterForm() {
         </FormControl>
         </Grid>
         <Grid container  xs={12} padding={2}>        
-        <FormControl sx={{ m: 1, width: '35ch', height: "5.8ch"}} variant="filled" className={defaultStyle.inputbackground}>
+        <FormControl sx={{ m: 1, width: '35ch', height: "5.6ch"}} variant="filled" className={defaultStyle.inputbackground}>
           <InputLabel htmlFor="filled-adornment-password">Confirm your password</InputLabel>
           <FilledInput         
             disableUnderline="true"
             variant="filled"
             id="filled-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
-            value={values.password}
-            onChange={handleChange('password')}
+            value={values.confirmPassword}
+            onChange={handleChange('confirmPassword')}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -186,7 +207,7 @@ function RegisterForm() {
            sx={{ m: 1 }}
            id="new-sumbit"
            type="submit"
-           href="/registrationsuccess"
+          //  href="/registrationsuccess"
            variant="contained"
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
@@ -197,6 +218,7 @@ function RegisterForm() {
           </Button>
           </Grid>
         </Grid>
+        </form>
       </Container>
   );
 

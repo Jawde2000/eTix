@@ -1,6 +1,6 @@
 import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -10,6 +10,9 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import '../Header/header.css';
+import {useCookies} from 'react-cookie';
+import {useHistory} from 'react-router-dom';
+import APIService from '../../APIService'
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -73,11 +76,32 @@ const useStyles = makeStyles((theme) => ({
 function LoginForm() {
   const defaultStyle = useStyles();
 
+  const [token, setToken] = useCookies(['mytoken'])
+  const [isLogin, setLogin] = useState(true)
+  let history = useHistory()
+
+  useEffect(() => {
+    if(token['mytoken']) {
+        history.push('/menu')
+    }
+  }, [token])
+
   const [values, setValues] = useState({
     password: '',
     email: '',
     showPassword: false,
   });
+
+  const loginBtn = () => {
+    console.log("login passed")
+    console.log(values.email, values.password)
+    APIService.LoginUser(values.email, values.password)
+    .then(resp => resp.token? 
+      setToken('mytoken', resp.token)
+       : 
+      alert("Invalid username or password."))
+    .catch(e => console.log(e))
+  }
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -103,7 +127,7 @@ function LoginForm() {
 
   return (
       <Container>
-        <form onSubmit={handleSubmit}>
+        <form >
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
           label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
@@ -142,6 +166,7 @@ function LoginForm() {
            type="submit"
            color='success'
            variant="contained"
+           onclick={loginBtn}
           //  href="/menu"
            style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
