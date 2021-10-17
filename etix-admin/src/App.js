@@ -5,10 +5,9 @@ import { makeStyles } from '@mui/styles';
 import AdminMenu from './components/adminMenu/AdminMenu';
 import {useCookies} from 'react-cookie'
 
-import NavBar from './components/NavBar/NavBar';
+import Topbar from './components/NavBar/Topbar'
 import Login from './components/Login/Login'
 import Footer from './components/Footer/Footer'
-import Header from './components/NavBar/Header';
 import UserManagement from './components/userManagement/UserManagement';
 import Helpdesk from './components/Helpdesk/HelpdeskDetail';
 import HelpMan from './components/HelpMan/Help';
@@ -25,17 +24,21 @@ function App() {
   const [token, setToken, removeToken] = useCookies(['mytoken'])
   let history = useHistory()
 
-  //checking if it is logged in or not.
-  useEffect(() => {
-    if(!token['mytoken']) {
-        history.push('/')
-    }
-  },[])
+
 
   return (
     <div> 
       <div>
-        <AdminMenu />
+        <CookiesProvider>
+          <BrowserRouter>
+            <Topbar />
+              <Switch>
+                <Route exact path="/" component={Login} />
+                <Route exact path="/menu" component={AdminMenu}  />
+              </Switch>
+            <Footer />    
+          </BrowserRouter>
+      </CookiesProvider>
       </div>
     </div>
   );

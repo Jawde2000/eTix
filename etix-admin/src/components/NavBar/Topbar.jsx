@@ -1,16 +1,18 @@
 import React from 'react'
 import Header from './Header'
 import NavBar from './NavBar'
-import {useCookies} from 'react-cookie'
+import {useDispatch, useSelector} from 'react-redux'
 
 
 function Topbar() {
-    const [token, setToken] = useCookies(['mytoken'])
-    
+    // const [token, setToken] = useCookies(['mytoken'])
+    const userLogin = useSelector(state => state.userLogin)
+    const {error, loading, userInfo} = userLogin
+    const dispatch = useDispatch()
     
     return (
         <div>
-            {token['mytoken']?
+            {userInfo?
                 <Header /> : null
             }
             <NavBar />

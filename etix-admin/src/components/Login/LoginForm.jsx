@@ -12,6 +12,9 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {useHistory} from 'react-router-dom';
 import {useCookies} from 'react-cookie';
 import APIService from '../../APIService';
+import { login } from '../../actions/userActions'
+import {useDispatch, useSelector} from 'react-redux'
+import Alert from '@mui/material/Alert'
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -60,14 +63,24 @@ function LoginForm() {
     showPassword: false,
   });
 
-  let history = useHistory()
+  const userLogin = useSelector(state => state.userLogin)
+  const {error, loading, userInfo} = userLogin
+  const dispatch = useDispatch()
 
   //redirect the user app component if token is valid
+  // useEffect(() => {
+  //   if(token['mytoken']) {
+  //       history.push('/menu')
+  //   }
+  // },[token])
+
+  let history = useHistory()
+
   useEffect(() => {
-    if(token['mytoken']) {
+    if(userInfo) {
         history.push('/menu')
     }
-  },[token])
+  },[userInfo])
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -89,19 +102,28 @@ function LoginForm() {
     setEmail(event.target.value);
   }
 
-  const login = () => {
-    console.log(email, password)
-    APIService.LoginUser(email, password)
-    .then(resp => resp.token? 
-      setToken('mytoken', resp.token)
-       : 
-      alert("Invalid username or password."))
-    .catch(e => console.log(e))
-    //need to check user type
+  // const handleLogin = () => {
+  //   console.log(email, password)
+  //   APIService.LoginUser(email, password)
+  //   .then(resp => resp.token? 
+  //     setToken('mytoken', resp.token)
+  //      : 
+  //     alert("Invalid username or password."))
+  //   .catch(e => console.log(e))
+  //   //need to check user type
+  // }
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    dispatch(login(email, password))
   }
+
+
+  
 
   return (
       <Container>
+        {error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
           label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
@@ -141,7 +163,7 @@ function LoginForm() {
            color='primary'
            variant="contained"
            autoFocus
-           onClick={login}
+           onClick={handleLogin}
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
            >

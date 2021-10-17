@@ -5,6 +5,8 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import {useCookies} from 'react-cookie'
 import { useHistory } from "react-router-dom";
+import {useDispatch, useSelector} from 'react-redux'
+import { logout } from '../../actions/userActions'
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -77,13 +79,17 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const dispatch = useDispatch()
 
   let history = useHistory();
 
   function handleLogOut() {
-    removeToken(['mytoken'])
+    dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
+
+  const userLogin = useSelector(state => state.userLogin)
+  const {error, loading, userInfo} = userLogin
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -100,7 +106,7 @@ const Header = () => {
                 >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                    <Typography className={defaultStyle.customizeText}>
-                   Zhipeng
+                      {userInfo.username}
                    </Typography>
                 </Button>
                 <Menu
