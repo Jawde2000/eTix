@@ -12,9 +12,7 @@ import { useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import {Link} from 'react-router-dom';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import {Link} from 'react-router-dom'
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -35,30 +33,29 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function createData(uID, userName, email, role, status) {
+function createData(sID, vName, startTerminal, endTerminal, date_time, status) {
     return  {
-        uID,
-        userName,
-        email,
-        role,
+        sID,
+        vName,
+        startTerminal,
+        endTerminal,
+        date_time,
         status,
     };
 }
 
 const originalRows = [
-    createData("E1", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E2", 'ali', "ali@gmail.com", "Customer", "ACTIVE"),
-    createData("E3", 'koee', "koee@gmail.com", "Vendor", "ACTIVE"),
-    createData("E4", 'test', "test@gmail.com", "Admin", "ACTIVE"),
-    createData("E5", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E6", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E7", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E8", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E9", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E10", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E11", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E12", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E13", 'ali1', "admin@gmail.com", "Admin", "CLOSE"),
+    createData(1, 'ali1', "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(2, "ali2", "KLCC SENTRAL, KL", "Pesta, JHR", "12 December 2021","CLOSED"),
+    createData(3, "najib1", "KLCC SENTRAL, KL", "Pesta, KDH", "12 December 2021","ACTIVE"),
+    createData(4, "najib2", "BAYAN LEPAS, PEN", "TPS, KL", "12 December 2021","ACTIVE"),
+    createData(5, "najib3", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(6, "najib4", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(7, "mahiyadin1", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(8, "mahiyadin2", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(9, "mahathir1", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(10, "mahathir2", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
+    createData(11, "mahathir3", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
 ]
 
 
@@ -92,28 +89,34 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'uID',
-        numeric: false,
+        id: 'sID',
+        numeric: true,
         disablePadding: true,
-        label: 'USER ID',
+        label: 'Service ID',
     },
     {
-        id: 'userName',
+        id: 'vName',
         numeric: false,
         disablePadding: true,
-        label: 'User Name',
+        label: 'Vendor Name',
     },
     {
-        id: 'email',
+        id: 'startTerminal',
         numeric: false,
         disablePadding: true,
-        label: 'Email',
+        label: 'Start Terminal',
     },
     {
-        id: 'role',
+        id: 'endTerminal',
         numeric: false,
         disablePadding: true,
-        label: 'Role',
+        label: 'End Terminal',
+    },
+    {
+        id: 'date_time',
+        numeric: false,
+        disablePadding: true,
+        label: 'Date/Time',
     },
     {
         id: 'status',
@@ -219,7 +222,7 @@ const EnhancedTableToolbar = (props) => {
                     id="tableTitle"
                     component="div"
                 >
-                    User Management
+                    Service Management
                 </Typography>
             )}
 
@@ -248,19 +251,18 @@ EnhancedTableToolbar.propTypes = {
 };
 
 
-const UserManagement = () =>{
+const Services = () =>{
     const classes = useStyles();
     const [rows, setRows] = useState(originalRows);
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('uID');
+    const [orderBy, setOrderBy] = React.useState('sID');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [searchedID, setSearchedID] = useState("");
-    const [searchedUsername, setSearchedUsername] = useState("");
-    const [searchedEmail, setSearchedEmail] = useState("");
-    const [searchedRole, setSearchedRole] = useState('---');
+    const [searched, setSearched] = useState("");
+    const [searchedStart, setSearchedStart] = useState("");
+    const [searchedEnd, setSearchedEnd] = useState("");
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -270,7 +272,7 @@ const UserManagement = () =>{
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n)=> n.uID);
+            const newSelecteds = rows.map((n)=> n.sID);
             setSelected(newSelecteds);
             return;
         }
@@ -310,59 +312,47 @@ const UserManagement = () =>{
         setDense(event.target.checked);
     };
     
-    const isSelected = (uID) => selected.indexOf(uID) !== -1;
+    const isSelected = (sID) => selected.indexOf(sID) !== -1;
     
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
 
-    const requestSearchID = (searchedVal) => {
+    const requestSearchVendor = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.uID.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.vName.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
-        setSearchedID(searchedVal);
+        setSearched(searchedVal);
     };
     
-    const cancelSearchID = () => {
-        setSearchedID("");
-        requestSearchID(searchedID);
+    const cancelSearchVendor = () => {
+        setSearched("");
+        requestSearchVendor(searched);
     };
 
-    const requestSearchUsername = (searchedVal) => {
+    const requestSearchStart = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.userName.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.startTerminal.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
-        setSearchedUsername(searchedVal);
+        setSearchedStart(searchedVal);
     };
     
-    const cancelSearchUsername = () => {
-        setSearchedUsername("");
-        requestSearchUsername(searchedUsername);
+    const cancelSearchStart = () => {
+        setSearched("");
+        requestSearchStart(searchedStart);
     };
 
-    const requestSearchEmail = (searchedVal) => {
+    const requestSearchEnd = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.email.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.endTerminal.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
-        setSearchedEmail(searchedVal);
+        setSearchedEnd(searchedVal);
     };
     
-    const cancelSearchEmail = () => {
-        setSearchedEmail("");
-        requestSearchEmail(searchedEmail);
-    };
-
-    const handleChangeRole = (searchedVal) => {
-        setSearchedRole(searchedVal);
-        const filteredRows = originalRows.filter((row) => {
-            if(searchedVal === "---"){
-                searchedVal="";
-            }
-            return row.role.toLowerCase().includes(searchedVal.toLowerCase());
-        });
-        setRows(filteredRows);
-        
+    const cancelSearchEnd = () => {
+        setSearchedEnd("");
+        requestSearchEnd(searchedEnd);
     };
     
     return (
@@ -371,13 +361,13 @@ const UserManagement = () =>{
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>
                         <TextField
-                            placeholder="Search ID"
+                            placeholder="Search Vendor Name"
                             type="search"
-                            label="ID"
-                            style={{width: 200}} 
-                            value={searchedID} 
-                            onChange={(e) => requestSearchID(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchID()}
+                            label="vendor Name"
+                            style={{width: 300}} 
+                            value={searched} 
+                            onChange={(e) => requestSearchVendor(e.target.value)} 
+                            onCancelSearch={()=>cancelSearchVendor()}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -388,13 +378,13 @@ const UserManagement = () =>{
 
                         />
                         <TextField
-                            placeholder="Search Name"
+                            placeholder="Search Start"
                             type="search"
-                            label="Username"
+                            label="Start Terminal"
                             style={{paddingLeft: 10, width: 250}} 
-                            value={searchedUsername} 
-                            onChange={(e) => requestSearchUsername(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchUsername()}
+                            value={searchedStart} 
+                            onChange={(e) => requestSearchStart(e.target.value)} 
+                            onCancelSearch={()=>cancelSearchStart()}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -405,13 +395,13 @@ const UserManagement = () =>{
 
                         />
                         <TextField
-                            placeholder="Search Email"
+                            placeholder="Search End"
                             type="search"
-                            label="Email"
+                            label="End Terminal"
                             style={{paddingLeft: 10, width: 250}} 
-                            value={searchedEmail} 
-                            onChange={(e) => requestSearchEmail(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchEmail()}
+                            value={searchedEnd} 
+                            onChange={(e) => requestSearchEnd(e.target.value)} 
+                            onCancelSearch={()=>cancelSearchEnd()}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -419,19 +409,8 @@ const UserManagement = () =>{
                                     </InputAdornment>
                                      ),
                                   }}
+
                         />
-                        <Select
-                            id="searchRole"
-                            value={searchedRole}
-                            label="Role"
-                            onChange={(e) => handleChangeRole(e.target.value)}
-                            style={{marginLeft: 10}}
-                        >
-                            <MenuItem value={"---"}>----</MenuItem>
-                            <MenuItem value={"Admin"}>Admin</MenuItem>
-                            <MenuItem value={"Customer"}>Customer</MenuItem>
-                            <MenuItem value={"Vendor"}>Vendor</MenuItem>
-                        </Select>
                     </Container>
                     <EnhancedTableToolbar numSelected={selected.length} />
                     <TableContainer>
@@ -452,17 +431,17 @@ const UserManagement = () =>{
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                    const isItemSelected = isSelected(row.uID);
+                                    const isItemSelected = isSelected(row.sID);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.uID)}
+                                        onClick={(event) => handleClick(event, row.sID)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.uID}
+                                        key={row.sID}
                                         selected={isItemSelected}
                                         >
                                         <TableCell padding="checkbox">
@@ -481,17 +460,20 @@ const UserManagement = () =>{
                                             padding="none"
                                             align="center"
                                         >
-                                            {row.uID}
+                                            {row.sID}
                                         </TableCell>
-                                        <TableCell align="center">{row.userName}</TableCell>
-                                        <TableCell align="center">{row.email}</TableCell>
-                                        <TableCell align="center">{row.role}</TableCell>
+                                        <TableCell align="center">{row.vName}</TableCell>
+                                        <TableCell align="center">{row.startTerminal}</TableCell>
+                                        <TableCell align="center">{row.endTerminal}</TableCell>
+                                        <TableCell align="center">{row.date_time}</TableCell>
                                         <TableCell align="center">{row.status}</TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
-                                                    <Link to={`/user/${row.uID}`}>
+                                                <IconButton>
+                                                    <Link to={`/service/${row.sID}`}>
                                                         <EditIcon style={{cursor: 'pointer'}}/>
                                                     </Link>
+                                                </IconButton>
                                             </Tooltip>
                                         </TableCell>
                                         </TableRow>
@@ -528,4 +510,4 @@ const UserManagement = () =>{
     );
 }
 
-export default UserManagement
+export default Services

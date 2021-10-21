@@ -7,10 +7,7 @@ import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import GroupIcon from '@mui/icons-material/Group';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import Header from '../NavBar/Header';
-import NavBar from '../NavBar/NavBar';
-import { useCookies } from 'react-cookie';
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -58,11 +55,10 @@ const useStyles = makeStyles((theme) => ({
 
 function AdminMenu() {
   const defaultStyle = useStyles();
-  const [token, setToken] = useCookies(['mytoken'])
   let history = useHistory()
+
   const userLogin = useSelector(state => state.userLogin)
-  const {error, loading, userInfo} = userLogin
-  const dispatch = useDispatch()
+  const {userInfo} = userLogin
 
   useEffect(() => {
     if(!userInfo) {
@@ -77,7 +73,7 @@ function AdminMenu() {
           <Grid xs={12} direction="column" container justify="center" alignItems="center" alignContent="center">
             <Grid xs={12} sm={2} item>
               <Typography variant="h2" className={defaultStyle.welcome} style={{fontFamily: ['rubik', 'sans-serif'].join(','), color: 'black'}}>
-                Welcome Back, {userInfo.username}
+                Welcome {userInfo? userInfo.username : null}   
               </Typography>
             </Grid>
             <Grid xs={1} item direction="row" display="flex" spacing={20}>

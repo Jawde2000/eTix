@@ -1,9 +1,8 @@
 import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
-import { makeStyles, withStyles} from '@mui/styles';
+import { makeStyles} from '@mui/styles';
 import React from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import {useCookies} from 'react-cookie'
+// import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useHistory } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import { logout } from '../../actions/userActions'
@@ -70,7 +69,6 @@ menu: {
 
 const Header = () => {
   const defaultStyle = useStyles();
-  const [token, setToken, removeToken] = useCookies(['mytoken'])
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -89,7 +87,7 @@ const Header = () => {
   }
 
   const userLogin = useSelector(state => state.userLogin)
-  const {error, loading, userInfo} = userLogin
+  const { userInfo} = userLogin
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
