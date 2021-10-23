@@ -1,20 +1,12 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
 import { makeStyles, withStyles} from '@mui/styles';
 import React from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from '@material-ui/icons/Notifications';
-// import HelpIcon from '@material-ui/icons/Help';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import LogoutIcon from '@mui/icons-material/Logout';
+import {useCookies} from 'react-cookie'
 import { useHistory } from "react-router-dom";
+import {useDispatch, useSelector} from 'react-redux'
+import { logout } from '../../actions/userActions'
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -76,14 +68,9 @@ menu: {
   
 }));
 
-function logout() {
-  localStorage.clear();
-  window.location.href = '/';
-}
-
-function Header() {
+const Header = () => {
   const defaultStyle = useStyles();
-  
+  const [token, setToken, removeToken] = useCookies(['mytoken'])
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -92,14 +79,17 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const dispatch = useDispatch()
 
   let history = useHistory();
 
   function handleLogOut() {
-    sessionStorage.setItem("userToken", '');
-    sessionStorage.clear();
+    dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
+
+  const userLogin = useSelector(state => state.userLogin)
+  const {error, loading, userInfo} = userLogin
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -116,7 +106,7 @@ function Header() {
                 >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                    <Typography className={defaultStyle.customizeText}>
-                   Zhipeng
+                      {userInfo.username}
                    </Typography>
                 </Button>
                 <Menu
@@ -129,7 +119,6 @@ function Header() {
                 onClose={handleClose}
                 TransitionComponent={Fade}
                 >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>

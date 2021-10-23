@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.views import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -9,7 +10,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email',
+        fields = ['userID', 'username', 'email',
                   'is_customer', 'is_vendor', 'is_staff', 'is_superuser']
 
         extra_kwargs = {'password': {
@@ -21,6 +22,19 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         Token.objects.create(user=user)
         return user
+
+
+class UserSerializerWithToken(UserSerializer):
+    token = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['userID', 'username', 'email',
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'token']
+
+    def get_token(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -51,7 +65,7 @@ class AdminSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ['ticketID', 'ticketName']
+        fields = '__all__'
 
 
 class HelpDeskSerializer(serializers.ModelSerializer):
