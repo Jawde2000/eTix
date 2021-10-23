@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['userID', 'username', 'email',
-                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser']
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'is_active']
 
         extra_kwargs = {'password': {
             'write_only': True,
@@ -30,7 +30,7 @@ class UserSerializerWithToken(UserSerializer):
     class Meta:
         model = User
         fields = ['userID', 'username', 'email',
-                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'token']
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'is_active', 'token']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
@@ -41,14 +41,14 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['customerID', 'customerFirstName', 'customerLastName',
-                  'customerContact_Number', 'customerAddress', 'customerBirthday']
+                  'customerContact_Number', 'customerAddress', 'customerBirthday', 'created_by']
 
 
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
-                  'vendorName', 'vendorBankAcc', 'vendorRegistrationNo']
+                  'vendorName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
 
 
 class AdminSerializer(serializers.ModelSerializer):

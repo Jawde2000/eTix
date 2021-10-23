@@ -8,13 +8,15 @@ import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import moscow from '../globalAssets/moscow.jpg';
 import DownloadIcon from '@mui/icons-material/Download';
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import {Link} from 'react-router-dom';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { listUsers } from '../../actions/userActions';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -34,33 +36,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 50,
     },
 }));
-
-function createData(uID, userName, email, role, status) {
-    return  {
-        uID,
-        userName,
-        email,
-        role,
-        status,
-    };
-}
-
-const originalRows = [
-    createData("E1", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E2", 'ali', "ali@gmail.com", "Customer", "ACTIVE"),
-    createData("E3", 'koee', "koee@gmail.com", "Vendor", "ACTIVE"),
-    createData("E4", 'test', "test@gmail.com", "Admin", "ACTIVE"),
-    createData("E5", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E6", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E7", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E8", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E9", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E10", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E11", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E12", 'ali1', "admin@gmail.com", "Admin", "ACTIVE"),
-    createData("E13", 'ali1', "admin@gmail.com", "Admin", "CLOSE"),
-]
-
 
 function descendingComparator(a,b,orderBy){
     if (b[orderBy] < a[orderBy]) {
@@ -92,13 +67,13 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'uID',
+        id: 'userID',
         numeric: false,
         disablePadding: true,
         label: 'USER ID',
     },
     {
-        id: 'userName',
+        id: 'username',
         numeric: false,
         disablePadding: true,
         label: 'User Name',
@@ -187,7 +162,7 @@ const EnhancedTableToolbar = (props) => {
         doc.text("Services Data",20,10)
         doc.autoTable({
             columns: headCells.map(head=>({header:head.label, dataKey:head.id})),
-            body: originalRows,
+            body: props.originalRows,
         })
         doc.save("ServicesData.pdf")
     }
@@ -249,18 +224,41 @@ EnhancedTableToolbar.propTypes = {
 
 
 const UserManagement = () =>{
+    
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(listUsers())
+    }, [dispatch])
+    
+    const userList = useSelector(state => state.userList)
+    console.log(userList)
+    const {loading, error, users} = userList
+    console.log(users)
+    
+    const [rows, setRows] = useState([]);
+    var originalRows = users;
+    useEffect(() => {
+        if(users){
+            originalRows = users.map(item => Object.assign({}, item, {role: item.is_customer? "Customer" : (item.is_vendor? "Vendor" : "Admin")}));
+            setRows(originalRows)
+        }
+        
+    }, [userList])
+    
     const classes = useStyles();
-    const [rows, setRows] = useState(originalRows);
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('uID');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('userID');
+    const [selected, setSelected] = useState([]);
+    const [page, setPage] = useState(0);
+    const [dense, setDense] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [searchedID, setSearchedID] = useState("");
     const [searchedUsername, setSearchedUsername] = useState("");
     const [searchedEmail, setSearchedEmail] = useState("");
     const [searchedRole, setSearchedRole] = useState('---');
+
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -270,7 +268,7 @@ const UserManagement = () =>{
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n)=> n.uID);
+            const newSelecteds = rows.map((n)=> n.userID);
             setSelected(newSelecteds);
             return;
         }
@@ -310,13 +308,13 @@ const UserManagement = () =>{
         setDense(event.target.checked);
     };
     
-    const isSelected = (uID) => selected.indexOf(uID) !== -1;
+    const isSelected = (userID) => selected.indexOf(userID) !== -1;
     
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
 
     const requestSearchID = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.uID.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.userID.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
         setSearchedID(searchedVal);
@@ -329,7 +327,7 @@ const UserManagement = () =>{
 
     const requestSearchUsername = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.userName.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.username.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
         setSearchedUsername(searchedVal);
@@ -367,6 +365,7 @@ const UserManagement = () =>{
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
+            {console.log(rows)}
             <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>
@@ -433,7 +432,7 @@ const UserManagement = () =>{
                             <MenuItem value={"Vendor"}>Vendor</MenuItem>
                         </Select>
                     </Container>
-                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows}/>
                     <TableContainer>
                         <Table
                             sx={{minWidth:750}}
@@ -452,17 +451,17 @@ const UserManagement = () =>{
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                    const isItemSelected = isSelected(row.uID);
+                                    const isItemSelected = isSelected(row.userID);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.uID)}
+                                        onClick={(event) => handleClick(event, row.userID)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.uID}
+                                        key={row.userID}
                                         selected={isItemSelected}
                                         >
                                         <TableCell padding="checkbox">
@@ -481,15 +480,16 @@ const UserManagement = () =>{
                                             padding="none"
                                             align="center"
                                         >
-                                            {row.uID}
+                                            {console.log(row)}
+                                            {row.userID}
                                         </TableCell>
-                                        <TableCell align="center">{row.userName}</TableCell>
+                                        <TableCell align="center">{row.username}</TableCell>
                                         <TableCell align="center">{row.email}</TableCell>
                                         <TableCell align="center">{row.role}</TableCell>
-                                        <TableCell align="center">{row.status}</TableCell>
+                                        <TableCell align="center">{row.is_active? "Active" : "Not Active"}</TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
-                                                    <Link to={`/user/${row.uID}`}>
+                                                    <Link to={`/user/${row.userID}`}>
                                                         <EditIcon style={{cursor: 'pointer'}}/>
                                                     </Link>
                                             </Tooltip>

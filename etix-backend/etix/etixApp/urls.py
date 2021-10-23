@@ -36,6 +36,24 @@ urlpatterns = [
     # api path for get all users, method get (only admin can access)
     path('api/users/', views.getUsers, name="users-profile"),
     # api path to get user profile (must be logged in first)
-    path('api/users/profile/', views.getUserProfile, name="user-profile")
+    path('api/users/profile/', views.getUserProfile, name="user-profile"),
+
+    # get single user by id
+    path('api/user/<str:pk>/', views.getUserById, name='user'),
+
+    # api path to update logged in user profile
+    path('api/user/profile/update/', views.updateUserProfile,
+         name="user-profile-update"),
+
+    # update user by id
+    path('api/user//update/<str:pk>/', views.updateUser,
+         name="user-update"),
+
+
+    # api path to delete users
+    path('api/user/delete/<str:pk>/', views.deleteUser, name='user-delete'),
+
+
+
 
 ]
