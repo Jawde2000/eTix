@@ -1,5 +1,5 @@
 from django.urls import path, include
-from etixApp.views import DestinationViewSet, PaymentViewSet, RowViewSet, SeatTypeViewSet, SeatViewSet, ServicesViewSet, CustomerViewSet, VendorViewSet, AdminViewSet, TicketViewSet, HelpDeskViewSet, HelpResponseViewSet, CartViewSet
+from etixApp.views import PaymentViewSet, SeatViewSet, ServicesViewSet, CustomerViewSet, VendorViewSet, AdminViewSet, TicketViewSet, HelpDeskViewSet, HelpResponseViewSet, CartViewSet, LocationViewSet
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.urls import path, include
@@ -9,10 +9,7 @@ user = settings.AUTH_USER_MODEL
 
 router = DefaultRouter()
 # router.register('users', UserViewSet, basename='users')
-router.register('destination', DestinationViewSet, basename='destination')
 router.register('payment', PaymentViewSet, basename='payment')
-router.register('row', RowViewSet, basename='row')
-router.register('seattype', SeatTypeViewSet, basename='seattype')
 router.register('seat', SeatViewSet, basename='seat')
 router.register('service', ServicesViewSet, basename='service')
 router.register('customer', CustomerViewSet, basename='customer')
@@ -22,6 +19,8 @@ router.register('ticket', TicketViewSet, basename='ticket')
 router.register('helpdesk', HelpDeskViewSet, basename='helpdesk')
 router.register('helpresponse', HelpResponseViewSet, basename='helpresponse')
 router.register('cart', CartViewSet, basename='cart')
+router.register('cart', CartViewSet, basename='cart')
+router.register('location', LocationViewSet, basename='location')
 
 
 urlpatterns = [

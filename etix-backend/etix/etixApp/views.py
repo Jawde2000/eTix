@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Row, Location
+from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
 from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -203,7 +203,7 @@ class SeatViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
-class LocationViewSet(viewset.ModelViewSet):
+class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = [IsAuthenticated]

@@ -156,7 +156,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
 
-    userID = models.TextField(default=generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
+    userID = models.TextField(default=str(generate_user_id), primary_key=True, unique=True, editable=False, max_length=8)
     username = models.CharField(max_length=100, blank=True, unique=True)
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
@@ -253,8 +253,8 @@ class Seat(models.Model):
 
 
 class Location(models.Model):
-    locationID = models(
-        default=str(generate_location_id()), primary_key=True, unique=True, editable=False, max_length=5)
+    locationID = models.TextField(
+        default=generate_location_id, primary_key=True, unique=True, editable=False, max_length=5)
     locationName = models.TextField(max_length=1000)
     
     
@@ -264,10 +264,10 @@ class Services(models.Model):
         ("X", "Inactive")
     ]
     service_frequency = [
-        ("Daily"),
-        ("Weekly"),
-        ("Monthly"),
-        ("Once")
+        ("D", "Daily"),
+        ("W", "Weekly"),
+        ("M", "Monthly"),
+        ("O", "Once")
     ]
     serviceID = models.TextField(
         default=generate_service_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -280,8 +280,8 @@ class Services(models.Model):
     # FK
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
     seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
-    locationTo = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
-    locationFrom = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+    locationTo = models.ForeignKey(Location, related_name='%(class)s_location_to', on_delete=models.SET_NULL, null=True)
+    locationFrom = models.ForeignKey(Location, related_name='%(class)s_location_from', on_delete=models.SET_NULL, null=True)
 
 
 class Ticket(models.Model):

@@ -67,7 +67,7 @@ class AdminModel(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('ticketID')
+    list_filter = ('ticketID', 'service')
     list_display = ('ticketID', 'service')
 
 
@@ -99,7 +99,7 @@ class TicketModel(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationModel(admin.ModelAdmin):
-    list_filter = ('locationID')
+    list_filter = ('locationID', 'locationName')
     list_display = ('locationID', 'locationName')
 
 
@@ -108,9 +108,9 @@ class TicketModel(admin.ModelAdmin):
     list_filter = ('serviceID', 'serviceStatus')
     list_display = ('serviceID', 'serviceName', 'serviceDesc',
                     'serviceStatus', 'serviceTime', 'serviceFrequency', 
-                    'serviceStartDate', 'vendor', 'seat', 'fromLocation', 'toLocation')
+                    'serviceStartDate', 'vendor', 'seat')
 
 @admin.register(Seat)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('seatID')
+    list_filter = ('seatID', 'economyQuantity', 'businessQuantity', 'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')
     list_display = ('seatID', 'economyQuantity', 'businessQuantity', 'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')

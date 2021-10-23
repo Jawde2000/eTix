@@ -92,10 +92,10 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LocationSerializer(serializer.ModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     class Meta:
-    model = Location
-    fields = '__all__'
+        model = Location
+        fields = '__all__'
 
 
 class ServicesSerializer(serializers.ModelSerializer):
