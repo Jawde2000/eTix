@@ -74,13 +74,17 @@ def registerUser(request):
             username=data['username'],
             email=data['email'],
             password=make_password(data['password']),
-            is_customer=data['is_customer'],
-            is_vendor=data['is_vendor'],
-            is_staff=data['is_staff'],
-            is_superuser=data['is_superuser'],
         )
 
         serializer = UserSerializerWithToken(user, many=False)
+        user.is_customer = data['is_customer']
+        user.is_vendor = data['is_vendor']
+        user.is_staff = data['is_staff']
+        user.is_superuser = data['is_superuser']
+        user.is_active = data['is_active']
+
+        user.save()
+
         return Response(serializer.data)
     except:
         message = {'detail': 'User with this email already exist'}

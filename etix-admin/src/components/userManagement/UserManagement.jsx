@@ -16,7 +16,8 @@ import {Link} from 'react-router-dom';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { listUsers } from '../../actions/userActions';
+import { listUsers, deleteUsers } from '../../actions/userActions';
+import { useHistory } from 'react-router';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -108,7 +109,7 @@ function EnhancedTableHead(props){
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
+          {/* <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
@@ -116,7 +117,7 @@ function EnhancedTableHead(props){
             inputProps={{
               'aria-label': 'select all desserts',
             }}
-          />
+          /> */}
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -201,7 +202,7 @@ const EnhancedTableToolbar = (props) => {
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                 <IconButton>
-                    <DeleteIcon />
+                    <DeleteIcon onClick={()=>props.handleDelete(props.selected)} />
                 </IconButton>
                 </Tooltip>
             ) : (
@@ -226,24 +227,40 @@ EnhancedTableToolbar.propTypes = {
 const UserManagement = () =>{
     
     const dispatch = useDispatch()
-    useEffect(() => {
-        dispatch(listUsers())
-    }, [dispatch])
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+    let history = useHistory()
+    
     
     const userList = useSelector(state => state.userList)
-    console.log(userList)
     const {loading, error, users} = userList
-    console.log(users)
-    
+
+    const userDelete = useSelector(state => state.userDelete)
+    const {success: successDelete} = userDelete
+
+    useEffect(() => {
+        if(userInfo){
+            dispatch(listUsers())
+        }
+        else{
+            history.push('/')
+        }
+    }, [dispatch, successDelete])
+
+
     const [rows, setRows] = useState([]);
-    var originalRows = users;
+    var originalRow = users;
+    const [originalRows, setOriginalRows] = useState([]);
     useEffect(() => {
         if(users){
-            originalRows = users.map(item => Object.assign({}, item, {role: item.is_customer? "Customer" : (item.is_vendor? "Vendor" : "Admin")}));
+            originalRow = users.map(item => Object.assign({}, item, {role: item.is_customer? "Customer" : (item.is_vendor? "Vendor" : "Admin")}));
+            setOriginalRows(originalRow)
             setRows(originalRows)
+            
         }
-        
     }, [userList])
+
+
     
     const classes = useStyles();
     
@@ -257,7 +274,6 @@ const UserManagement = () =>{
     const [searchedUsername, setSearchedUsername] = useState("");
     const [searchedEmail, setSearchedEmail] = useState("");
     const [searchedRole, setSearchedRole] = useState('---');
-
 
 
     const handleRequestSort = (event, property) => {
@@ -362,6 +378,16 @@ const UserManagement = () =>{
         setRows(filteredRows);
         
     };
+
+    const handleDelete = (ids) => {
+        ids.map((id) => {
+            if(id === userInfo.userID){
+                alert("You can't delete The account that you are currently logged in!");
+                return;
+            }
+        })
+        console.log(ids);
+    }
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
@@ -432,7 +458,7 @@ const UserManagement = () =>{
                             <MenuItem value={"Vendor"}>Vendor</MenuItem>
                         </Select>
                     </Container>
-                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows}/>
+                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows} handleDelete={handleDelete} selected={selected}/>
                     <TableContainer>
                         <Table
                             sx={{minWidth:750}}
@@ -457,7 +483,7 @@ const UserManagement = () =>{
                                     return (
                                         <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.userID)}
+                                        onClick={(event) => row.userID === userInfo.userID? null:handleClick(event, row.userID)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
@@ -468,6 +494,7 @@ const UserManagement = () =>{
                                             <Checkbox
                                             color="primary"
                                             checked={isItemSelected}
+                                            disabled={row.userID === userInfo.userID? true : false}
                                             inputProps={{
                                                 'aria-labelledby': labelId,
                                             }}
