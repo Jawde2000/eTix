@@ -380,13 +380,21 @@ const UserManagement = () =>{
     };
 
     const handleDelete = (ids) => {
+        var i=0;
         ids.map((id) => {
             if(id === userInfo.userID){
                 alert("You can't delete The account that you are currently logged in!");
                 return;
             }
+            else{
+                dispatch(deleteUsers(id));
+                i+=1;
+            }
         })
-        console.log(ids);
+
+        alert("Sucessfully Deleted");
+        setSelected([]);
+        history.push("/menu/users");
     }
     
     return (

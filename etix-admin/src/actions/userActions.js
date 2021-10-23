@@ -114,6 +114,7 @@ export const listUsers = () => async (dispatch, getState) => {
 //GET USER delete
 export const deleteUsers = (id) => async (dispatch, getState) => {
     try{
+        
         dispatch({
             type:USER_DELETE_REQUEST
         })
@@ -131,7 +132,7 @@ export const deleteUsers = (id) => async (dispatch, getState) => {
         }
 
         const { data } = await axios.delete(
-            `http://127.0.0.1:8000/api/users/${id}`,
+            `http://127.0.0.1:8000/api/user/delete/${id}/`,
             config
         )
         
