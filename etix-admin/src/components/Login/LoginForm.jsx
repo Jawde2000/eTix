@@ -1,5 +1,5 @@
-import { AppBar, Grid, Container, IconButton,  Typography, Button,} from '@mui/material';
-import { makeStyles, styled} from '@mui/styles';
+import { Grid, Container, IconButton,  Typography, Button,} from '@mui/material';
+import { makeStyles} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -10,8 +10,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {useHistory} from 'react-router-dom';
-import {useCookies} from 'react-cookie';
-import APIService from '../../APIService';
 import { login } from '../../actions/userActions'
 import {useDispatch, useSelector} from 'react-redux'
 import Alert from '@mui/material/Alert'
@@ -53,9 +51,6 @@ const useStyles = makeStyles((theme) => ({
 function LoginForm() {
   const defaultStyle = useStyles();
 
-  const [token, setToken] = useCookies(['mytoken'])
-  const [user, setUser] = useState();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [values, setValues] = useState({
@@ -64,15 +59,9 @@ function LoginForm() {
   });
 
   const userLogin = useSelector(state => state.userLogin)
-  const {error, loading, userInfo} = userLogin
+  const {error,  userInfo} = userLogin
   const dispatch = useDispatch()
 
-  //redirect the user app component if token is valid
-  // useEffect(() => {
-  //   if(token['mytoken']) {
-  //       history.push('/menu')
-  //   }
-  // },[token])
 
   let history = useHistory()
 
@@ -101,17 +90,6 @@ function LoginForm() {
   const handleChangeEmail = (event) => {
     setEmail(event.target.value);
   }
-
-  // const handleLogin = () => {
-  //   console.log(email, password)
-  //   APIService.LoginUser(email, password)
-  //   .then(resp => resp.token? 
-  //     setToken('mytoken', resp.token)
-  //      : 
-  //     alert("Invalid username or password."))
-  //   .catch(e => console.log(e))
-  //   //need to check user type
-  // }
 
   const handleLogin = (e) => {
     e.preventDefault()
