@@ -247,7 +247,6 @@ const UserManagement = () =>{
         }
     }, [dispatch, successDelete])
 
-
     const [rows, setRows] = useState([]);
     var originalRow = users;
     const [originalRows, setOriginalRows] = useState([]);
@@ -255,12 +254,13 @@ const UserManagement = () =>{
         if(users){
             originalRow = users.map(item => Object.assign({}, item, {role: item.is_customer? "Customer" : (item.is_vendor? "Vendor" : "Admin")}));
             setOriginalRows(originalRow)
-            setRows(originalRows)
-            
+            setRows(originalRow)
+            console.log(originalRow)
+            console.log(originalRows)
+            console.log(rows)
+            console.log("hello")
         }
     }, [userList])
-
-
     
     const classes = useStyles();
     
