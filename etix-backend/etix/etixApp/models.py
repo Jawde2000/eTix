@@ -201,7 +201,7 @@ class Customer(models.Model):
     customerGender = models.CharField(max_length=1, choices=genderChoices)
     customerFirstName = models.CharField(max_length=100, blank=True)
     customerLastName = models.CharField(max_length=100, blank=True)
-    customerContact_Number = models.TextField(max_length=11, blank=True)
+    customerContact_Number = models.TextField(max_length=16, blank=True)
     customerAddress = models.TextField(max_length=200, blank=True)
     customerBirthday = models.DateField(auto_now=False, auto_now_add=False)
 
@@ -218,7 +218,7 @@ class Vendor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     vendorID = models.TextField(
         default=generate_vendor_id, primary_key=True, unique=True, editable=False, max_length=8)
-    vendorContact_Number = models.TextField(max_length=11)
+    vendorContact_Number = models.TextField(max_length=16)
     vendorStatus = models.BooleanField(default=False)
     vendorName = models.CharField(max_length=100)
     vendorBankName = models.CharField(max_length=100)
