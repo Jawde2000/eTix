@@ -222,7 +222,7 @@ class Vendor(models.Model):
     vendorStatus = models.BooleanField(default=False)
     vendorName = models.CharField(max_length=100)
     vendorBankName = models.CharField(max_length=100)
-    vendorBankAcc = models.CharField(max_length=15)
+    vendorBankAcc = models.CharField(max_length=16)
     vendorRegistrationNo = models.CharField(max_length=15)
 
     class Meta:
