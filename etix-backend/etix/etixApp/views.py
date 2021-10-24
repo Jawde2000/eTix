@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
-from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, DestinationSerializer, SeatSerializer, SeatTypeSerializer, RowSerializer
+from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
+from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -198,29 +198,13 @@ class ServicesViewSet(viewsets.ModelViewSet):
     # authentication_classes = (TokenAuthentication, )
 
 
-class DestinationViewSet(viewsets.ModelViewSet):
-    queryset = Destination.objects.all()
-    serializer_class = DestinationSerializer
-    permission_classes = [IsAuthenticated]
-    # authentication_classes = (TokenAuthentication, )
-
-
 class SeatViewSet(viewsets.ModelViewSet):
     queryset = Seat.objects.all()
     serializer_class = SeatSerializer
     permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
-
-class SeatTypeViewSet(viewsets.ModelViewSet):
-    queryset = SeatType.objects.all()
-    serializer_class = SeatTypeSerializer
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
     permission_classes = [IsAuthenticated]
-    # authentication_classes = (TokenAuthentication, )
-
-
-class RowViewSet(viewsets.ModelViewSet):
-    queryset = Row.objects.all()
-    serializer_class = RowSerializer
-    permission_classes = [IsAuthenticated]
-    # authentication_classes = (TokenAuthentication, )

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.views import Token
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -92,31 +92,19 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Services
         fields = '__all__'
 
 
-class DestinationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Destination
-        fields = '__all__'
-
-
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
-        fields = '__all__'
-
-
-class SeatTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SeatType
-        fields = '__all__'
-
-
-class RowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Row
         fields = '__all__'
