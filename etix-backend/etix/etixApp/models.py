@@ -277,6 +277,8 @@ class Services(models.Model):
     serviceTime = models.TimeField(blank=True, null=True)
     serviceFrequency = models.CharField(max_length=7, choices=service_frequency)
     serviceStartDate = models.DateField()
+    servicedepartureTerminal = models.TextField(max_length=1000)
+    servicearrivalTerminal = models.TextField(max_length=1000)
     # FK
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
     seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
