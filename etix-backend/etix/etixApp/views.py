@@ -84,6 +84,7 @@ def registerUser(request):
         user.is_active = data['is_active']
 
         user.save()
+
         return Response(serializer.data)
     except:
         message = {'detail': 'User with this email already exist'}
