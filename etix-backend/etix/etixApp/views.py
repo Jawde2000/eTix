@@ -138,14 +138,14 @@ def deleteUser(request, pk):
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
 
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
 
@@ -203,6 +203,7 @@ class SeatViewSet(viewsets.ModelViewSet):
     serializer_class = SeatSerializer
     permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
+
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()

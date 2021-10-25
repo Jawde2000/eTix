@@ -18,6 +18,21 @@ import {
     USER_DELETE_REQUEST, 
     USER_DELETE_SUCCESS,
     USER_DELETE_FAIL,
+
+    USER_CUSTOMER_REGISTER_REQUEST, 
+    USER_CUSTOMER_REGISTER_SUCCESS,
+    USER_CUSTOMER_REGISTER_FAIL,
+    USER_CUSTOMER_REGISTER_RESET,
+
+    USER_REGISTER_REQUEST, 
+    USER_REGISTER_SUCCESS,
+    USER_REGISTER_FAIL,
+    USER_REGISTER_RESET,
+
+    USER_VENDOR_REGISTER_REQUEST, 
+    USER_VENDOR_REGISTER_SUCCESS,
+    USER_VENDOR_REGISTER_FAIL,
+    USER_VENDOR_REGISTER_RESET,
 } from '../constants/userConstants'
 
 export const userLoginReducer = (state = { }, action) => {
@@ -87,6 +102,63 @@ export const userDeleteReducer = (state = { }, action) => {
         
         case USER_DELETE_FAIL:
            return {loading: false, error: action.payload}
+
+        default:
+            return state
+    }
+}
+
+export const customerRegisterReducer = (state = { }, action) => {
+    switch(action.type){
+        case USER_CUSTOMER_REGISTER_REQUEST:
+            return {loading: true}
+        
+        case USER_CUSTOMER_REGISTER_SUCCESS:
+           return {loading: false, success: true}
+        
+        case USER_CUSTOMER_REGISTER_FAIL:
+           return {loading: false, error: action.payload}
+
+        case USER_CUSTOMER_REGISTER_RESET:
+            return {}
+
+        default:
+            return state
+    }
+}
+
+export const adminRegisterReducer = (state = {}, action) =>{
+    switch(action.type){
+        case USER_REGISTER_REQUEST:
+            return {loading: true}
+        
+        case USER_REGISTER_SUCCESS:
+           return {loading: false, success: true}
+        
+        case USER_REGISTER_FAIL:
+           return {loading: false, error: action.payload}
+
+        case USER_REGISTER_RESET:
+            return {}
+
+        default:
+            return state
+    }
+}
+
+export const vendorRegisterReducer = (state = { }, action) => {
+    switch(action.type){
+        case USER_VENDOR_REGISTER_REQUEST:
+            return {loading: true}
+        
+        case USER_VENDOR_REGISTER_SUCCESS:
+           return {loading: false, success: true}
+        
+        case USER_VENDOR_REGISTER_FAIL:
+           return {loading: false, error: action.payload}
+
+        case USER_VENDOR_REGISTER_RESET:
+            return {}
 
         default:
             return state

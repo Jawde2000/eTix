@@ -19,6 +19,20 @@ import {
     USER_DELETE_REQUEST, 
     USER_DELETE_SUCCESS,
     USER_DELETE_FAIL,
+
+    USER_CUSTOMER_REGISTER_REQUEST, 
+    USER_CUSTOMER_REGISTER_SUCCESS,
+    USER_CUSTOMER_REGISTER_FAIL,
+    USER_CUSTOMER_REGISITER_RESET,
+    
+    USER_REGISTER_REQUEST, 
+    USER_REGISTER_SUCCESS,
+    USER_REGISTER_FAIL,
+    
+    USER_VENDOR_REGISTER_REQUEST, 
+    USER_VENDOR_REGISTER_SUCCESS,
+    USER_VENDOR_REGISTER_FAIL,
+    USER_VENDOR_REGISTER_RESET,
 } from '../constants/userConstants'
 
 
@@ -189,6 +203,127 @@ export const deleteUsers = (id) => async (dispatch, getState) => {
     }catch(error){
         dispatch({
             type: USER_DELETE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const customerRegisterUsers = (user, customer) => async (dispatch) => {
+    try{
+        
+        dispatch({
+            type:USER_CUSTOMER_REGISTER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+
+        const { data } = await axios.post(
+            `http://127.0.0.1:8000/api/users/register/`,
+            user,
+            config
+        )
+        
+        customer = {
+            ...customer,
+            created_by: data.userID
+        }
+        const { data2 } = await axios.post(
+            "http://127.0.0.1:8000/api/customer/",
+            customer,
+            config
+        )
+
+        dispatch({
+            type: USER_CUSTOMER_REGISTER_SUCCESS,
+        })
+
+    }catch(error){
+        dispatch({
+            type: USER_CUSTOMER_REGISTER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const adminRegisterUsers = (user) => async (dispatch) => {
+    try{
+        
+        dispatch({
+            type:USER_REGISTER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+
+        const { data } = await axios.post(
+            `http://127.0.0.1:8000/api/users/register/`,
+            user,
+            config
+        )
+
+        dispatch({
+            type: USER_REGISTER_SUCCESS,
+        })
+
+    }catch(error){
+        dispatch({
+            type: USER_REGISTER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+
+export const vendorRegisterUsers = (user, vendor) => async (dispatch) => {
+    try{
+        
+        dispatch({
+            type:USER_VENDOR_REGISTER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+
+        const { data } = await axios.post(
+            `http://127.0.0.1:8000/api/users/register/`,
+            user,
+            config
+        )
+        console.log(vendor)
+        vendor = {
+            ...vendor,
+            created_by: data.userID
+        }
+        console.log(vendor)
+        const { data2 } = await axios.post(
+            "http://127.0.0.1:8000/api/vendor/",
+            vendor,
+            config
+        )
+
+        dispatch({
+            type: USER_VENDOR_REGISTER_SUCCESS,
+        })
+
+    }catch(error){
+        dispatch({
+            type: USER_VENDOR_REGISTER_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
