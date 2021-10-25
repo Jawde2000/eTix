@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.views import Token
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['userID', 'username', 'email',
-                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser']
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'is_active']
 
         extra_kwargs = {'password': {
             'write_only': True,
@@ -30,7 +30,7 @@ class UserSerializerWithToken(UserSerializer):
     class Meta:
         model = User
         fields = ['userID', 'username', 'email',
-                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'token']
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'is_active', 'token']
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
@@ -41,14 +41,19 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['customerID', 'customerFirstName', 'customerLastName',
-                  'customerContact_Number', 'customerAddress', 'customerBirthday']
+                  'customerContact_Number', 'customerAddress', 'customerBirthday', 'created_by']
 
 
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
-                  'vendorName', 'vendorBankAcc', 'vendorRegistrationNo']
+                  'vendorName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
+
+class VendorSerializerNameOnly(serializers.ModelSerializer):
+    class Meta:
+        model = Vendor
+        fields = ['vendorName']
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -92,31 +97,23 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+
 class ServicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Services
         fields = '__all__'
 
-
-class DestinationSerializer(serializers.ModelSerializer):
+class LocationSerializerIDonly(serializers.ModelSerializer):
     class Meta:
-        model = Destination
-        fields = '__all__'
-
+        model = Location
+        fields = ['locationID']
 
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
-        fields = '__all__'
-
-
-class SeatTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SeatType
-        fields = '__all__'
-
-
-class RowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Row
         fields = '__all__'

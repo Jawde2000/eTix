@@ -1,5 +1,5 @@
-import { AppBar, Grid, Container, IconButton,  Typography, Button,} from '@mui/material';
-import { makeStyles, styled} from '@mui/styles';
+import { Grid, Container, IconButton,  Typography, Button,} from '@mui/material';
+import { makeStyles} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -10,8 +10,9 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {useHistory} from 'react-router-dom';
-import {useCookies} from 'react-cookie';
-import APIService from '../../APIService';
+import { login } from '../../actions/userActions'
+import {useDispatch, useSelector} from 'react-redux'
+import Alert from '@mui/material/Alert'
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -50,9 +51,6 @@ const useStyles = makeStyles((theme) => ({
 function LoginForm() {
   const defaultStyle = useStyles();
 
-  const [token, setToken] = useCookies(['mytoken'])
-  const [user, setUser] = useState();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [values, setValues] = useState({
@@ -60,14 +58,18 @@ function LoginForm() {
     showPassword: false,
   });
 
+  const userLogin = useSelector(state => state.userLogin)
+  const {error,  userInfo} = userLogin
+  const dispatch = useDispatch()
+
+
   let history = useHistory()
 
-  //redirect the user app component if token is valid
   useEffect(() => {
-    if(token['mytoken']) {
+    if(userInfo) {
         history.push('/menu')
     }
-  },[token])
+  },[userInfo])
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -89,19 +91,17 @@ function LoginForm() {
     setEmail(event.target.value);
   }
 
-  const login = () => {
-    console.log(email, password)
-    APIService.LoginUser(email, password)
-    .then(resp => resp.token? 
-      setToken('mytoken', resp.token)
-       : 
-      alert("Invalid username or password."))
-    .catch(e => console.log(e))
-    //need to check user type
+  const handleLogin = (e) => {
+    e.preventDefault()
+    dispatch(login(email, password))
   }
+
+
+  
 
   return (
       <Container>
+        {error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
           label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
@@ -141,7 +141,7 @@ function LoginForm() {
            color='primary'
            variant="contained"
            autoFocus
-           onClick={login}
+           onClick={handleLogin}
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
            >
