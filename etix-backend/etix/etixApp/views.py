@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
-from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer
+from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -87,6 +87,39 @@ def registerUser(request):
         return Response(serializer.data)
     except:
         message = {'detail': 'User with this email already exist'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def getRoutes(request):
+    data = request.data 
+
+    try:
+        locationone = Location.objects.get(locationName = data['locationFrom'])
+        serializerone = LocationSerializerIDonly(locationone, many=False)
+
+        locationtwo = Location.objects.get(locationName = data['locationTo'])
+        serializertwo = LocationSerializerIDonly(locationtwo, many=False)
+
+        services = Services.objects.all().filter(locationFrom = serializerone.data['locationID']).filter(locationTo = serializertwo.data['locationID'])
+        serializer = ServicesSerializer(services, many=True)
+        
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'No routes exist'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['POST'])
+def getVendorName(request):
+    data = request.data 
+
+    try:
+        vendor = Vendor.objects.get(vendorID=data['vendorID'])
+        serializer = VendorSerializer(vendor, many=False)
+
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'No vendors exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 # update user profile

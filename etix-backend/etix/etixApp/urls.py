@@ -40,6 +40,12 @@ urlpatterns = [
     # get single user by id
     path('api/user/<str:pk>/', views.getUserById, name='user'),
 
+    # get list of services by location
+    path('api/service/routes', views.getRoutes, name='route-query'),
+
+    # get vendor name by vendor ID
+    path('api/vendor', views.getVendorName, name='vendor-query'),
+
     # api path to update logged in user profile
     path('api/user/profile/update/', views.updateUserProfile,
          name="user-profile-update"),
