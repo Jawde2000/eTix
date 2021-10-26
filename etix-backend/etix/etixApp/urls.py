@@ -40,13 +40,30 @@ urlpatterns = [
     # get single user by id
     path('api/user/<str:pk>/', views.getUserById, name='user'),
 
+    # get customer by userID
+    path('api/user/customer/<str:pk>/',
+         views.getCustomerByUserID, name='customer-userid'),
+
+    # get vendor by userID
+    path('api/user/vendor/<str:pk>/',
+         views.getVendorByUserID, name='vendor-userid'),
+
     # api path to update logged in user profile
     path('api/user/profile/update/', views.updateUserProfile,
          name="user-profile-update"),
 
     # update user by id
-    path('api/user//update/<str:pk>/', views.updateUser,
+    path('api/user/update/<str:pk>/', views.updateUser,
          name="user-update"),
+
+    # update customer by userid
+    path('api/user/customer/update/<str:pk>/',
+         views.updateCustomer, name="customer-update"),
+
+    # update vendor by userid
+    path('api/user/vendor/update/<str:pk>/',
+         views.updateVendor, name="vendor-update"),
+
 
 
     # api path to delete users

@@ -10,7 +10,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { getUser } from '../../actions/userActions';
 import CircularProgress from '@mui/material/CircularProgress';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import AddIcon from '@mui/icons-material/Add';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
+import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
+import { updateUser, updateCustomer, updateVendor } from '../../actions/userActions';
 
 
 //koee
@@ -50,14 +58,115 @@ const UserDetail = ({props}) => {
     let history = useHistory()
     
     const userDetail = useSelector(state => state.userDetail)
-    
     const {loading, userD} = userDetail
+
+    const usr = useSelector(state => state.userUpdate)
+    const {success: successUser, error: errorUsr} = usr
+
+    const cus = useSelector(state => state.customerUpdate)
+    const {success: successCustomer, error: errorCus} = cus
+
+    const ven = useSelector(state => state.vendorUpdate)
+    const {success: successVendor, error: errorVen} = ven
     
     const [user, setUser] = useState();
+    const [uptUser, setUptUser] = useState();
+    const [uptVendor, setUptVendor] = useState();
+    const [uptCustomer, setUptCustomer] = useState();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [isActive, setIsActive] = useState();
     const [role , setRole] = useState("");
+    const [contact, setContact] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
+    const [passStatus, setPassStatus] = useState(false);
+    // vendor
+    const [status, setStatus] = useState(false);
+    const [businessName, setBusinessName] = useState("");
+    const [registrationNo, setRegistrationNo] = useState("");
+    const [bankName, setBankName] = useState("");
+    const [bankAcc, setBankAcc] = useState("");
+    
+    //customer
+    const [birthdate, setBirthDate] = useState("");
+    const [address, setAddress] = useState("");
+    const [gender, setGender] = useState('');
+    // const [user, setUser]
+    const [customer, setCustomer]= useState();
+    const [vendor, setVendor] = useState();
+    const [submit, setSubmit] = useState(false);
+    const [editing,setEditing] = useState(false);
+
+    const handleSubmit = () =>{
+        setUptUser(
+            {
+                username: username,
+                email: email,
+                password: password,
+                is_active: isActive,
+            }
+        )
+
+        if(vendor){
+            setUptVendor({
+                vendorContact_Number: contact,
+                vendorStatus: status,
+                vendorName: businessName,
+                vendorBankName: bankName,
+                vendorBankAcc: bankAcc,
+                vendorRegistrationNo: registrationNo,
+            })
+        }
+
+        if(customer){
+            setUptCustomer({
+                customerGender: gender,
+                customerContact_Number: contact,
+                customerAddress: address,
+                customerBirthday: birthdate,
+            })
+        }
+    }
+
+    useEffect(() =>{
+        if(role==="Admin" && uptUser){
+            dispatch(updateUser(uptUser, id));
+        }
+        else if(role === "Customer" && uptCustomer){
+            dispatch(updateCustomer(uptUser, uptCustomer, id))
+        }
+        else if(role === "Vendor" && uptVendor){
+            dispatch(updateVendor(uptUser, uptVendor, id))
+        }
+    }, [uptUser, uptCustomer, uptVendor])
+
+    useEffect(() => {
+        if(successUser){
+            alert("Successfully Updated User");
+            dispatch({type: USER_UPDATE_RESET});
+            setEditing(!editing);
+            return;
+        }
+        else if(successCustomer){
+            alert("Successfully Updated User");
+            dispatch({type: USER_CUSTOMER_UPDATE_RESET});
+            setEditing(!editing);
+            return;
+        }
+        else if(successVendor){
+            alert("Successfully Updated User");
+            dispatch({type: USER_VENDOR_UPDATE_RESET});
+            setEditing(!editing);
+            return;
+        }
+        else if(errorUsr || errorCus || errorVen){
+            alert("Fail to Update");
+            dispatch({type: USER_VENDOR_UPDATE_RESET});
+            dispatch({type: USER_CUSTOMER_UPDATE_RESET});
+            dispatch({type: USER_UPDATE_RESET});
+        }
+    }, [successUser, successCustomer, successVendor, errorUsr, errorCus, errorVen])
 
 
     useEffect(() => {
@@ -69,22 +178,48 @@ const UserDetail = ({props}) => {
             setUsername(userD.username);
             setEmail(userD.email);
             setIsActive(userD.is_active);
+            if(userD.is_customer && userD.customerInfo){
+                setCustomer(
+                    userD.customerInfo.data
+                )
+
+            }
+            else if(userD.is_vendor && userD.vendorInfo){
+                setVendor(
+                    userD.vendorInfo.data
+                )
+            }
         }
-    }, [userD, id,])
+    }, [userD, id])
+
+    useEffect(() => {
+        if(customer){
+            setContact(customer.customerContact_Number)
+            setAddress(customer.customerAddress)
+            setBirthDate(customer.customerBirthday)
+            setGender(customer.customerGender)
+        }
+        else if(vendor){
+            setContact(vendor.vendorContact_Number)
+            setStatus(vendor.vendorStatus)
+            setBusinessName(vendor.vendorName)
+            setBankName(vendor.vendorBankName)
+            setBankAcc(vendor.vendorBankAcc)
+            setRegistrationNo(vendor.vendorRegistrationNo)
+        }
+    }, [customer, vendor])
     
     
 
-    const [editing,setEditing] = useState(false);
+    
     //Remember to update database also.
     const changeStatus = () => {
         if(role==="Vendor"){
-            if(isActive && user.verified){
-                setUser({...user, is_active: isActive});
+            if(isActive && status){
                 setIsActive(!isActive)
                 return;
             }
-            else if(!isActive){
-                setUser({...user, is_active: isActive});
+            else if(!isActive && status){
                 setIsActive(!isActive)
                 return;
             }
@@ -93,12 +228,10 @@ const UserDetail = ({props}) => {
         }
         else{
             if(isActive){
-                setUser({...user, is_active:isActive});
                 setIsActive(!isActive)
                 return;
             }
             else if(!isActive){
-                setUser({...user, is_active:isActive});
                 setIsActive(!isActive)
             }
         }
@@ -107,21 +240,68 @@ const UserDetail = ({props}) => {
     };
 
     const handleChangeUserName = (event) => {
-        setUser({...user, username: event.target.value});
         setUsername(event.target.value);
     }
 
     const handleChangeUserEmail = (event) => {
-        setUser({...user, email: event.target.value})
         setEmail(event.target.value);
     }
+
     const handleChangeUserPhone = (event) => {
-        setUser({...user, userPhone: event.target.value})
+        setContact(event.target.value);
+    }
+
+    const handleChangeBusinessName = (event) => {
+        setBusinessName(event.target.value);
+    }
+
+    const handleChangeRegNo = (event) => {
+        setRegistrationNo(event.target.value);
+    }
+
+    const handleChangebankName = (event) => {
+        setBankName(event.target.value);
+    }
+
+    const handleChangebankAcc = (event) => {
+        setBankAcc(event.target.value);
+    }
+
+    const hadleChangePassword = (event) => {
+        setPassword(event.target.value);
+    }
+    
+    const handleChangeConfirmPassword = (event) => {
+        setConfirmPass(event.target.value);
+    }
+
+    const handleVarified = () => {
+        if(status && isActive){
+            alert("You can't unverify user when it is active.")
+            return
+        }
+        setStatus(!status)
+    }
+
+    const handleChangeBirthDate = (event) => {
+        setBirthDate(event.target.value);
+    }
+
+    const handleChangeAddress = (event) => {
+        setAddress(event.target.value);
+    }
+
+    const handleChangeGender = (event) => {
+        setGender(event.target.value);
+    }
+
+    const handleBack = () => {
+        dispatch({type: USER_DETAIL_RESET});
+        history.push('/menu/users/');
     }
 
     return (
         <Container className={classes.root}>
-            {console.log(user)}
             {!user? 
                 <Box sx={{ display: 'flex' }}>
                     <CircularProgress />
@@ -132,11 +312,9 @@ const UserDetail = ({props}) => {
                         <Grid item xs={12} className={classes.action} container>
                             <Grid item xs={4}>
                                 <Tooltip title="Back">
-                                    <Link to="/menu/users/">
-                                        <IconButton>
-                                            <ArrowBackIcon fontSize="large" />
-                                        </IconButton>
-                                    </Link>
+                                    <IconButton onClick={handleBack}>
+                                        <ArrowBackIcon fontSize="large" />
+                                    </IconButton>
                                 </Tooltip>
                             </Grid>
                             <Grid item xs={4} textAlign="center" style={{fontSize:20}}>
@@ -152,7 +330,7 @@ const UserDetail = ({props}) => {
                                 <Tooltip title="Delete User">
                                     {/* Set onclick delete here, *create a delete function* */}
                                     <IconButton>
-                                        <DeleteIcon className={classes.functionicon} fontSize="large" />
+                                        <DeleteIcon className={classes.functionicon} fontSize="large" style={{color: 'red'}}/>
                                     </IconButton>
                                 </Tooltip>
                             </Grid>
@@ -161,7 +339,9 @@ const UserDetail = ({props}) => {
                     <Box sx={{width:'90%'}} className={classes.box}>
                         <Grid container spacing={3} direction="column">
                             <Grid item xs={12} container>
+                                
                                 <Grid item xs={12} sm={4} container style={{textAlign:'center'}}>
+                                    
                                     <Grid item xs={12} >
                                         Profile Picture
                                     </Grid>
@@ -199,12 +379,48 @@ const UserDetail = ({props}) => {
                                         </Grid>
                                         
                                     </Grid>
+                                    {vendor?
+                                        (
+                                            <Grid item xs={12} style={{marginTop: 20}} container>
+                                                <Grid item xs={5} style={{textAlign:'right', fontWeight: 'bold'}}>
+                                                    Verify Status:    
+                                                </Grid>
+                                                <Grid item xs={5} style={{textAlign:'right'}}>
+                                                    {status? "Verified" : "Not Verified"}
+                                                </Grid>
+                                                {editing?
+                                                    (
+                                                        <Grid item xs={2}>
+                                                            <Tooltip title="Verify Account">
+                                                                <IconButton onClick={()=>handleVarified()} style={!status? ({color: "red"}) : ({color: "green"})}>
+                                                                    <ChangeCircleIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </Grid>
+                                                    )
+                                                    :
+                                                    (null)
+                                                }
+
+                                                
+                                            </Grid>
+                                        )
+                                        :
+                                        (null)
+                                    }
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
                                 </Grid>
                                 <Grid item xs={12} sm={7} container>
                                     <Grid item xs={12} container>
+                                        <Grid item xs={12} style={{fontWeight:'bold'}}>
+                                            Basic Information
+                                        </Grid>
                                         {/* username */}
-                                        <Grid item xs={12} container>
-                                            <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                        <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
+                                            <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                 User Name: 
                                             </Grid>
                                             {!editing ?
@@ -233,7 +449,7 @@ const UserDetail = ({props}) => {
                                             }
                                             
                                         </Grid>
-                                        <Grid item xs={12} container>
+                                        <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
                                             <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                 Email: 
                                             </Grid>
@@ -263,24 +479,315 @@ const UserDetail = ({props}) => {
                                             }
                                             
                                         </Grid>
-                                        <Grid item xs={12} container>
-                                            <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                Phone Number: 
-                                            </Grid>
-                                            {!editing ?
-                                                (
-                                                    <Grid item xs={9} textAlign="left">\
-                                                        {/* userphone */}
+                                        {role==="Admin"?
+                                            (null)
+                                            :
+                                            (
+                                                <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        Phone Number: 
                                                     </Grid>
-                                                )
-                                                :
-                                                (
+                                                    {!editing ?
+                                                        (
+                                                            <Grid item xs={9} textAlign="left">
+                                                                {contact}
+                                                            </Grid>
+                                                        )
+                                                        :
+                                                        (
+                                                            <Grid item xs={9} textAlign="left">
+                                                                <TextField 
+                                                                    id="user_phone" 
+                                                                    variant="outlined"
+                                                                    onChange={handleChangeUserPhone}
+                                                                    defaultValue={contact}
+                                                                    margin="dense"
+                                                                    fullWidth
+                                                                    size="small"
+                                                                    InputProps={{
+                                                                        style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                    }} 
+                                                                />
+                                                            </Grid>   
+                                                        )
+                                                    }
+                                                    
+                                                </Grid>
+                                            )
+                                        }
+                                        {vendor?
+                                            (
+                                                <>
+                                                    <Grid item xs={12} style={{fontWeight:'bold', marginTop: 20}}>
+                                                        Business Information
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                            Business Name: 
+                                                        </Grid>
+                                                        {!editing ?
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    {businessName}
+                                                                </Grid>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    <TextField 
+                                                                        id="businessName" 
+                                                                        variant="outlined"
+                                                                        onChange={handleChangeBusinessName}
+                                                                        defaultValue={businessName}
+                                                                        margin="dense"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        InputProps={{
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                        }} 
+                                                                    />
+                                                                </Grid>   
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                            Registration No.: 
+                                                        </Grid>
+                                                        {!editing ?
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    {registrationNo}
+                                                                </Grid>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    <TextField 
+                                                                        id="regNo" 
+                                                                        variant="outlined"
+                                                                        onChange={handleChangeRegNo}
+                                                                        defaultValue={registrationNo}
+                                                                        margin="dense"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        InputProps={{
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                        }} 
+                                                                    />
+                                                                </Grid>   
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                            Bank Name: 
+                                                        </Grid>
+                                                        {!editing ?
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    {bankName}
+                                                                </Grid>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    <TextField 
+                                                                        id="bankName" 
+                                                                        variant="outlined"
+                                                                        onChange={handleChangebankName}
+                                                                        defaultValue={bankName}
+                                                                        margin="dense"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        InputProps={{
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                        }} 
+                                                                    />
+                                                                </Grid>   
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10, marginBottom: 20}}>
+                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                            Bank Account: 
+                                                        </Grid>
+                                                        {!editing ?
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    {bankAcc}
+                                                                </Grid>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    <TextField 
+                                                                        id="bankAcc" 
+                                                                        variant="outlined"
+                                                                        onChange={handleChangebankAcc}
+                                                                        defaultValue={bankAcc}
+                                                                        margin="dense"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        InputProps={{
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                        }} 
+                                                                    />
+                                                                </Grid>   
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                </>
+                                            )
+                                            :
+                                            (
+                                               null
+                                            )
+                                        }
+                                        {customer?
+                                            (
+                                                <>
+                                                    <Grid item xs={12} style={{fontWeight:'bold', marginTop: 20}}>
+                                                        Personal Information
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30 , marginTop:10}}>
+                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                            Birth Date: 
+                                                        </Grid>
+                                                        {!editing ?
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    {birthdate}
+                                                                </Grid>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    <TextField 
+                                                                        id="businessName" 
+                                                                        variant="outlined"
+                                                                        onChange={handleChangeBirthDate}
+                                                                        defaultValue={birthdate}
+                                                                        margin="dense"
+                                                                        type="date"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        InputProps={{
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                        }} 
+                                                                    />
+                                                                </Grid>   
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                            Address : 
+                                                        </Grid>
+                                                        {!editing ?
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    {address}
+                                                                </Grid>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Grid item xs={9} textAlign="left">
+                                                                    <TextField 
+                                                                        id="regNo" 
+                                                                        variant="outlined"
+                                                                        onChange={handleChangeAddress}
+                                                                        defaultValue={address}
+                                                                        margin="dense"
+                                                                        fullWidth
+                                                                        size="small"
+                                                                        InputProps={{
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                        }} 
+                                                                    />
+                                                                </Grid>   
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                        
+                                                        {!editing ?
+                                                            (
+                                                                <FormControl component="fieldset">
+                                                                    <FormLabel component="legend" style={{fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: 'bold'}}>Gender</FormLabel>
+                                                                    <RadioGroup
+                                                                        row
+                                                                        aria-label="gender"
+                                                                        name="gender-radio-buttons-group"
+                                                                        value={gender}
+                                                                        disabled
+                                                                    >
+                                                                        <FormControlLabel value="M" control={<Radio />} label="Male" />
+                                                                        <FormControlLabel value="F" control={<Radio />} label="Female" />
+                                                                        <FormControlLabel value="P" control={<Radio />} label="Others" />
+                                                                    </RadioGroup>
+                                                                </FormControl>
+                                                            )
+                                                            :
+                                                            (
+                                                                <FormControl component="fieldset">
+                                                                    <FormLabel component="legend">Gender</FormLabel>
+                                                                    <RadioGroup
+                                                                        row
+                                                                        aria-label="gender"
+                                                                        name="gender-radio-buttons-group"
+                                                                        value={gender}
+                                                                        onChange={(e) => handleChangeGender(e)}
+                                                                    >
+                                                                        <FormControlLabel value="M" control={<Radio />} label="Male" />
+                                                                        <FormControlLabel value="F" control={<Radio />} label="Female" />
+                                                                        <FormControlLabel value="P" control={<Radio />} label="Others" />
+                                                                    </RadioGroup>
+                                                                </FormControl> 
+                                                            )
+                                                        }  
+                                                    </Grid>
+                                                </>
+                                            )
+                                            :
+                                            (
+                                               null
+                                            )
+                                        }
+                                        {editing?
+                                            (
+                                                <>
+                                                <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        Password: 
+                                                    </Grid>
                                                     <Grid item xs={9} textAlign="left">
                                                         <TextField 
-                                                            id="user_phone" 
+                                                            id="password" 
                                                             variant="outlined"
-                                                            onChange={handleChangeUserPhone}
-                                                            // defaultValue={userPhone}
+                                                            onChange={hadleChangePassword}
+                                                            defaultValue={password}
+                                                            margin="dense"
+                                                            type='password'
+                                                            fullWidth
+                                                            size="small"
+                                                            InputProps={{
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                            }} 
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        Confirm Password: 
+                                                    </Grid>
+                                                    <Grid item xs={9} textAlign="left">
+                                                        <TextField 
+                                                            id="confirmPass" 
+                                                            variant="outlined"
+                                                            onChange={handleChangeConfirmPassword}
+                                                            defaultValue={confirmPass}
+                                                            type='password'
                                                             margin="dense"
                                                             fullWidth
                                                             size="small"
@@ -288,47 +795,43 @@ const UserDetail = ({props}) => {
                                                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
                                                             }} 
                                                         />
-                                                    </Grid>   
-                                                )
-                                            }
-                                            
-                                        </Grid>
-                                        {user.userType==="Vendor" ? 
-                                            (  
-                                                <Grid item xs={12} container>
-                                                    <Grid item xs={3} style={{fontWeight: 'bold'}} >
-                                                        Verified Status: 
                                                     </Grid>
-                                                    <Grid item xs={9} textAlign="left">
-                                                        {user.is_active? "Verified" : "Not Verified"}
-                                                    </Grid>
-                                                    <Grid item xs={12}>
-                                                        {user.is_active? null : (<Button onClick={()=>setUser({...user, verified: true})} variant="text">Click Here To Verify Account</Button>)}
-                                                    </Grid> 
-                                                    
                                                 </Grid>
+                                                <Grid item xs={12} container>
+                                                    <Grid item xs={12} style={{textAlign: 'right', paddingRight: 20}}>
+                                                        {password!==confirmPass?
+                                                            (
+                                                                <Button 
+                                                                    variant="outlined"
+                                                                    startIcon={<AddIcon />}
+                                                                    onClick={()=> alert("Password Not Match")}
+                                                                    style={{cursor: 'pointer', backgroundColor: 'green', color: 'black', fontWeight: 'bold', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
+                                                                >
+                                                                    Save
+                                                                </Button>
+                                                            )
+                                                            :
+                                                            (
+                                                                <Button 
+                                                                    variant="outlined"
+                                                                    startIcon={<AddIcon />}
+                                                                    style={{cursor: 'pointer', backgroundColor: 'green', color: 'black', fontWeight: 'bold', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
+                                                                    onClick={handleSubmit}
+                                                                >
+                                                                    Save
+                                                                </Button>
+                                                            )
+                                                        }
+                                                        
+                                                    </Grid>
+                                                </Grid>
+                                                </>
                                             )
                                             :
                                             (
                                                 null
                                             )
                                         }
-                                        {role==="Admin"? 
-                                            null
-                                            :
-                                            <Grid item xs={12} container>
-                                                <Grid item xs={3} style={{fontWeight: 'bold'}}>
-                                                    Help Messages: 
-                                                </Grid>
-                                                <Grid item xs={9} style={{textAlign: 'left'}}>
-                                                    {user.helpMessage}
-                                                </Grid>
-                                                <Grid item xs={12}>
-                                                    {user.helpMessage>0?(<Button href="http://localhost:5000/helpdesk" variant="text">Click Here To View all Message</Button>):null}
-                                                </Grid>
-                                            </Grid>    
-                                        }
-                                        
                                     </Grid>    
                                 </Grid>
                                 <Grid item xs={12} sm={1} />

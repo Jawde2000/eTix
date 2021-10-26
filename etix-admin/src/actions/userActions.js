@@ -33,6 +33,22 @@ import {
     USER_VENDOR_REGISTER_SUCCESS,
     USER_VENDOR_REGISTER_FAIL,
     USER_VENDOR_REGISTER_RESET,
+
+    USER_VENDOR_UPDATE_REQUEST, 
+    USER_VENDOR_UPDATE_SUCCESS,
+    USER_VENDOR_UPDATE_FAIL,
+    USER_VENDOR_UPDATE_RESET,
+
+    USER_CUSTOMER_UPDATE_REQUEST, 
+    USER_CUSTOMER_UPDATE_SUCCESS,
+    USER_CUSTOMER_UPDATE_FAIL,
+    USER_CUSTOMER_UPDATE_RESET,
+
+    USER_UPDATE_REQUEST, 
+    USER_UPDATE_SUCCESS,
+    USER_UPDATE_FAIL,
+    USER_UPDATE_RESET,
+
 } from '../constants/userConstants'
 
 
@@ -150,15 +166,42 @@ export const getUser = (id) => async (dispatch, getState) => {
             }
         }
 
-        const { data } = await axios.get(
+        var { data } = await axios.get(
             `http://127.0.0.1:8000/api/user/${id}/`,
             config
         )
+
+        const config2 = {
+            headers:{
+                'Content-type' : 'application/json'
+            }
+        }
+        if(data.is_customer){
+            data = {
+                ...data,
+                customerInfo: await axios.get(
+                    `http://127.0.0.1:8000/api/user/customer/${id}/`,
+                    config2
+                )
+            }
+        }
+        else if(data.is_vendor){
+            data = {
+                ...data,
+                vendorInfo: await axios.get(
+                    `http://127.0.0.1:8000/api/user/vendor/${id}/`,
+                    config2
+                )
+            }
+        }
         
+        
+
         dispatch({
             type: USER_DETAIL_SUCCESS,
             payload: data
         })
+
 
     }catch(error){
         dispatch({
@@ -324,6 +367,148 @@ export const vendorRegisterUsers = (user, vendor) => async (dispatch) => {
     }catch(error){
         dispatch({
             type: USER_VENDOR_REGISTER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+
+//user update
+export const updateUser = (user, id) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type:USER_UPDATE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        console.log(userInfo.token)
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        
+        var { data } = await axios.put(
+            `http://127.0.0.1:8000/api/user/update/${id}/`,
+            user,
+            config
+        )
+
+        dispatch({
+            type: USER_UPDATE_SUCCESS,
+        })
+
+        dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: data,
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: USER_UPDATE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//customer update
+export const updateCustomer = (user, customer, id) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type:USER_CUSTOMER_UPDATE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        var { data } = await axios.put(
+            `http://127.0.0.1:8000/api/user/update/${id}/`,
+            user,
+            config
+        )
+
+        var { data2 } = await axios.put(
+            `http://127.0.0.1:8000/api/user/customer/update/${id}/`,
+            customer,
+            config
+        )
+        
+    
+        dispatch({
+            type: USER_CUSTOMER_UPDATE_SUCCESS,
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: USER_CUSTOMER_UPDATE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//VENDOR update
+export const updateVendor = (user, vendor, id) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type:USER_VENDOR_UPDATE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        console.log(userInfo.token)
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        var { data } = await axios.put(
+            `http://127.0.0.1:8000/api/user/update/${id}/`,
+            user,
+            config
+        )
+
+        var { data2 } = await axios.put(
+            `http://127.0.0.1:8000/api/user/vendor/update/${id}/`,
+            vendor,
+            config
+        )
+        
+    
+        dispatch({
+            type: USER_VENDOR_UPDATE_SUCCESS,
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: USER_VENDOR_UPDATE_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

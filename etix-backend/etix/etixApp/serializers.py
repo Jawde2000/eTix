@@ -40,7 +40,7 @@ class UserSerializerWithToken(UserSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['customerID', 'customerFirstName', 'customerLastName',
+        fields = ['customerID', 'customerFirstName', 'customerLastName', 'customerGender',
                   'customerContact_Number', 'customerAddress', 'customerBirthday', 'created_by']
 
 
@@ -48,7 +48,7 @@ class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
-                  'vendorName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
+                  'vendorName', 'vendorBankName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
 
 
 class AdminSerializer(serializers.ModelSerializer):

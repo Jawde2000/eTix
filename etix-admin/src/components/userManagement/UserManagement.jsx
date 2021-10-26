@@ -406,7 +406,7 @@ const UserManagement = () =>{
         <Container className={classes.root} maxWidth="Fixed">
             {console.log(rows)}
             <Box>
-                <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
+                <Paper sx={{width:'100%', mb: 2, minHeight: 500}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>
                         <TextField
                             placeholder="Search ID"
