@@ -404,7 +404,6 @@ const UserManagement = () =>{
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
-            {console.log(rows)}
             <Box>
                 <Paper sx={{width:'100%', mb: 2, minHeight: 500}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>

@@ -301,7 +301,7 @@ const UserDetail = ({props}) => {
     }
 
     return (
-        <Container className={classes.root}>
+        <Container className={classes.root} maxWidth="Fixed">
             {!user? 
                 <Box sx={{ display: 'flex' }}>
                     <CircularProgress />

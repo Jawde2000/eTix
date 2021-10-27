@@ -316,8 +316,10 @@ class HelpDesk(models.Model):
         max_length=10000, null=True, blank=True
     )
     helpdeskDateTime = models.DateTimeField(auto_now_add=True)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True)
+    to_vendor = models.BooleanField(default=False)
+    to_admin = models.BooleanField(default=False)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
 
 
@@ -339,8 +341,8 @@ class Cart(models.Model):
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     cartTotal = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True)
 
 
 class Payment(models.Model):
