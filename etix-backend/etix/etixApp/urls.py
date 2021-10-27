@@ -64,12 +64,12 @@ urlpatterns = [
     path('api/user/vendor/update/<str:pk>/',
          views.updateVendor, name="vendor-update"),
 
+    # get helpdesk response by help id
+    path('api/help/response/<str:pk>/',
+         views.getHelpResponseByHelpID, name="help-detail"),
 
 
     # api path to delete users
     path('api/user/delete/<str:pk>/', views.deleteUser, name='user-delete'),
-
-
-
 
 ]

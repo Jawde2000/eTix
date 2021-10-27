@@ -51,6 +51,7 @@ import {
 
 } from '../constants/userConstants'
 
+import { HELP_LIST_RESET } from '../constants/helpConstants'
 
 export const login = (email, password) => async (dispatch) => {
     try{
@@ -106,6 +107,7 @@ export const logout = () => (dispatch) => {
     dispatch({type: USER_LOGOUT})
     dispatch({type: USER_LIST_RESET})
     dispatch({type: USER_DETAIL_RESET})
+    dispatch({type: HELP_LIST_RESET})
 }
 
 //GET USER LISTS

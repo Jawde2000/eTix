@@ -225,6 +225,14 @@ class TicketViewSet(viewsets.ModelViewSet):
     # authentication_classes = (TokenAuthentication, )
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getHelpResponseByHelpID(reqeust, pk):
+    helpresponse = HelpResponse.objects.get(helpdesk=pk)
+    serializer = HelpResponseSerializer(helpresponse, many=False)
+    return Response(serializer.data)
+
+
 class HelpDeskViewSet(viewsets.ModelViewSet):
     queryset = HelpDesk.objects.all()
     serializer_class = HelpDeskSerializer

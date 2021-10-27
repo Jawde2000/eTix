@@ -42,6 +42,7 @@ function App() {
                 <Route exact path="/menu/helpdesk" component={Help} /> 
                 <Route exact path="/user/:id" component={UserDetail}/>
                 <Route exact path="/addUser" component={AddUser} />
+                <Route exact path="/help/:id" component={Helpdesk} />
               </Switch>
             <Footer />    
           </BrowserRouter>

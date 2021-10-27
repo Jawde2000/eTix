@@ -18,7 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
 import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
-import { updateUser, updateCustomer, updateVendor } from '../../actions/userActions';
+import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../actions/userActions';
 
 
 //koee
@@ -239,6 +239,20 @@ const UserDetail = ({props}) => {
         
     };
 
+    const handleDelete = () => {
+
+        if(id === userInfo.userID){
+            alert("You can't delete The account that you are currently logged in!");
+            return;
+        }
+        else{
+            dispatch(deleteUsers(id));
+        }
+
+        alert("Sucessfully Deleted");
+        history.push("/menu/users");
+    }
+
     const handleChangeUserName = (event) => {
         setUsername(event.target.value);
     }
@@ -330,7 +344,7 @@ const UserDetail = ({props}) => {
                                 <Tooltip title="Delete User">
                                     {/* Set onclick delete here, *create a delete function* */}
                                     <IconButton>
-                                        <DeleteIcon className={classes.functionicon} fontSize="large" style={{color: 'red'}}/>
+                                        <DeleteIcon onClick={handleDelete} className={classes.functionicon} fontSize="large" style={{color: 'red'}}/>
                                     </IconButton>
                                 </Tooltip>
                             </Grid>

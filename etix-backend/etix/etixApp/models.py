@@ -305,7 +305,8 @@ class Ticket(models.Model):
 class HelpDesk(models.Model):
     help_desk_status = [
         ("OP", "Open"),
-        ("CL", "Close")
+        ("CL", "Close"),
+        ("RP", "Responded")
     ]
     helpdeskID = models.TextField(
         default=generate_helpdesk_id, primary_key=True, unique=True, editable=False, max_length=8)

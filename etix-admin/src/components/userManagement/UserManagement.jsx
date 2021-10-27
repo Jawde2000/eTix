@@ -260,10 +260,6 @@ const UserManagement = () =>{
             originalRow = users.map(item => Object.assign({}, item, {role: item.is_customer? "Customer" : (item.is_vendor? "Vendor" : "Admin")}));
             setOriginalRows(originalRow)
             setRows(originalRow)
-            console.log(originalRow)
-            console.log(originalRows)
-            console.log(rows)
-            console.log("hello")
         }
     }, [userList])
     
