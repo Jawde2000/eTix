@@ -107,13 +107,19 @@ function RegisterForm() {
 
   const display = (event) => {
     event.preventDefault();
-    console.log(values.username);
-    console.log(values.email);
-    console.log(values.businessId);
-    console.log(bankBrand);
-    console.log(phone);
-    console.log(values.password);
-    console.log(values.confirmPassword);
+    if (values.password !== values.confirmPassword) {
+      alert("Password doesnt match")
+    }
+    else {
+      console.log(values.username);
+      console.log(values.email);
+      console.log(values.businessId);
+      console.log(bankBrand);
+      console.log(phone);
+      console.log(values.password);
+      console.log(values.confirmPassword);
+    }
+    
   }
 
   const banks = [
@@ -143,14 +149,18 @@ function RegisterForm() {
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Business Number'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.businessId} onChange={handleChange('businessId')} required
+          value={values.businessId} onChange={handleChange('businessId')} required 
+          inputProps={{
+            maxLength: 15,
+            minLength: 7,
+          }}
           ></TextField>
         </Grid>  
         <Grid xs={12} container padding={2} direction="row">
           <Grid xs={4} item>
             <Autocomplete 
             disablePortal
-            options={banks} required onChange={setBank}
+            options={banks} required  getOptionLabel={option => option} onChange={(event, value) => setBank(value)}
             sx={{ width: '10ch', height: "5.6ch"}}
             className={defaultStyle.inputbackground}
             renderInput={(params) => 
@@ -161,6 +171,10 @@ function RegisterForm() {
           <TextField sx={{ m: 1, width: '26.5ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Bank Number'} variant="filled" InputProps={{ disableUnderline: true }}
           value={values.bank} onChange={handleChange('bank')} required
+          inputProps={{
+            maxLength: 16,
+            minLength: 6,
+          }}
           ></TextField>
           </Grid>
         </Grid>  
