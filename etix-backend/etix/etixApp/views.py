@@ -236,6 +236,15 @@ def getVendorByUserID(reqeust, pk):
     serializer = VendorSerializer(vendor, many=False)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getServiceByVendorID(request, pk):
+    try:
+        services = Services.objects.all().filter(vendor=pk)
+        serializer = ServicesSerializer(services, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'service not exist'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
