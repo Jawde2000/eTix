@@ -48,8 +48,6 @@ function Router() {
   )
 }
 
-
-
 function App() {
 
   return (
@@ -60,6 +58,7 @@ function App() {
           <Switch>
              <Route exact path="/menu" component={Header}/>
           </Switch>
+          <NavBar />
               <Switch>
                 <Route exact path="/" component={Login} />
                 <Route exact path="/menu" component={VendorMenu}  />

@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
+import { Grid, Box, Container, IconButton, Link, Typography, Button} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -13,6 +13,9 @@ import '../Header/header.css';
 import {useCookies} from 'react-cookie';
 import {useHistory} from 'react-router-dom';
 import APIService from '../../APIService'
+import { login } from '../../actions/userActions/userActions'
+import {useDispatch, useSelector} from 'react-redux'
+import Alert from '@mui/material/Alert'
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -76,15 +79,17 @@ const useStyles = makeStyles((theme) => ({
 function LoginForm() {
   const defaultStyle = useStyles();
 
-  const [token, setToken] = useCookies(['mytoken'])
-  const [isLogin, setLogin] = useState(true)
   let history = useHistory()
 
+  const userLogin = useSelector(state => state.userLogin)
+  const {error,  userInfo} = userLogin
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    if(token['mytoken']) {
+    if(userInfo) {
         history.push('/menu')
     }
-  }, [token])
+  }, [userInfo])
 
   const [values, setValues] = useState({
     password: '',
@@ -92,15 +97,10 @@ function LoginForm() {
     showPassword: false,
   });
 
-  const loginBtn = () => {
-    console.log("login passed")
+  const loginBtn = (e) => {
+    e.preventDefault();
     console.log(values.email, values.password)
-    APIService.LoginUser(values.email, values.password)
-    .then(resp => resp.token? 
-      setToken('mytoken', resp.token)
-       : 
-      alert("Invalid username or password."))
-    .catch(e => console.log(e))
+    dispatch(login(values.email, values.password))
   }
 
   const handleChange = (prop) => (event) => {
@@ -118,16 +118,10 @@ function LoginForm() {
     event.preventDefault();
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    console.log(values.email);
-    console.log(values.password);
-    console.log("submitted");
-  };
-
   return (
       <Container>
         <form >
+        {error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
           label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
