@@ -105,7 +105,7 @@ function RegisterForm() {
     event.preventDefault();
   };
 
-  const display = (event) => {
+  const submit = (event) => {
     event.preventDefault();
     if (values.password !== values.confirmPassword) {
       alert("Password doesnt match")
@@ -128,7 +128,7 @@ function RegisterForm() {
 
   return (
       <Container>
-        <form onSubmit={display}>
+        <form onSubmit={submit}>
         <Grid xs={12} container padding={2} justifyContent="center" justifyItems="center">
             <Typography style={{fontSize: 15, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
                 Create your eTix business account 
@@ -162,7 +162,7 @@ function RegisterForm() {
             disablePortal
             options={banks} required  getOptionLabel={option => option} onChange={(event, value) => setBank(value)}
             sx={{ width: '10ch', height: "5.6ch"}}
-            className={defaultStyle.inputbackground}
+            className={defaultStyle.inputbackground} InputProps={{ disableUnderline: true }}
             renderInput={(params) => 
             <TextField variant="filled" {...params} label="bank" />}
             />
@@ -187,7 +187,7 @@ function RegisterForm() {
         onlyCountries={["my", "sg"]}
         value={phone} required
         onChange={setPhone}
-        sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.phonebackground}
+        sx={{ m: 1, width: '39ch', height: "5.6ch"}} className={defaultStyle.phonebackground}
           label={'Phone Number'} variant="filled" InputProps={{ disableUnderline: true }}
         />
         </Grid>
