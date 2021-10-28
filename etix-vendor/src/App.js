@@ -14,6 +14,7 @@ import DataGeneration from './components/DataGeneration/DataGeneration'
 import Service from "./components/Service/Service";
 import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
 import Profile from "./components/Profile/Profile";
+import {CookiesProvider} from 'react-cookie'
 
 function Router() {
 
@@ -23,9 +24,6 @@ function Router() {
     <NavBar />
     <Route path="/" exact>
       <Login />
-    </Route>
-    <Route path="/forgotpassword" exact>
-      <ForgotPassword />
     </Route>
     <Route path="/register" exact>
       <Register />
@@ -50,14 +48,27 @@ function Router() {
   )
 }
 
-
-
 function App() {
 
   return (
     <div> 
       <div>
-        <Router />
+      <CookiesProvider>
+          <BrowserRouter>
+          <Switch>
+             <Route exact path="/menu" component={Header}/>
+          </Switch>
+          <NavBar />
+              <Switch>
+                <Route exact path="/" component={Login} />
+                <Route exact path="/menu" component={VendorMenu}  />
+                <Route exact path="/register" component={Register}/>
+                <Route exact path="/register/registersuccess" component={RegistrationSuccess}/>
+                <Route exact path="/forgotpassword" component={ForgotPassword}/>
+              </Switch>
+            <Footer />    
+          </BrowserRouter>
+      </CookiesProvider>
       </div>
     </div>
   );
