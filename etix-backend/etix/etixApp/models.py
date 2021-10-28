@@ -111,6 +111,7 @@ def generate_payment_id():
 
     return code
 
+
 def generate_location_id():
 
     while True:
@@ -121,6 +122,7 @@ def generate_location_id():
     return code
 
 # Create your models here.
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **other_fields):
@@ -156,7 +158,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
 
-    userID = models.TextField(default=generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
+    userID = models.TextField(
+        default=generate_user_id, primary_key=True, unique=True, editable=False, max_length=8)
     username = models.CharField(max_length=100, blank=True, unique=True)
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
@@ -247,17 +250,20 @@ class Seat(models.Model):
     firstQuantity = models.IntegerField(blank=True, null=True)
     businessQuantity = models.IntegerField(blank=True, null=True)
     economyQuantity = models.IntegerField(blank=True, null=True)
-    firstPrice = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    businessPrice = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    economyPrice = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    firstPrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    businessPrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    economyPrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
 
 
 class Location(models.Model):
     locationID = models.TextField(
         default=generate_location_id, primary_key=True, unique=True, editable=False, max_length=5)
     locationName = models.TextField(max_length=1000)
-    
-    
+
+
 class Services(models.Model):
     service_status = [
         ("O", "Active"),
@@ -275,15 +281,18 @@ class Services(models.Model):
     serviceDesc = models.TextField(max_length=10000)
     serviceStatus = models.CharField(max_length=1, choices=service_status)
     serviceTime = models.TimeField(blank=True, null=True)
-    serviceFrequency = models.CharField(max_length=7, choices=service_frequency)
+    serviceFrequency = models.CharField(
+        max_length=7, choices=service_frequency)
     serviceStartDate = models.DateField()
     servicedepartureTerminal = models.TextField(max_length=1000)
     servicearrivalTerminal = models.TextField(max_length=1000)
     # FK
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
     seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
-    locationTo = models.ForeignKey(Location, related_name='%(class)s_location_to', on_delete=models.SET_NULL, null=True)
-    locationFrom = models.ForeignKey(Location, related_name='%(class)s_location_from', on_delete=models.SET_NULL, null=True)
+    locationTo = models.ForeignKey(
+        Location, related_name='%(class)s_location_to', on_delete=models.SET_NULL, null=True)
+    locationFrom = models.ForeignKey(
+        Location, related_name='%(class)s_location_from', on_delete=models.SET_NULL, null=True)
 
 
 class Ticket(models.Model):
@@ -296,7 +305,8 @@ class Ticket(models.Model):
 class HelpDesk(models.Model):
     help_desk_status = [
         ("OP", "Open"),
-        ("CL", "Close")
+        ("CL", "Close"),
+        ("RP", "Responded")
     ]
     helpdeskID = models.TextField(
         default=generate_helpdesk_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -307,8 +317,10 @@ class HelpDesk(models.Model):
         max_length=10000, null=True, blank=True
     )
     helpdeskDateTime = models.DateTimeField(auto_now_add=True)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True)
+    to_vendor = models.BooleanField(default=False)
+    to_admin = models.BooleanField(default=False)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
 
 
@@ -330,8 +342,8 @@ class Cart(models.Model):
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     cartTotal = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True)
 
 
 class Payment(models.Model):
