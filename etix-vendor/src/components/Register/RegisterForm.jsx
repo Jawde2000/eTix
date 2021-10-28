@@ -10,6 +10,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MuiPhoneNumber from "material-ui-phone-number";
+import Autocomplete from '@mui/material/Autocomplete';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -77,11 +78,13 @@ const useStyles = makeStyles((theme) => ({
 function RegisterForm() {
   const defaultStyle = useStyles();
   const [phone, setPhone] = useState();
+  const [bankBrand, setBank] = useState();
 
   const [values, setValues] = useState({
     username: '',
     email: '',
     businessId: '',
+    bank: '',
     password: '',
     confirmPassword: '',
     showPassword: false,
@@ -107,10 +110,15 @@ function RegisterForm() {
     console.log(values.username);
     console.log(values.email);
     console.log(values.businessId);
+    console.log(bankBrand);
     console.log(phone);
     console.log(values.password);
     console.log(values.confirmPassword);
   }
+
+  const banks = [
+    "Maybank", "OCBC", "CIMB", "Affin", "RHB", "HSBC", "AmBank"
+  ]
 
   return (
       <Container>
@@ -121,22 +129,40 @@ function RegisterForm() {
             </Typography>
         </Grid>
         <Grid xs={12} container padding={2}>
-          <TextField sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
+          <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Username'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.username} onChange={handleChange('username')}
+          value={values.username} onChange={handleChange('username')} required
           ></TextField>
         </Grid>
         <Grid xs={12} container padding={2}>
-          <TextField sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
-          label={'email'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.email} onChange={handleChange('email')}
+          <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
+          label={'email'} variant="filled" InputProps={{ disableUnderline: true }} type="email"
+          value={values.email} onChange={handleChange('email')} required
           ></TextField>
         </Grid>  
         <Grid xs={12} container padding={2}>
-          <TextField sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
+          <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Business Number'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.businessId} onChange={handleChange('businessId')}
+          value={values.businessId} onChange={handleChange('businessId')} required
           ></TextField>
+        </Grid>  
+        <Grid xs={12} container padding={2} direction="row">
+          <Grid xs={4} item>
+            <Autocomplete 
+            disablePortal
+            options={banks} required onChange={setBank}
+            sx={{ width: '10ch', height: "5.6ch"}}
+            className={defaultStyle.inputbackground}
+            renderInput={(params) => 
+            <TextField variant="filled" {...params} label="bank" />}
+            />
+          </Grid>
+          <Grid xs={8} item>
+          <TextField sx={{ m: 1, width: '26.5ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
+          label={'Bank Number'} variant="filled" InputProps={{ disableUnderline: true }}
+          value={values.bank} onChange={handleChange('bank')} required
+          ></TextField>
+          </Grid>
         </Grid>  
         <Grid xs={12} container direction="column" padding={2}>   
         <MuiPhoneNumber 
@@ -145,18 +171,18 @@ function RegisterForm() {
         data-cy="user-phone"
         defaultCountry={"my"}
         onlyCountries={["my", "sg"]}
-        value={phone}
+        value={phone} required
         onChange={setPhone}
-        sx={{ m: 1, width: '35ch', height: "5.6ch"}} className={defaultStyle.phonebackground}
+        sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.phonebackground}
           label={'Phone Number'} variant="filled" InputProps={{ disableUnderline: true }}
         />
         </Grid>
         <Grid container  xs={12} padding={2}>        
-        <FormControl sx={{ m: 1, width: '35ch', height: "5.6ch"}} variant="filled" className={defaultStyle.inputbackground}>
+        <FormControl sx={{ m: 1, width: '40ch', height: "5.6ch"}} variant="filled" className={defaultStyle.inputbackground}>
           <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
           <FilledInput         
             disableUnderline="true"
-            variant="filled"
+            variant="filled" required
             id="filled-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}
@@ -177,11 +203,11 @@ function RegisterForm() {
         </FormControl>
         </Grid>
         <Grid container  xs={12} padding={2}>        
-        <FormControl sx={{ m: 1, width: '35ch', height: "5.6ch"}} variant="filled" className={defaultStyle.inputbackground}>
+        <FormControl sx={{ m: 1, width: '40ch', height: "5.6ch"}} variant="filled" className={defaultStyle.inputbackground}>
           <InputLabel htmlFor="filled-adornment-password">Confirm your password</InputLabel>
           <FilledInput         
             disableUnderline="true"
-            variant="filled"
+            variant="filled" required
             id="filled-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.confirmPassword}
