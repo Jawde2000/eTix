@@ -84,7 +84,7 @@ function RegisterForm() {
   const [bankBrand, setBank] = useState();
 
   const userRegister = useSelector(state => state.userRegister)
-  const {error,  success} = userRegister
+  const {success} = userRegister
   const dispatch = useDispatch()
   let history = useHistory()
 

@@ -14,28 +14,48 @@ export const login = (email, password) => async (dispatch) => {
 
         const config = {
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
             }
         }
 
-        var data = await axios.post(
+        console.log("pass data")
+        console.log(email)
+        console.log(password)
+
+        var { data } = await axios.post(
             'http://127.0.0.1:8000/api/users/login/',
             {
                 "email": email,
-                "password": password
+                "password": password,
             },
             config
         )
 
-        var data2 = data;
+        // console.log(data)
 
-        data = {
-            userInfo: data2,
+        const configVendor = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
         }
 
+        // console.log(data.userID)
+        var data2 = data
+
+        data = {
+             ...data,
+             vendorInfo: await axios.get(
+            'http://127.0.0.1:8000/api/user/vendor/' + data.userID + '/',
+            configVendor
+            )
+        }
+
+        data.vendorInfo = data.vendorInfo.data
+
+        // console.log(vendorInfo)
         console.log(data)
         
-        if(!data.is_vendor){
+        if(!data.is_vendor ){
             dispatch({
                 type: USER_LOGIN_FAIL,
                 payload: "Invalid User"

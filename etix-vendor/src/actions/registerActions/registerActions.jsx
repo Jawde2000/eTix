@@ -13,7 +13,7 @@ export const register = (email, password, business, bankNumber, bandBrand, phone
 
         const config = {
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json', 
             }
         }
 
@@ -37,13 +37,11 @@ export const register = (email, password, business, bankNumber, bandBrand, phone
         const configVendor = {
             headers: {
                 'Content-type' : 'application/json',
-                Authorization: "Bearer " + data.token,
+                Authorization: "Bearer " + data.token
             }
         }
 
-        console.log(data.userID)
-
-        const { Register } = await axios.post(
+        const Register = await axios.post(
             'http://localhost:8000/api/vendor/',
             {
                 "created_by": data.userID,
@@ -53,11 +51,12 @@ export const register = (email, password, business, bankNumber, bandBrand, phone
                 "vendorBankName": bandBrand,
                 "vendorBankAcc": bankNumber,
                 "vendorRegistrationNo": business,
-            },
-            configVendor
+                configVendor
+            }
+            
         )
      
-        console.log(Register.data)
+        console.log(Register)
         
         if(!data){
             dispatch({
@@ -68,7 +67,7 @@ export const register = (email, password, business, bankNumber, bandBrand, phone
         else{
             dispatch({
                 type: USER_REGISTER_SUCCESS,
-                payload: data
+                payload: "RGISTER SUCCESS"
             })
             
             //set user info in local storage

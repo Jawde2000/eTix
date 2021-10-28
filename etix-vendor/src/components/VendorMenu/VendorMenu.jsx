@@ -7,7 +7,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import '../Header/header.css';
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -72,7 +72,7 @@ function VendorMenu() {
           <Grid xs={12} direction="column" container justify="center" alignItems="center" alignContent="center">
             <Grid xs={12} sm={2} item>
               <Typography variant="h2" className={defaultStyle.welcome} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
-                Welcome Back, {userInfo? userInfo.data.username : null}  
+                Welcome Back, {userInfo? userInfo.username : null}  
               </Typography>
             </Grid>
             <Grid xs={1} item direction="row" display="flex" spacing={20}>

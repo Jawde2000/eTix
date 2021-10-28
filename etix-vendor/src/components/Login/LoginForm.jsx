@@ -97,17 +97,12 @@ function LoginForm() {
     showPassword: false,
   });
 
-  const loginBtn = (e) => {
-    e.preventDefault();
-    console.log(values.email, values.password)
-    dispatch(login(values.email, values.password))
-  }
-
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  const handleClickShowPassword = () => {
+  const handleClickShowPassword = (event) => {
+    event.preventDefault();
     setValues({
       ...values,
       showPassword: !values.showPassword,
@@ -118,9 +113,16 @@ function LoginForm() {
     event.preventDefault();
   };
 
+  const loginBtn = (e) => {
+    e.preventDefault();
+    console.log(values.email, values.password)
+    dispatch(login(values.email, values.password))
+  }
+
+
   return (
       <Container>
-        <form >
+        <form onSubmit={loginBtn}>
         {error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
@@ -160,7 +162,6 @@ function LoginForm() {
            type="submit"
            color='success'
            variant="contained"
-           onclick={loginBtn}
           //  href="/menu"
            style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}

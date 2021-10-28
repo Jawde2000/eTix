@@ -113,7 +113,7 @@ def getRoutes(request):
 @api_view(['POST'])
 def getVendorName(request):
     data = request.data 
-
+    
     try:
         vendor = Vendor.objects.get(vendorID=data['vendorID'])
         serializer = VendorSerializer(vendor, many=False)
@@ -164,7 +164,6 @@ def updateUser(request, pk):
     serializer = UserSerializer(user, many=False)
 
     return Response(serializer.data)
-
 # update customer by userid
 
 
