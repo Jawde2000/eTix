@@ -39,7 +39,11 @@ function HomeQuery() {
 
   const [value, setValue] = React.useState([null, null]);
 
-
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log('You clicked submit.');
+  }
+  
   return (
         <Box className={classes.whole}>
           <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2} className={classes.inside}>
@@ -71,7 +75,7 @@ function HomeQuery() {
                             />
                           </Grid>
                           <Grid item>
-                            <Button variant="contained"><SearchIcon></SearchIcon> Search</Button>
+                            <Button variant="contained" onClick={handleSubmit}><SearchIcon></SearchIcon> Search</Button>
                           </Grid>
                       </Grid>
                     </Grid>

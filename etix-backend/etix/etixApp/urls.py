@@ -47,6 +47,12 @@ urlpatterns = [
     # get vendor by userID
     path('api/user/vendor/<str:pk>/',
          views.getVendorByUserID, name='vendor-userid'),
+  
+    # get list of services by location
+    path('api/service/routes', views.getRoutes, name='route-query'),
+
+    # get vendor name by vendor ID
+    path('api/vendor', views.getVendorName, name='vendor-query'),
 
     # api path to update logged in user profile
     path('api/user/profile/update/', views.updateUserProfile,

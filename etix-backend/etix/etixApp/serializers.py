@@ -50,6 +50,11 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
                   'vendorName', 'vendorBankName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
 
+class VendorSerializerNameOnly(serializers.ModelSerializer):
+    class Meta:
+        model = Vendor
+        fields = ['vendorName']
+
 
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,6 +108,10 @@ class ServicesSerializer(serializers.ModelSerializer):
         model = Services
         fields = '__all__'
 
+class LocationSerializerIDonly(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = ['locationID']
 
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
