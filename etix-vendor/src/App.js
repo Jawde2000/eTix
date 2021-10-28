@@ -15,6 +15,7 @@ import Service from "./components/Service/Service";
 import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
 import Profile from "./components/Profile/Profile";
 import {CookiesProvider} from 'react-cookie'
+import ServicesManagement from './components/ServiceManagement/ServicesManagement';
 
 function Router() {
 
@@ -65,6 +66,7 @@ function App() {
                 <Route exact path="/register" component={Register}/>
                 <Route exact path="/register/registersuccess" component={RegistrationSuccess}/>
                 <Route exact path="/forgotpassword" component={ForgotPassword}/>
+                <Route exact path="/menu/servicemanagement" component={ServicesManagement}/>
               </Switch>
             <Footer />    
           </BrowserRouter>
