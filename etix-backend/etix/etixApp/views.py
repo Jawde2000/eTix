@@ -135,6 +135,7 @@ def updateUserProfile(request):
     data = request.data
     user.username = data['username']
     user.email = data['email']
+    user.is_active = data['is_active']
 
     if data['password'] != '':
         user.password = make_password(data['password'])
@@ -150,12 +151,59 @@ def updateUser(request, pk):
     user = User.objects.get(userID=pk)
 
     data = request.data
+
     user.username = data['username']
     user.email = data['email']
+    user.is_active = data['is_active']
+
+    if data['password'] != '':
+        user.password = make_password(data['password'])
 
     user.save()
 
     serializer = UserSerializer(user, many=False)
+
+    return Response(serializer.data)
+
+# update customer by userid
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateCustomer(request, pk):
+    customer = Customer.objects.get(created_by=pk)
+
+    data = request.data
+    customer.customerContact_Number = data['customerContact_Number']
+    customer.customerAddress = data['customerAddress']
+    customer.customerBirthday = data['customerBirthday']
+    customer.gender = data['customerGender']
+
+    customer.save()
+
+    serializer = CustomerSerializer(customer, many=False)
+
+    return Response(serializer.data)
+
+# update vendor by userid
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateVendor(request, pk):
+    vendor = Vendor.objects.get(created_by=pk)
+
+    data = request.data
+    vendor.vendorContact_Number = data['vendorContact_Number']
+    vendor.vendorStatus = data['vendorStatus']
+    vendor.vendorName = data['vendorName']
+    vendor.vendorBankName = data['vendorBankName']
+    vendor.vendorBankAcc = data['vendorBankAcc']
+    vendor.vendorRegistrationNo = data['vendorRegistrationNo']
+
+    vendor.save()
+
+    serializer = VendorSerializer(vendor, many=False)
 
     return Response(serializer.data)
 
@@ -168,17 +216,31 @@ def deleteUser(request, pk):
     return Response('User was deleted')
 
 
+@api_view(['GET'])
+def getCustomerByUserID(request, pk):
+    customer = Customer.objects.get(created_by=pk)
+    serializer = CustomerSerializer(customer, many=False)
+    return Response(serializer.data)
+
+
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
+
+
+@api_view(['GET'])
+def getVendorByUserID(reqeust, pk):
+    vendor = Vendor.objects.get(created_by=pk)
+    serializer = VendorSerializer(vendor, many=False)
+    return Response(serializer.data)
 
 
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
 
@@ -194,6 +256,14 @@ class TicketViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
     permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getHelpResponseByHelpID(reqeust, pk):
+    helpresponse = HelpResponse.objects.get(helpdesk=pk)
+    serializer = HelpResponseSerializer(helpresponse, many=False)
+    return Response(serializer.data)
 
 
 class HelpDeskViewSet(viewsets.ModelViewSet):
@@ -236,6 +306,7 @@ class SeatViewSet(viewsets.ModelViewSet):
     serializer_class = SeatSerializer
     permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
+
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()

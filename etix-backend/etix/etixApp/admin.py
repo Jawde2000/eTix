@@ -75,7 +75,7 @@ class TicketModel(admin.ModelAdmin):
 class TicketModel(admin.ModelAdmin):
     list_filter = ('helpdeskID', 'helpdeskStatus')
     list_display = ('helpdeskID', 'helpdeskTitle',
-                    'helpdeskDateTime', 'helpdeskStatus', 'customer')
+                    'helpdeskDateTime', 'helpdeskStatus', 'user')
 
 
 @admin.register(HelpResponse)
@@ -87,8 +87,8 @@ class TicketModel(admin.ModelAdmin):
 
 @admin.register(Cart)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('cartID', 'customer')
-    list_display = ('cartID', 'service', 'cartTotal', 'customer')
+    list_filter = ('cartID', 'user')
+    list_display = ('cartID', 'service', 'cartTotal', 'user')
 
 
 @admin.register(Payment)
@@ -107,10 +107,13 @@ class LocationModel(admin.ModelAdmin):
 class TicketModel(admin.ModelAdmin):
     list_filter = ('serviceID', 'serviceStatus')
     list_display = ('serviceID', 'serviceName', 'serviceDesc',
-                    'serviceStatus', 'serviceTime', 'serviceFrequency', 
+                    'serviceStatus', 'serviceTime', 'serviceFrequency',
                     'serviceStartDate', 'vendor', 'seat')
+
 
 @admin.register(Seat)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('seatID', 'economyQuantity', 'businessQuantity', 'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')
-    list_display = ('seatID', 'economyQuantity', 'businessQuantity', 'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')
+    list_filter = ('seatID', 'economyQuantity', 'businessQuantity',
+                   'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')
+    list_display = ('seatID', 'economyQuantity', 'businessQuantity',
+                    'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')

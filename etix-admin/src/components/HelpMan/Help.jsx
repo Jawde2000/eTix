@@ -15,6 +15,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import {Link} from 'react-router-dom';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
+import { deleteHelp, listHelp } from '../../actions/helpActions';
+import { useEffect } from 'react';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -34,29 +41,6 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 50,
     },
 }));
-
-function createData(SID, userName, title, message, date_time, status) {
-    return  {
-        SID,
-        userName,
-        title,
-        message,
-        date_time,
-        status,
-    };
-}
-
-const originalRows = [
-    createData(1, 'ali1', "Need Help on Payment", "Please Help", "12 December 2021","ACTIVE"),
-    createData(2, "ali2", "How to pay", "Please Help", "12 December 2021","CLOSED"),
-    createData(3, "najib1", "Can't checkout", "Please Help", "12 December 2021","ACTIVE"),
-    createData(4, "najib2", "Help!", "Please Help!", "12 December 2021","ACTIVE"),
-    createData(5, "najib2", "Help!", "Please Help!", "12 December 2021","ACTIVE"),
-    createData(6, "najib2", "Help!", "Please Help!", "12 December 2021","ACTIVE"),
-    createData(7, "najib2", "Help!", "Please Help!", "12 December 2021","ACTIVE"),
-    createData(8, "najib2", "Help!", "Please Help!", "12 December 2021","ACTIVE"),
-]
-
 
 function descendingComparator(a,b,orderBy){
     if (b[orderBy] < a[orderBy]) {
@@ -88,37 +72,49 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'SID',
+        id: 'helpdeskID',
         numeric: true,
         disablePadding: true,
         label: 'Help ID',
     },
     {
-        id: 'userName',
+        id: 'user',
         numeric: false,
         disablePadding: true,
-        label: 'User Name',
+        label: 'Sender',
     },
     {
-        id: 'title',
+        id: 'to_vendor',
+        numeric: false,
+        disablePadding: true,
+        label: 'To Vendor',
+    },
+    {
+        id: 'to_admin',
+        numeric: false,
+        disablePadding: true,
+        label: 'To Admin',
+    },
+    {
+        id: 'helpdeskTitle',
         numeric: false,
         disablePadding: true,
         label: 'Title',
     },
     {
-        id: 'message',
+        id: 'helpdeskMessage',
         numeric: false,
         disablePadding: true,
         label: 'Message Body',
     },
     {
-        id: 'date_time',
+        id: 'helpdeskDateTime',
         numeric: false,
         disablePadding: true,
         label: 'Date/Time',
     },
     {
-        id: 'status',
+        id: 'helpdeskStatus',
         numeric: false,
         disablePadding: true,
         label: 'Status',
@@ -189,7 +185,7 @@ const EnhancedTableToolbar = (props) => {
         doc.text("Services Data",20,10)
         doc.autoTable({
             columns: headCells.map(head=>({header:head.label, dataKey:head.id})),
-            body: originalRows,
+            body: props.originalRows,
         })
         doc.save("ServicesData.pdf")
     }
@@ -228,7 +224,7 @@ const EnhancedTableToolbar = (props) => {
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                 <IconButton>
-                    <DeleteIcon />
+                    <DeleteIcon onClick={()=>props.handleDelete(props.selected)}/>
                 </IconButton>
                 </Tooltip>
             ) : (
@@ -251,16 +247,49 @@ EnhancedTableToolbar.propTypes = {
 
 
 const Help = () =>{
+    const dispatch = useDispatch()
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+    let history = useHistory()
+    
+    
+    const helpList = useSelector(state => state.helpList)
+    const {loading, error, helps} = helpList
+
+    const helpDelete = useSelector(state => state.helpDelete)
+    const {success: successDelete} = helpDelete
+
+    useEffect(() => {
+        if(userInfo){
+            dispatch(listHelp())
+        }
+        else{
+            history.push('/')
+        }
+    }, [dispatch, successDelete])
+
+    const [rows, setRows] = useState([]);
+    const [originalRows, setOriginalRows] = useState([]);
+    useEffect(() => {
+        if(helps){
+            setOriginalRows(helps)
+            setRows(helps)
+        }
+    }, [helpList])
+
+
     const classes = useStyles();
-    const [rows, setRows] = useState(originalRows);
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('SID');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [searchedUserName, setSearchedUserName] = useState("");
+    // const [rows, setRows] = useState(originalRows);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('helpdeskID');
+    const [selected, setSelected] = useState([]);
+    const [page, setPage] = useState(0);
+    const [dense, setDense] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [searchedUserID, setSearchedUserID] = useState("");
     const [searchedStatus, setSearchedStatus] = useState("---");
+    const [searchedReceiver, setSearchedReceiver] = useState("---");
+
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -270,7 +299,7 @@ const Help = () =>{
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n)=> n.SID);
+            const newSelecteds = rows.map((n)=> n.helpdeskID);
             setSelected(newSelecteds);
             return;
         }
@@ -310,33 +339,72 @@ const Help = () =>{
         setDense(event.target.checked);
     };
     
-    const isSelected = (SID) => selected.indexOf(SID) !== -1;
+    const isSelected = (helpdeskID) => selected.indexOf(helpdeskID) !== -1;
     
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
 
-    const requestSearchUserName = (searchedVal) => {
+    const requestSearchUserID = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.userName.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.user.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
-        setSearchedUserName(searchedVal);
+        setSearchedUserID(searchedVal);
     };
     
-    const cancelSearchUserName = () => {
-        setSearchedUserName("");
-        requestSearchUserName(searchedUserName);
+    const cancelSearchUserID = () => {
+        setSearchedUserID("");
+        requestSearchUserID(searchedUserID);
     };
 
     const requestSearchStatus = (searchedVal) => {
         setSearchedStatus(searchedVal);
         const filteredRows = originalRows.filter((row) => {
             if(searchedVal == "---"){
-                searchedVal = "";
+                return row.helpdeskStatus
             }
-            return row.status.toLowerCase().includes(searchedVal.toLowerCase());
+            if(searchedVal === "Active"){
+                if(row.helpdeskStatus){
+                    return row.helpdeskStatus
+                }
+            }
+            else if(searchedVal === "Closed"){
+                if(!row.helpdeskStatus){
+                    return row.helpdeskStatus
+                }
+            }
         });
         setRows(filteredRows);
     };
+
+    const requestSearchReceiver = (searchedVal) => {
+        setSearchedReceiver(searchedVal);
+        const filteredRows = originalRows.filter((row) => {
+            if(searchedVal == "---"){
+                return row.to_vendor || row.to_admin
+            }
+            if(searchedVal === "toVendor"){
+                if(row.to_vendor){
+                    return row.to_vendor
+                }
+            }
+            else if(searchedVal === "toAdmin"){
+                if(row.to_admin){
+                    return row.to_admin
+                }
+            }
+        });
+        setRows(filteredRows);
+    };
+
+    const handleDelete = (ids) => {
+        ids.map((id) => {
+            dispatch(deleteHelp(id));
+        })
+
+        alert("Sucessfully Deleted");
+        setSelected([]);
+        history.push("/menu/helpdesk");
+    }
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
@@ -346,11 +414,11 @@ const Help = () =>{
                         <TextField
                             placeholder="Search User"
                             type="search"
-                            label="User Name"
+                            label="User ID"
                             style={{width: 300}} 
-                            value={searchedUserName} 
-                            onChange={(e) => requestSearchUserName(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchUserName()}
+                            value={searchedUserID} 
+                            onChange={(e) => requestSearchUserID(e.target.value)} 
+                            onCancelSearch={()=>cancelSearchUserID()}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -371,8 +439,19 @@ const Help = () =>{
                             <MenuItem value={"Active"}>Active</MenuItem>
                             <MenuItem value={"Close"}>Close</MenuItem>
                         </Select>
+                        <Select
+                            id="searchReceiver"
+                            value={searchedReceiver}
+                            label="To Receive"
+                            onChange={(e) => requestSearchReceiver(e.target.value)}
+                            style={{marginLeft: 10}}
+                        >
+                            <MenuItem value={"---"}>----</MenuItem>
+                            <MenuItem value={"toVendor"}>To Vendor</MenuItem>
+                            <MenuItem value={"toAdmin"}>To Admin</MenuItem>
+                        </Select>
                     </Container>
-                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows} handleDelete={handleDelete} selected={selected}/>
                     <TableContainer>
                         <Table
                             sx={{minWidth:750}}
@@ -391,17 +470,17 @@ const Help = () =>{
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                    const isItemSelected = isSelected(row.SID);
+                                    const isItemSelected = isSelected(row.helpdeskID);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.SID)}
+                                        onClick={(event) => handleClick(event, row.helpdeskID)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.SID}
+                                        key={row.helpdeskID}
                                         selected={isItemSelected}
                                         >
                                         <TableCell padding="checkbox">
@@ -420,17 +499,19 @@ const Help = () =>{
                                             padding="none"
                                             align="center"
                                         >
-                                            {row.SID}
+                                            {row.helpdeskID}
                                         </TableCell>
-                                        <TableCell align="center">{row.userName}</TableCell>
-                                        <TableCell align="center">{row.title}</TableCell>
-                                        <TableCell align="center">{row.message}</TableCell>
-                                        <TableCell align="center">{row.date_time}</TableCell>
-                                        <TableCell align="center">{row.status}</TableCell>
+                                        <TableCell align="center">{row.user}</TableCell>
+                                        <TableCell align="center">{row.to_vendor? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
+                                        <TableCell align="center">{row.to_admin? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
+                                        <TableCell align="center">{row.helpdeskTitle}</TableCell>
+                                        <TableCell align="center">{row.helpdeskMessage.substring(0, 20) + "..."}</TableCell>
+                                        <TableCell align="center">{row.helpdeskDateTime}</TableCell>
+                                        <TableCell align="center">{row.helpdeskStatus === "OP"? "Active" : "Closed"}</TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
                                                 <IconButton>
-                                                    <Link to={`/help/${row.SID}`}>
+                                                    <Link to={`/help/${row.helpdeskID}`}>
                                                         <EditIcon style={{cursor: 'pointer'}}/>
                                                     </Link>
                                                 </IconButton>

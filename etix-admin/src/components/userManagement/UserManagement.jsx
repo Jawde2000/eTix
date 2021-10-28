@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import moscow from '../globalAssets/moscow.jpg';
 import DownloadIcon from '@mui/icons-material/Download';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState , useEffect} from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputAdornment } from '@mui/material';
@@ -109,15 +110,6 @@ function EnhancedTableHead(props){
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          {/* <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectedAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          /> */}
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -206,14 +198,27 @@ const EnhancedTableToolbar = (props) => {
                 </IconButton>
                 </Tooltip>
             ) : (
-                <Tooltip title="Export to PDF file">
-                    <IconButton>
-                        <DownloadIcon
-                            onClick={() => downloadPDF()}
-                            style={{cursor: 'pointer'}}
-                        />
-                    </IconButton>
-                </Tooltip>
+                <>
+                    <Tooltip title="Export to PDF file">
+                        <IconButton>
+                            <DownloadIcon
+                                onClick={() => downloadPDF()}
+                                style={{cursor: 'pointer'}}
+                                sx={{ color: 'blue' }}
+                            />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Add New User">
+                        <Link to="/addUser">
+                            <IconButton>
+                                <AddCircleIcon
+                                    style={{cursor: 'pointer'}}
+                                    sx={{ color: 'red' }}
+                                />
+                            </IconButton>
+                        </Link>
+                    </Tooltip>
+                </>
             )}
         </Toolbar>
     );
@@ -255,10 +260,6 @@ const UserManagement = () =>{
             originalRow = users.map(item => Object.assign({}, item, {role: item.is_customer? "Customer" : (item.is_vendor? "Vendor" : "Admin")}));
             setOriginalRows(originalRow)
             setRows(originalRow)
-            console.log(originalRow)
-            console.log(originalRows)
-            console.log(rows)
-            console.log("hello")
         }
     }, [userList])
     
@@ -399,9 +400,8 @@ const UserManagement = () =>{
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
-            {console.log(rows)}
             <Box>
-                <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
+                <Paper sx={{width:'100%', mb: 2, minHeight: 500}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>
                         <TextField
                             placeholder="Search ID"

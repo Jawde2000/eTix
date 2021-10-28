@@ -16,6 +16,8 @@ import User from './components/User/UserDetail'
 import DataGenerationService from './components/DataGeneration/DataGenerationService';
 import {CookiesProvider} from 'react-cookie'
 import Help from './components/HelpMan/Help';
+import UserDetail from './components/User/UserDetail';
+import AddUser from './components/User/AddUser';
 
 
 
@@ -38,6 +40,9 @@ function App() {
                 <Route exact path="/menu/servicemanagement" component={ServiceMan} />
                 <Route exact path="/menu/users" component={UserManagement} />
                 <Route exact path="/menu/helpdesk" component={Help} /> 
+                <Route exact path="/user/:id" component={UserDetail}/>
+                <Route exact path="/addUser" component={AddUser} />
+                <Route exact path="/help/:id" component={Helpdesk} />
               </Switch>
             <Footer />    
           </BrowserRouter>
