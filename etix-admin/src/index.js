@@ -3,29 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {CookiesProvider} from 'react-cookie';
-import {Route, BrowserRouter, useHistory, Switch} from 'react-router-dom';
-import Login from './components/Login/Login';
-import Footer from './components/Footer/Footer';
-import Topbar from './components/NavBar/Topbar';
+import store from './store'
+import {Provider} from 'react-redux'
 
 
 ReactDOM.render(
-  
-  <React.StrictMode>
-    <CookiesProvider>
-     
-        <BrowserRouter>
-          <Topbar />
-            <Switch>
-              <Route exact path="/" component={Login} />
-              <Route exact path="/menu" component={App}  />
-            </Switch>
-            <Footer />
-            
-          </BrowserRouter>
-    </CookiesProvider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById('root')
 );
 

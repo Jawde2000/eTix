@@ -1,6 +1,6 @@
 import React from 'react'
 import {makeStyles} from '@mui/styles';
-import {Paper, Box,Container, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Toolbar, Checkbox, Tooltip, FormControlLabel, Switch, Typography} from '@mui/material';
+import {Paper, Box,Container, Table, TableBody, TableCell, TableContainer, TextField,TableHead, TablePagination, TableRow, TableSortLabel, Toolbar, Checkbox, Tooltip, FormControlLabel, Switch, Typography} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
@@ -8,6 +8,12 @@ import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import moscow from '../globalAssets/moscow.jpg';
 import DownloadIcon from '@mui/icons-material/Download';
+import SearchBar from "material-ui-search-bar";
+import { useState } from 'react';
+import SearchIcon from '@material-ui/icons/Search';
+import { InputAdornment } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import {Link} from 'react-router-dom'
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -40,10 +46,10 @@ function createData(sID, route, date_time, status, NetIncome_vendor, NetIncome_e
     };
 }
 
-const rows = [
+const originalRows = [
     createData(1, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 16:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(2, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 14:20", "CLOSED", 752000.00, 7520.00, 520.00),
-    createData(3, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 19:20", "ACTIVE", 752000.00, 7520.00, 520.00),
+    createData(2, "KlCC SENTRAL, KL - Pesta SENTRAL, Penang", "1/10/2021 14:20", "CLOSED", 752000.00, 7520.00, 520.00),
+    createData(3, "PESTA, PEN - TBS, KL", "1/10/2021 19:20", "ACTIVE", 752000.00, 7520.00, 520.00),
     createData(4, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 12:20", "ACTIVE", 752000.00, 7520.00, 520.00),
     createData(5, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 18:20", "ACTIVE", 752000.00, 7520.00, 520.00),
     createData(6, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 11:20", "ACTIVE", 752000.00, 7520.00, 520.00),
@@ -192,7 +198,7 @@ const EnhancedTableToolbar = (props) => {
         doc.text("Services Data",20,10)
         doc.autoTable({
             columns: headCells.map(head=>({header:head.label, dataKey:head.id})),
-            body: rows,
+            body: originalRows,
         })
         doc.save("ServicesData.pdf")
     }
@@ -255,12 +261,14 @@ EnhancedTableToolbar.propTypes = {
 
 const DataGenerationService = () =>{
     const classes = useStyles();
+    const [rows, setRows] = useState(originalRows);
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('sID');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [searchedRoute, setSearchedRoute] = useState("");
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -313,11 +321,43 @@ const DataGenerationService = () =>{
     const isSelected = (sID) => selected.indexOf(sID) !== -1;
     
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
+
+    const requestSearchRoute = (searchedVal) => {
+        const filteredRows = originalRows.filter((row) => {
+          return row.route.toLowerCase().includes(searchedVal.toLowerCase());
+        });
+        setRows(filteredRows);
+        setSearchedRoute(searchedVal)
+    };
+    
+    const cancelSearchRoute = () => {
+        setSearchedRoute("");
+        requestSearchRoute(searchedRoute);
+    };
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
             <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
+                    <Container style={{paddingTop: 20}}>
+                        <TextField
+                            placeholder="Search Route"
+                            type="search"
+                            label="Route"
+                            style={{width: 300}} 
+                            value={searchedRoute} 
+                            onChange={(e) => requestSearchRoute(e.target.value)} 
+                            onCancelSearch={()=>cancelSearchRoute()}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Container>
+
                     <EnhancedTableToolbar numSelected={selected.length} />
                     <TableContainer>
                         <Table
@@ -374,6 +414,13 @@ const DataGenerationService = () =>{
                                         <TableCell align="center">{row.NetIncome_vendor}</TableCell>
                                         <TableCell align="center">{row.NetIncome_eTix}</TableCell>
                                         <TableCell align="center">{row.Taxation}</TableCell>
+                                        <TableCell align="center">
+                                            <Tooltip title="Edit">
+                                                    <Link to={`/sale/${row.sID}`}>
+                                                        <EditIcon style={{cursor: 'pointer'}}/>
+                                                    </Link>
+                                            </Tooltip>
+                                        </TableCell>
                                         </TableRow>
                                     );
                                     })}

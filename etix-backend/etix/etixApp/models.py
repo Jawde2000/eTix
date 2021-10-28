@@ -4,12 +4,10 @@ import random
 
 
 def generate_user_id():
-
     while True:
         code = "U" + str(random.randint(1000000, 9999999))
         if User.objects.filter(userID=code).count() == 0:
             break
-
     return code
 
 
@@ -64,36 +62,6 @@ def generate_service_id():
     return code
 
 
-def generate_destination_id():
-
-    while True:
-        code = "E" + str(random.randint(100000, 999999)) + "D"
-        if Destination.objects.filter(destinationID=code).count() == 0:
-            break
-
-    return code
-
-
-def generate_seattype_id():
-
-    while True:
-        code = "E" + str(random.randint(10000, 99999)) + "ST"
-        if Destination.objects.filter(destinationID=code).count() == 0:
-            break
-
-    return code
-
-
-def generate_row_id():
-
-    while True:
-        code = "E" + str(random.randint(100000, 999999)) + "R"
-        if Row.objects.filter(rowID=code).count() == 0:
-            break
-
-    return code
-
-
 def generate_seat_id():
 
     while True:
@@ -143,7 +111,18 @@ def generate_payment_id():
 
     return code
 
+
+def generate_location_id():
+
+    while True:
+        code = "E" + str(random.randint(100, 999)) + "L"
+        if Location.objects.filter(locationID=code).count() == 0:
+            break
+
+    return code
+
 # Create your models here.
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **other_fields):
@@ -225,7 +204,7 @@ class Customer(models.Model):
     customerGender = models.CharField(max_length=1, choices=genderChoices)
     customerFirstName = models.CharField(max_length=100, blank=True)
     customerLastName = models.CharField(max_length=100, blank=True)
-    customerContact_Number = models.TextField(max_length=11, blank=True)
+    customerContact_Number = models.TextField(max_length=16, blank=True)
     customerAddress = models.TextField(max_length=200, blank=True)
     customerBirthday = models.DateField(auto_now=False, auto_now_add=False)
 
@@ -242,10 +221,11 @@ class Vendor(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     vendorID = models.TextField(
         default=generate_vendor_id, primary_key=True, unique=True, editable=False, max_length=8)
-    vendorContact_Number = models.TextField(max_length=11)
+    vendorContact_Number = models.TextField(max_length=16)
     vendorStatus = models.BooleanField(default=False)
     vendorName = models.CharField(max_length=100)
-    vendorBankAcc = models.CharField(max_length=15)
+    vendorBankName = models.CharField(max_length=100)
+    vendorBankAcc = models.CharField(max_length=16)
     vendorRegistrationNo = models.CharField(max_length=15)
 
     class Meta:
@@ -263,78 +243,70 @@ class Admin(models.Model):
         default=generate_admin_id, primary_key=True, unique=True, editable=False, max_length=8)
 
 
-class Destination(models.Model):
-    destinationID = models.TextField(
-        default=generate_destination_id, primary_key=True, unique=True, editable=False, max_length=8)
-    destinationTimeDeparture = models.TimeField(blank=True, null=True)
-    destinationOnwardDate = models.DateField()
-    destinationStartName = models.TextField(max_length=1000)
-    destinationEndName = models.TextField(max_length=1000)
-    destinationFrom = models.TextField(max_length=1000)
-    destinationTo = models.TextField(max_length=1000)
+class Seat(models.Model):
+    seatID = models.TextField(
+        default=generate_seat_id, primary_key=True, unique=True, editable=False, max_length=8)
+    # new set
+    firstQuantity = models.IntegerField(blank=True, null=True)
+    businessQuantity = models.IntegerField(blank=True, null=True)
+    economyQuantity = models.IntegerField(blank=True, null=True)
+    firstPrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    businessPrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    economyPrice = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+
+
+class Location(models.Model):
+    locationID = models.TextField(
+        default=generate_location_id, primary_key=True, unique=True, editable=False, max_length=5)
+    locationName = models.TextField(max_length=1000)
 
 
 class Services(models.Model):
     service_status = [
-        ("AC", "active"),
-        ("DC", "Disactive")
+        ("O", "Active"),
+        ("X", "Inactive")
+    ]
+    service_frequency = [
+        ("D", "Daily"),
+        ("W", "Weekly"),
+        ("M", "Monthly"),
+        ("O", "Once")
     ]
     serviceID = models.TextField(
         default=generate_service_id, primary_key=True, unique=True, editable=False, max_length=8)
-    destinationTimeDeparture = models.TimeField(blank=True, null=True)
     serviceName = models.TextField(max_length=1000)
     serviceDesc = models.TextField(max_length=10000)
-    serviceStatus = models.CharField(max_length=2, choices=service_status)
-    serviceRowCapacity = models.IntegerField(blank=True, null=True)
-    destination = models.ForeignKey(
-        Destination, on_delete=models.SET_NULL, null=True)
+    serviceStatus = models.CharField(max_length=1, choices=service_status)
+    serviceTime = models.TimeField(blank=True, null=True)
+    serviceFrequency = models.CharField(
+        max_length=7, choices=service_frequency)
+    serviceStartDate = models.DateField()
+    servicedepartureTerminal = models.TextField(max_length=1000)
+    servicearrivalTerminal = models.TextField(max_length=1000)
+    # FK
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
-
-
-class SeatType(models.Model):
-    seatTypeID = models.TextField(
-        default=generate_seattype_id, primary_key=True, unique=True, editable=False, max_length=8)
-    destinationTimeDeparture = models.TimeField(blank=True, null=True)
-    seatTypeName = models.TextField(max_length=1000)
-    seatTypePrice = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
-    seatTypeQuantity = models.IntegerField()
-    # FK
-    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
-
-
-class Row(models.Model):
-    rowID = models.TextField(
-        default=generate_row_id, primary_key=True, unique=True, editable=False, max_length=8)
-    capacity = models.IntegerField()
-    # FK
-    destination = models.ForeignKey(
-        Destination, on_delete=models.SET_NULL, null=True)
-
-
-class Seat(models.Model):
-    seatID = models.TextField(
-        default=generate_seat_id, primary_key=True, unique=True, editable=False, max_length=8)
-    # status changed to boolean because it looks more feasable
-    status = models.BooleanField()
-    # FK
-    seatType = models.ForeignKey(
-        SeatType, on_delete=models.SET_NULL, null=True)
-    row = models.ForeignKey(Row, on_delete=models.SET_NULL, null=True)
+    seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
+    locationTo = models.ForeignKey(
+        Location, related_name='%(class)s_location_to', on_delete=models.SET_NULL, null=True)
+    locationFrom = models.ForeignKey(
+        Location, related_name='%(class)s_location_from', on_delete=models.SET_NULL, null=True)
 
 
 class Ticket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     ticketID = models.TextField(
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
-    ticketName = models.TextField(max_length=100)
-    seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
+    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
 
 
 class HelpDesk(models.Model):
     help_desk_status = [
         ("OP", "Open"),
-        ("CL", "Close")
+        ("CL", "Close"),
+        ("RP", "Responded")
     ]
     helpdeskID = models.TextField(
         default=generate_helpdesk_id, primary_key=True, unique=True, editable=False, max_length=8)
@@ -345,8 +317,10 @@ class HelpDesk(models.Model):
         max_length=10000, null=True, blank=True
     )
     helpdeskDateTime = models.DateTimeField(auto_now_add=True)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True)
+    to_vendor = models.BooleanField(default=False)
+    to_admin = models.BooleanField(default=False)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
 
 
@@ -368,8 +342,8 @@ class Cart(models.Model):
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     cartTotal = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
-    customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True)
 
 
 class Payment(models.Model):

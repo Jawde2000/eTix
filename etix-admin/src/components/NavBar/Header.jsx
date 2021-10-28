@@ -1,10 +1,11 @@
 import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
-import { makeStyles, withStyles} from '@mui/styles';
+import { makeStyles} from '@mui/styles';
 import React from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import {useCookies} from 'react-cookie'
+// import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useHistory } from "react-router-dom";
+import {useDispatch, useSelector} from 'react-redux'
+import { logout } from '../../actions/userActions'
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -68,7 +69,6 @@ menu: {
 
 const Header = () => {
   const defaultStyle = useStyles();
-  const [token, setToken, removeToken] = useCookies(['mytoken'])
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -77,13 +77,17 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const dispatch = useDispatch()
 
   let history = useHistory();
 
   function handleLogOut() {
-    removeToken(['mytoken'])
+    dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
+
+  const userLogin = useSelector(state => state.userLogin)
+  const { userInfo} = userLogin
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -100,7 +104,7 @@ const Header = () => {
                 >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                    <Typography className={defaultStyle.customizeText}>
-                   Zhipeng
+                      {userInfo.username}
                    </Typography>
                 </Button>
                 <Menu

@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 function NavBar() {
   const defaultStyle = useStyles();
-  const [value, setValue] = useState("/");
+  const [value] = useState("/");
   var dateAndTime= moment().format("DD/MM/YYYY");
 
   return (
