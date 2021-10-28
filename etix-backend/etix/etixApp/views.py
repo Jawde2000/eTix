@@ -229,7 +229,6 @@ class CustomerViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
-
 @api_view(['GET'])
 def getVendorByUserID(reqeust, pk):
     vendor = Vendor.objects.get(created_by=pk)

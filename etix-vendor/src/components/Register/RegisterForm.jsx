@@ -1,6 +1,6 @@
 import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -11,6 +11,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MuiPhoneNumber from "material-ui-phone-number";
 import Autocomplete from '@mui/material/Autocomplete';
+import { register } from '../../actions/registerActions/registerActions'
+import {useDispatch, useSelector} from 'react-redux'
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -80,6 +83,17 @@ function RegisterForm() {
   const [phone, setPhone] = useState();
   const [bankBrand, setBank] = useState();
 
+  const userRegister = useSelector(state => state.userRegister)
+  const {error,  success} = userRegister
+  const dispatch = useDispatch()
+  let history = useHistory()
+
+  useEffect(() => {
+    if(success) {
+        history.push('/register/registersuccess')
+    }
+  }, [success])
+
   const [values, setValues] = useState({
     username: '',
     email: '',
@@ -115,9 +129,11 @@ function RegisterForm() {
       console.log(values.email);
       console.log(values.businessId);
       console.log(bankBrand);
+      console.log(values.bank);
       console.log(phone);
       console.log(values.password);
       console.log(values.confirmPassword);
+      dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username))
     }
     
   }
@@ -136,7 +152,7 @@ function RegisterForm() {
         </Grid>
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
-          label={'Username'} variant="filled" InputProps={{ disableUnderline: true }}
+          label={'Company'} variant="filled" InputProps={{ disableUnderline: true }}
           value={values.username} onChange={handleChange('username')} required
           ></TextField>
         </Grid>

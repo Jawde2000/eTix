@@ -72,7 +72,7 @@ function VendorMenu() {
           <Grid xs={12} direction="column" container justify="center" alignItems="center" alignContent="center">
             <Grid xs={12} sm={2} item>
               <Typography variant="h2" className={defaultStyle.welcome} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
-                Welcome Back, {userInfo? userInfo.userInfo.username : null}  
+                Welcome Back, {userInfo? userInfo.data.username : null}  
               </Typography>
             </Grid>
             <Grid xs={1} item direction="row" display="flex" spacing={20}>

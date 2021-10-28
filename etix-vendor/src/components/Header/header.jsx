@@ -119,7 +119,7 @@ function Header() {
                 >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                    <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','), whiteSpace: "nowrap"}}>
-                   {userInfo? userInfo.userInfo.username : null}  
+                   {userInfo? userInfo.data.username : null}  
                    </Typography>
                 </Button>
                 <Menu
