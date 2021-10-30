@@ -1,0 +1,2 @@
+export const USER_HELP_SUCCESS = 'USER_HELP_SUCCESS'
+export const USER_HELP_FAIL = 'USER_HELP_FAIL'
