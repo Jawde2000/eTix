@@ -40,7 +40,6 @@ export const login = (email, password) => async (dispatch) => {
         }
 
         // console.log(data.userID)
-        var data2 = data
 
         data = {
              ...data,
@@ -55,7 +54,7 @@ export const login = (email, password) => async (dispatch) => {
         // console.log(vendorInfo)
         console.log(data)
         
-        if(!data.is_vendor ){
+        if(!data.is_vendor || !data.vendorInfo.vendorStatus){
             dispatch({
                 type: USER_LOGIN_FAIL,
                 payload: "Invalid User"

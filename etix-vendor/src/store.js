@@ -9,7 +9,7 @@ const reducer = combineReducers({
     userLogin: userLoginReducer,
     userRegister: registerReducer,
     deleteHelplist: helpDeleteReducer,
-    helplist: helpListReducer,
+    helpList: helpListReducer,
     helpDetail: helpDetailReducer,
 })
 

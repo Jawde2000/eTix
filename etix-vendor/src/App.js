@@ -13,6 +13,7 @@ import VendorMenu from './components/VendorMenu/VendorMenu'
 import DataGeneration from './components/DataGeneration/DataGeneration'
 import Service from "./components/Service/Service";
 import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
+import Help from './components/HelpMan/Help';
 import Profile from "./components/Profile/Profile";
 import {CookiesProvider} from 'react-cookie'
 import ServicesManagement from './components/ServiceManagement/ServicesManagement';
@@ -67,6 +68,7 @@ function App() {
                 <Route exact path="/register/registersuccess" component={RegistrationSuccess}/>
                 <Route exact path="/forgotpassword" component={ForgotPassword}/>
                 <Route exact path="/menu/servicemanagement" component={ServicesManagement}/>
+                <Route exact path="/menu/helpdesk" component={Help}/>
               </Switch>
             <Footer />    
           </BrowserRouter>

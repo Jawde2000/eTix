@@ -14,7 +14,7 @@ import {
     HELP_DETAIL_FAIL,
     HELP_DETAIL_RESET,
 
-} from '../constants/helpConstants'
+} from '../../constants/helpConstants/helpConstants'
 
 //GET HELP LISTS
 export const listHelp = () => async (dispatch, getState) => {
@@ -35,7 +35,7 @@ export const listHelp = () => async (dispatch, getState) => {
         }
 
         const { data } = await axios.get(
-            'http://127.0.0.1:8000/api/helpdesk/',
+            'http://127.0.0.1:8000/api/user/vendorhelp/' + userInfo.userID + "/",
             config
         )
         
@@ -104,9 +104,6 @@ export const getHelp = (id) => async (dispatch, getState) => {
                 }
             }
         }
-
-        
-        
 
         dispatch({
             type: HELP_DETAIL_SUCCESS,
