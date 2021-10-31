@@ -69,6 +69,7 @@ function App() {
                 <Route exact path="/forgotpassword" component={ForgotPassword}/>
                 <Route exact path="/menu/servicemanagement" component={ServicesManagement}/>
                 <Route exact path="/menu/helpdesk" component={Help}/>
+                <Route exact path="/menu/helpdesk/:id" component={HelpdeskDetail}/>
               </Switch>
             <Footer />    
           </BrowserRouter>

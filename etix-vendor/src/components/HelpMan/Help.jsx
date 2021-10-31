@@ -511,7 +511,7 @@ const Help = () =>{
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
                                                 <IconButton>
-                                                    <Link to={`/help/${row.helpdeskID}`}>
+                                                    <Link to={`/menu/helpdesk/${row.helpdeskID}`}>
                                                         <EditIcon style={{cursor: 'pointer'}}/>
                                                     </Link>
                                                 </IconButton>
