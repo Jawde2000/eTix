@@ -313,7 +313,7 @@ class Ticket(models.Model):
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     ownBy = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     Token = models.TextField(
-        default=str(get_token), unique=True, editable=False, max_length=32)
+        default=get_token, unique=True, editable=False, max_length=32)
     
 class HelpDesk(models.Model):
     help_desk_status = [
