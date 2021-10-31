@@ -181,7 +181,7 @@ const HelpdeskDetail = ({props}) => {
                                             User: 
                                         </Grid>
                                         <Grid item xs={9} textAlign="left">
-                                            {senderD.username} 
+                                            {senderD? senderD.username : null} 
                                         </Grid>
                                     </Grid>
                                     {/* Message subject */}
