@@ -319,6 +319,7 @@ class HelpDesk(models.Model):
     helpdeskDateTime = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True)
+    receiver = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
     to_vendor = models.BooleanField(default=False)
     to_admin = models.BooleanField(default=False)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
@@ -353,6 +354,6 @@ class Payment(models.Model):
     ]
     paymentID = models.TextField(
         default=generate_payment_id, primary_key=True, unique=True, editable=False, max_length=8)
-    cart = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
     paymentStatus = models.CharField(max_length=2, choices=payment_status)
-    paymentDateTime = models.DateTimeField(auto_now_add=True)
+    paymentDateTime = models.DateField(auto_now_add=True)

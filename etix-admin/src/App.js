@@ -19,7 +19,21 @@ import Help from './components/HelpMan/Help';
 import UserDetail from './components/User/UserDetail';
 import AddUser from './components/User/AddUser';
 
-
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+const theme = createTheme({
+    palette: {
+        type: 'light',
+        primary: {
+          main: '#1c183f'
+        },
+        secondary: {
+          main: '#f5cb5c'
+        },
+    },
+    typography: {
+        fontFamily: 'Rubik'
+    }
+})
 
 function App() {
   const [token, setToken, removeToken] = useCookies(['mytoken'])
@@ -30,23 +44,26 @@ function App() {
   return (
     <div> 
       <div>
-        <CookiesProvider>
-          <BrowserRouter>
-            <Topbar />
-              <Switch>
-                <Route exact path="/" component={Login} />
-                <Route exact path="/menu" component={AdminMenu}  />
-                <Route exact path="/menu/sales" component={DataGenerationService} />
-                <Route exact path="/menu/servicemanagement" component={ServiceMan} />
-                <Route exact path="/menu/users" component={UserManagement} />
-                <Route exact path="/menu/helpdesk" component={Help} /> 
-                <Route exact path="/user/:id" component={UserDetail}/>
-                <Route exact path="/addUser" component={AddUser} />
-                <Route exact path="/help/:id" component={Helpdesk} />
-              </Switch>
-            <Footer />    
-          </BrowserRouter>
-      </CookiesProvider>
+      <ThemeProvider theme={theme}>
+          <CookiesProvider>
+            <BrowserRouter>
+              <Topbar />
+                <Switch>
+                  <Route exact path="/" component={Login} />
+                  <Route exact path="/menu" component={AdminMenu}  />
+                  <Route exact path="/sales/datageneration" component={DataGenerationService} />
+                  <Route exact path="/menu/sales" component={Sales} />
+                  <Route exact path="/menu/servicemanagement" component={ServiceMan} />
+                  <Route exact path="/menu/users" component={UserManagement} />
+                  <Route exact path="/menu/helpdesk" component={Help} /> 
+                  <Route exact path="/user/:id" component={UserDetail}/>
+                  <Route exact path="/addUser" component={AddUser} />
+                  <Route exact path="/help/:id" component={Helpdesk} />
+                </Switch>
+              <Footer />    
+            </BrowserRouter>
+        </CookiesProvider>
+      </ThemeProvider>
       </div>
     </div>
   );
