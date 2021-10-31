@@ -49,7 +49,7 @@ def getUserProfile(request):
 # only admin user can get the lists of users
 
 
-@api_view(['GET'])
+@api_view(['GET']) 
 @permission_classes([IsAdminUser])
 def getUsers(request):
     users = User.objects.all()
@@ -58,7 +58,7 @@ def getUsers(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def getUserById(request, pk):
     user = User.objects.get(userID=pk)
     serializer = UserSerializer(user, many=False)

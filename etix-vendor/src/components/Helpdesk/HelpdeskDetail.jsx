@@ -70,7 +70,6 @@ const HelpdeskDetail = ({props}) => {
     useEffect(() => {
         if(!helpD || helpD.helpdeskID !== id){
             dispatch(getHelp(id))
-            
         }else{
             setHelpdesk(helpD)
             if(helpD.helpdeskStatus ==="CL")
@@ -81,8 +80,6 @@ const HelpdeskDetail = ({props}) => {
                 }
             }
             setStatus(helpD.helpdeskStatus)
-
-            
         }
 
         if(!senderD && helpD){
@@ -181,10 +178,10 @@ const HelpdeskDetail = ({props}) => {
                                     {/* username */}
                                     <Grid item xs={12} container>
                                         <Grid item xs={3}>
-                                            User Name: 
+                                            User: 
                                         </Grid>
                                         <Grid item xs={9} textAlign="left">
-                                            {senderD.username}
+                                            {senderD.username} 
                                         </Grid>
                                     </Grid>
                                     {/* Message subject */}
