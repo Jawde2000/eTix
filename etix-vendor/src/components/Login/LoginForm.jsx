@@ -1,4 +1,4 @@
-import { Grid, Box, Container, IconButton, Link, Typography, Button} from '@mui/material';
+import { Grid, Box, Container, IconButton, Link, Typography, Button, Paper} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -163,22 +163,22 @@ function LoginForm() {
            color='success'
            variant="contained"
           //  href="/menu"
-           style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}
-           startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
+           style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
+           startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black", textShadow: '1px 1px 2px white'}}/>}
            >
-          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}} >
+          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black", textShadow: '1px 1px 2px white',}} >
             Login
           </Typography>
           </Button>
           </Grid>
           <Grid item xs={12} >
-            <Link className={defaultStyle.forgot} style={{textDecoration: "none",}} href="/forgotpassword">
+            <Link className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 20}} href="/forgotpassword">
               Forgot Password?
             </Link>
           </Grid>
           <Grid item xs={12}>
             <Box>
-            <Link className={defaultStyle.create} style={{textDecoration: "none",}} href="/register">
+            <Link className={defaultStyle.create} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 20}} href="/register">
               Create a new account?
             </Link>
             </Box>

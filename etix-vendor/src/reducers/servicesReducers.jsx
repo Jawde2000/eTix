@@ -2,9 +2,9 @@ import {
     USER_SERVICE_REQUEST,
     USER_SERVICE_SUCCESS,
     USER_SERVICE_FAIL
-} from '../../constants/serviceConstants/serviceConstants';
+} from '../constants/serviceConstants/serviceConstants';
 
-export const registerReducer = (state = { }, action) => {
+export const serviceReducer = (state = { }, action) => {
     switch(action.type){
         case USER_SERVICE_REQUEST:
             return {loading: true}

@@ -4,6 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { userLoginReducer, userDetailReducer} from './reducers/userReducers'
 import { registerReducer } from './reducers/registerReducers'
 import { helpListReducer, helpDeleteReducer, helpDetailReducer } from './reducers/helpReducers'
+import { serviceReducer } from './reducers/servicesReducers'
 
 const reducer = combineReducers({
     userLogin: userLoginReducer,
@@ -12,6 +13,7 @@ const reducer = combineReducers({
     helpList: helpListReducer,
     helpDetail: helpDetailReducer,
     userDetail : userDetailReducer,
+    serviceList: serviceReducer,
 })
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

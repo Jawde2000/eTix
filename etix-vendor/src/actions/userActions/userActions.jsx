@@ -22,7 +22,7 @@ export const login = (email, password) => async (dispatch) => {
                 'Content-type' : 'application/json',
             }
         }
-
+        
         console.log("pass data")
         console.log(email)
         console.log(password)

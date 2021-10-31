@@ -1,12 +1,14 @@
 import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper} from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import React, {useEffect} from 'react';
 import moscow from '../globalAssets/moscow.jpg'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
+import { servicelist } from '../../actions/serviceActions/serviceActions';
+import {useDispatch, useSelector} from 'react-redux'
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 
 const useStyles = makeStyles((theme) => ({
@@ -14,8 +16,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundImage: `url(${moscow})`,
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
-      backgroundColor: "rgba(255,255,255,0.5)",
-      backgroundBlendMode: "lighten",
       minHeight: 700
     },
 }));
@@ -32,21 +32,21 @@ function CustomToolbar() {
 }
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 200 },
+    { field: 'id', headerName: 'Service ID', width: 200 },
     {
-      field: 'username',
-      headerName: 'Username',
+      field: 'service',
+      headerName: 'Service',
       width: 250,
     },
     {
-      field: 'email',
-      headerName: 'Email',
+      field: 'departure',
+      headerName: 'Departure',
       width: 250,
       editable: true,
     },
     {
-      field: 'role',
-      headerName: 'Role',
+      field: 'time',
+      headerName: 'Service Time',
       width: 250,
       editable: true,
     },
@@ -60,16 +60,29 @@ const columns = [
 
 function ServicesManagement() {
     const defaultStyle = useStyles();
+    const userLogin = useSelector(state => state.userLogin)
+    const {error,  loading, userInfo} = userLogin
+    const dispatch = useDispatch()
+    // const serviceList = useSelector(state => state.serviceList)
+    // const {services} = serviceList
 
-    const rows = [
-        { id: "E993382A", username: "admin", email: "admin@gmail.com", role: "Admin", status: "active" },
-        { id: "E332169A", username: "admin2", email: "admin2@gmail.com", role: "Admin", status: "active" },
-        { id: "97451694", username: "Pengeema Technologies", email: "admin2@gmail.com", role: "Vendor", status: "active" },
-        { id: "15671716", username: "Chew", email: "zhipengchew@yahoo.com.sg", role: "Customer", status: "active" },
-        { id: "	64325963", username: "jamond", email: "jamondchew2000@gmail.com", role: "Customer", status: "active" },
-        { id: "	64325964", username: "koee", email: "koee@gmail.com", role: "Customer", status: "active" },
-        { id: "	64325965", username: "matt", email: "matt@gmail.com", role: "Customer", status: "active" },
-    ];
+    useEffect(() => {
+      if(userInfo) {
+        dispatch(servicelist(userInfo.vendorInfo.vendorID, userInfo.token, userInfo))
+      }
+    }, [userInfo])
+
+    const rows = userInfo.services?.map(service => {
+      var s = service.serviceStatus === "O"? "Active":"Inactive"
+
+      return {
+        id: service.serviceID,
+        service: service.serviceName,
+        departure: service.serviceEndDate,
+        time: service.serviceTime,
+        status: s
+      }
+    })
 
     return (
         
