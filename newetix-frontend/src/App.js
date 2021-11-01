@@ -11,7 +11,6 @@ import HomeOperators from './components/HomeServices/Operators';
 // Popular Attractions
 import Attractions from './components/Static/Attractions';
 // Debugging
-import Test from './components/Test';
 
 const theme = createTheme({
     palette: {
@@ -39,9 +38,6 @@ function Router() {
                 </Route>
                 <Route path="/attractions" exact>
                     <Attractions />
-                </Route>
-                <Route path="/testing" exact>
-                    <Test />
                 </Route>
             </Switch>
             <Footer />

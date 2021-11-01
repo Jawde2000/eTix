@@ -9,6 +9,8 @@ import { makeStyles } from '@mui/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import Locations from './../globalAssets/scripts/strings';
 import images from '../globalAssets/scripts/bgchange';
+import { useDispatch, useSelector } from 'react-redux';
+import { retrieveLookup, routeLookup, storeLookup } from '../../state/actions/actions';
 
 const homeStyles = makeStyles((theme) => ({
   whole: {
@@ -36,12 +38,17 @@ const homeStyles = makeStyles((theme) => ({
 
 function HomeQuery() {
   const classes = homeStyles();
+  const dispatch = useDispatch()
 
+  const [to, setTo] = React.useState(Location[0]);
+  const [from, setFrom] = React.useState(Location[0]);
   const [value, setValue] = React.useState([null, null]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log('You clicked submit.');
+    dispatch(storeLookup(from.label, to.label, value[0].toISOString().split('T')[0], value[1].toISOString().split('T')[0]))
+    dispatch(routeLookup(from.label, to.label))
+    dispatch(retrieveLookup())
   }
   
   return (
@@ -57,7 +64,11 @@ function HomeQuery() {
                     <Grid item>
                       <Autocomplete
                         disablePortal
-                        id="combo-box-demo"
+                        value={from}
+                        onChange={(event, newValue) => {
+                          setFrom(newValue);
+                        }}
+                        id="fromCombobox"
                         options={Locations}
                         sx={{ width: 300 }}
                         renderInput={(params) => <TextField {...params} label="From" />}
@@ -68,7 +79,11 @@ function HomeQuery() {
                           <Grid item>
                             <Autocomplete
                               disablePortal
-                              id="combo-box-demo"
+                              value={to}
+                              onChange={(event, newValue) => {
+                                setTo(newValue);
+                              }}
+                              id="toCombobox"
                               options={Locations}
                               sx={{ width: 300 }}
                               renderInput={(params) => <TextField {...params} label="To" />}
