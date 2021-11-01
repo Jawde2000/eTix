@@ -93,7 +93,6 @@ function LoginForm() {
     const handleLogin = (e) => {
       e.preventDefault()
       dispatch(login(email, password))
-      console.log(email,password)
     }  
 
     return (

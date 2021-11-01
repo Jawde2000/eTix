@@ -5,7 +5,6 @@ import LockIcon from '@mui/icons-material/Lock';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import images from '../globalAssets/scripts/bgchange';
-import Divider from '@mui/material/Divider';
 
 
 const useStyles = makeStyles((theme) => ({

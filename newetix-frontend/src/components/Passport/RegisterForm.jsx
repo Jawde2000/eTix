@@ -12,6 +12,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import Alert from '@mui/material/Alert'
+import { register } from '../../state/actions/actions'
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -60,16 +61,16 @@ function RegisterForm() {
     });
   
     const userLogin = useSelector(state => state.userLogin)
-    //const {error,  userInfo} = userLogin
+    const {error,  userInfo} = userLogin
     const dispatch = useDispatch()
   
     let history = useHistory()
   
-    //useEffect(() => {
-    //  if(userInfo) {
-    //      history.push('/')
-    //  }
-    //},[userInfo])
+    useEffect(() => {
+      if(userInfo) {
+          history.push('/')
+      }
+    },[userInfo])
   
     const handleChange = (prop) => (event) => {
       setValues({ ...values, [prop]: event.target.value });
@@ -100,8 +101,7 @@ function RegisterForm() {
     }
     const handleLogin = (e) => {
       e.preventDefault()
-      console.log(email,password, username, phonenumber)
-      //dispatch(login(email, password))
+      dispatch(register(email, password, username, phonenumber))
 
     }  
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {Route, BrowserRouter, Switch, useHistory} from 'react-router-dom';
-import {useCookies, CookiesProvider} from 'react-cookie'
+import {Route, BrowserRouter, Switch} from 'react-router-dom';
 
 import './App.css';
 import Header from './components/Header/Header';
@@ -56,9 +55,6 @@ function Router() {
 }
 
 function App() {
-    const [token, setToken, removeToken] = useCookies(['mytoken'])
-    let history = useHistory()
-
     return(
         <ThemeProvider theme={theme}>
             <Router />
