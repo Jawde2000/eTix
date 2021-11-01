@@ -45,37 +45,58 @@ export const retrieveLookup = () => async(dispatch) => {
     })
 }
 
-/*
-export function retrieveDepartureRoute(locationFrom, locationTo, departureDate, returnDate) {
-    return {
-        type: actions.RETRIEVE_DEPARTURE_ROUTE,
-        payload: {
-            locationFrom: locationFrom,
-            locationTo: locationTo,
-            departureDate: departureDate,
-            returnDate: returnDate
+export const login = (email, password) => async (dispatch) => {
+    try{
+        dispatch({
+            type: actions.USER_LOGIN_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json'
+            }
         }
+
+        const { data } = await axios.post(
+            'http://127.0.0.1:8000/api/users/login/',
+            {
+                "email": email,
+                "password": password
+            },
+            config
+        )
+
+        console.log(data)
+        
+        if(!data.is_customer){
+            dispatch({
+                type: actions.USER_LOGIN_FAIL,
+                payload: "Invalid User"
+            })
+        }
+        else{
+            dispatch({
+                type: actions.USER_LOGIN_SUCCESS,
+                payload: data
+            })
+            
+            //set user info in local storage
+            localStorage.setItem('userInfo', JSON.stringify(data))
+        }
+    }catch(error){
+        dispatch({
+            type: actions.USER_LOGIN_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
     }
 }
 
-export function retrieveArrivalRoute(locationFrom, locationTo, departureDate, returnDate) {
-    return {
-        type: actions.RETRIEVE_DEPARTURE_ROUTE,
-        payload: {
-            locationFrom: locationTo,
-            locationTo: locationFrom,
-            departureDate: departureDate,
-            returnDate: returnDate
-        }
-    }
+export const logout = () => (dispatch) => {
+    localStorage.removeItem('userInfo')
+    dispatch({type: actions.USER_LOGOUT})
+    dispatch({type: actions.USER_LIST_RESET})
+    dispatch({type: actions.USER_DETAIL_RESET})
+    dispatch({type: actions.HELP_LIST_RESET})
 }
-
-export function retrieveVendorDetails(vendorID) {
-    return {
-        type: actions.RETRIEVE_VENDOR_DETAILS,
-        payload: {
-            vendorID: vendorID
-        }
-    }
-}
-*/

@@ -1,6 +1,7 @@
 import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {Route, BrowserRouter, Switch} from 'react-router-dom';
+import {Route, BrowserRouter, Switch, useHistory} from 'react-router-dom';
+import {useCookies, CookiesProvider} from 'react-cookie'
 
 import './App.css';
 import Header from './components/Header/Header';
@@ -10,6 +11,9 @@ import HomeQuery from './components/HomeServices/HomeQuery';
 import HomeOperators from './components/HomeServices/Operators';
 // Popular Attractions
 import Attractions from './components/Static/Attractions';
+// Passport & Retrieval
+import Passport from './components/Passport/Passport';
+import PassportRetrieval from './components/Passport/Retrieval';
 // Debugging
 
 const theme = createTheme({
@@ -39,6 +43,12 @@ function Router() {
                 <Route path="/attractions" exact>
                     <Attractions />
                 </Route>
+                <Route path="/passport" exact>
+                    <Passport />
+                </Route>
+                <Route path="/passport/retrieval" exact>
+                    <PassportRetrieval />
+                </Route>
             </Switch>
             <Footer />
         </BrowserRouter>
@@ -46,6 +56,9 @@ function Router() {
 }
 
 function App() {
+    const [token, setToken, removeToken] = useCookies(['mytoken'])
+    let history = useHistory()
+
     return(
         <ThemeProvider theme={theme}>
             <Router />

@@ -1,9 +1,13 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { useHistory} from 'react-router-dom';
 import { AppBar, Grid, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
+
+import {useDispatch, useSelector} from 'react-redux'
+import { logout } from '../../../state/actions/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,6 +76,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Top() {
     const defaultStyle = useStyles();
+    const dispatch = useDispatch()
+
 
     const [anchorElN, setAnchorElN] = React.useState(null);
     const [anchorElA, setAnchorElA] = React.useState(null);
@@ -89,9 +95,20 @@ function Top() {
     const handleClickA = (event) => {
         setAnchorElA(event.currentTarget);
     };
+
+    const handleClickLogout = (event) => {
+        dispatch(logout())
+        setAnchorElA(null);
+    };
+
     const handleCloseA = () => {
       setAnchorElA(null);
     };
+
+    let history = useHistory()
+
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
 
     return (
     <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -117,13 +134,13 @@ function Top() {
                                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex" aria-expanded={openA ? 'true' : undefined} onClick={handleClickA}>
                                     <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
                                     <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}>
-                                        USER
+                                        {userInfo? userInfo.username : null} 
                                     </Typography>
                                 </Button>
                                 <Menu id="account" MenuListProps={{'aria-labelledby': 'account',}} anchorEl={anchorElA} open={openA} onClose={handleCloseA} TransitionComponent={Fade}>
                                     <MenuItem onClick={handleCloseA}>View Profile</MenuItem>
                                     <MenuItem onClick={handleCloseA}>Activities</MenuItem>
-                                    <MenuItem>Logout</MenuItem>
+                                    <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
                                 </Menu>
                             </div>
                         </Grid>

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { Grid, Typography, TextField, Box, Button, Autocomplete } from '@mui/material';
 import DateRangePicker from '@mui/lab/DateRangePicker';
@@ -9,8 +10,8 @@ import { makeStyles } from '@mui/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import Locations from './../globalAssets/scripts/strings';
 import images from '../globalAssets/scripts/bgchange';
-import { useDispatch, useSelector } from 'react-redux';
-import { retrieveLookup, routeLookup, storeLookup } from '../../state/actions/actions';
+import { useDispatch } from 'react-redux';
+import { storeLookup } from '../../state/actions/actions';
 
 const homeStyles = makeStyles((theme) => ({
   whole: {
@@ -40,15 +41,15 @@ function HomeQuery() {
   const classes = homeStyles();
   const dispatch = useDispatch()
 
-  const [to, setTo] = React.useState(Location[0]);
-  const [from, setFrom] = React.useState(Location[0]);
-  const [value, setValue] = React.useState([null, null]);
+  const [to, setTo] = useState(Location[0]);
+  const [from, setFrom] = useState(Location[0]);
+  const [value, setValue] = useState([null, null]);
+  var history = useHistory();
 
   function handleSubmit(e) {
     e.preventDefault();
     dispatch(storeLookup(from.label, to.label, value[0].toISOString().split('T')[0], value[1].toISOString().split('T')[0]))
-    dispatch(routeLookup(from.label, to.label))
-    dispatch(retrieveLookup())
+    history.push('/routes')
   }
   
   return (

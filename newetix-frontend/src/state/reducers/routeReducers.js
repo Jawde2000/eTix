@@ -19,7 +19,7 @@ export const routeDataManagementReducer = (state = {route: []}, action) => {
     switch (action.type) {
         case constants.STORING_LOOKUP_DATA:
             lookupData = action.payload
-            return lookupData
+            return action.payload
         case constants.RETRIEVING_LOOKUP_DATA:
             return lookupData
         default:
