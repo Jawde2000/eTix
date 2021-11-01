@@ -94,12 +94,16 @@ function ServicesManagement() {
 
     const rows = userInfo.services?.map(service => {
       var s = service.serviceStatus === "O"? "Active":"Inactive"
+      var timeString = service.serviceTime // input string
+      var arr = timeString.split(":"); // splitting the string by colon
+      var suffix = arr[0] >= 12 ? " PM":" AM"
+      var t = timeString + suffix
 
       return {
         id: service.serviceID,
         service: service.serviceName,
         departure: service.serviceEndDate,
-        time: service.serviceTime,
+        time: t,
         status: s
       }
     })
