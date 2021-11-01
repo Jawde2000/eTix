@@ -49,7 +49,7 @@ def getUserProfile(request):
 # only admin user can get the lists of users
 
 
-@api_view(['GET'])
+@api_view(['GET']) 
 @permission_classes([IsAdminUser])
 def getUsers(request):
     users = User.objects.all()
@@ -58,7 +58,7 @@ def getUsers(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def getUserById(request, pk):
     user = User.objects.get(userID=pk)
     serializer = UserSerializer(user, many=False)
@@ -113,7 +113,7 @@ def getRoutes(request):
 @api_view(['POST'])
 def getVendorName(request):
     data = request.data 
-
+    
     try:
         vendor = Vendor.objects.get(vendorID=data['vendorID'])
         serializer = VendorSerializer(vendor, many=False)
@@ -164,7 +164,6 @@ def updateUser(request, pk):
     serializer = UserSerializer(user, many=False)
 
     return Response(serializer.data)
-
 # update customer by userid
 
 
@@ -229,13 +228,31 @@ class CustomerViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
-
 @api_view(['GET'])
 def getVendorByUserID(reqeust, pk):
     vendor = Vendor.objects.get(created_by=pk)
     serializer = VendorSerializer(vendor, many=False)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getServiceByVendorID(request, pk):
+    try:
+        services = Services.objects.all().filter(vendor=pk)
+        serializer = ServicesSerializer(services, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'service not exist'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def getVendorHelpByID(request, pk):
+    try:
+        helps = HelpDesk.objects.all().filter(user=pk)
+        serializer = HelpDeskSerializer(helps, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'vendor helplist is empty'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()

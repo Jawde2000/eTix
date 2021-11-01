@@ -16,6 +16,8 @@ import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useHistory } from "react-router-dom";
 import '../Header/header.css';
+import {useDispatch, useSelector} from 'react-redux'
+import { logout } from '../../actions/userActions/userActions'
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -78,11 +80,6 @@ menu: {
   
 }));
 
-function logout() {
-  localStorage.clear();
-  window.location.href = '/';
-}
-
 function Header() {
   const defaultStyle = useStyles();
   
@@ -94,14 +91,18 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const dispatch = useDispatch()
 
   let history = useHistory();
 
   function handleLogOut() {
-    sessionStorage.setItem("userToken", '');
-    sessionStorage.clear();
+    dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
+
+  const userLogin = useSelector(state => state.userLogin)
+  const { userInfo} = userLogin
+
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -117,8 +118,8 @@ function Header() {
                 onClick={handleClick}
                 >
                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
-                   <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}>
-                   Zhipeng
+                   <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','), whiteSpace: "nowrap"}}>
+                   {userInfo? userInfo.username : null}  
                    </Typography>
                 </Button>
                 <Menu

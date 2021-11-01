@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import random
+from django.utils.crypto import get_random_string
 
 
 def generate_user_id():
@@ -120,6 +121,15 @@ def generate_location_id():
             break
 
     return code
+
+def get_token():
+
+    while True:
+        tk = get_random_string(length=32)
+        if Ticket.objects.filter(Token=tk).count() == 0:
+            break
+    
+    return str(tk)
 
 # Create your models here.
 
@@ -282,7 +292,8 @@ class Services(models.Model):
     serviceStatus = models.CharField(max_length=1, choices=service_status)
     serviceTime = models.TimeField(blank=True, null=True)
     serviceFrequency = models.CharField(
-        max_length=7, choices=service_frequency)
+        max_length=7, choices=service_frequency) 
+    serviceEndDate = models.DateField()
     serviceStartDate = models.DateField()
     servicedepartureTerminal = models.TextField(max_length=1000)
     servicearrivalTerminal = models.TextField(max_length=1000)
@@ -300,8 +311,10 @@ class Ticket(models.Model):
     ticketID = models.TextField(
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
-
-
+    ownBy = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    Token = models.TextField(
+        default=get_token, unique=True, editable=False, max_length=32)
+    
 class HelpDesk(models.Model):
     help_desk_status = [
         ("OP", "Open"),
