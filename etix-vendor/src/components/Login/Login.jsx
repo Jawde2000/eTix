@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button,} from '@mui/material';
+import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Paper} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, { useState } from 'react';
 import etixLogo from '../globalAssets/eTixLogo.png'
@@ -34,9 +34,11 @@ function Login() {
                           <Grid xs={6}>
                           </Grid>
                           <Grid xs={6}>
-                          <Typography style={{fontSize: 45, fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: "bold",color: 'white'}}>
+                          
+                          <Typography style={{fontSize: 45, fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: "bold",color: 'white', textShadow: '1px 1px 2px black'}}>
                               Once you have eTix, an ultimate journey is ready 
                           </Typography>
+                          
                           </Grid>
                       </Grid>
                   </Grid>
