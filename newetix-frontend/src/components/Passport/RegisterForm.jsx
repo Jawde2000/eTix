@@ -100,9 +100,8 @@ function RegisterForm() {
         setPhonenumber(event.target.value);
     }
     const handleLogin = (e) => {
-      e.preventDefault()
-      dispatch(register(email, password, username, phonenumber))
-
+        e.preventDefault()
+        dispatch(register(email, password, username, phonenumber))
     }  
 
     return (
