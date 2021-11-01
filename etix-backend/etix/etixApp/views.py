@@ -254,6 +254,16 @@ def getVendorHelpByID(request, pk):
         message = {'detail': 'vendor helplist is empty'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def getReceiverHelpByID(request, pk):
+    try:
+        helps = HelpDesk.objects.all().filter(receiver=pk)
+        serializer = HelpDeskSerializer(helps, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'receiver helplist is empty'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
