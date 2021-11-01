@@ -187,7 +187,7 @@ function Sales() {
                                 </Grid>
                                 <Grid item>
                                     <Link to="/sales/datageneration" style={{color: '#66FCF1', textDecoration: "none"}}>
-                                        <Typography variant="h6">View Payment Data</Typography>
+                                        <Typography variant="h6">View Data</Typography>
                                     </Link>
                                 </Grid>
                             </Grid>

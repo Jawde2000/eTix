@@ -442,7 +442,7 @@ const Help = () =>{
                         >
                             <MenuItem value={"---"}>----</MenuItem>
                             <MenuItem value={"Open"}>Open</MenuItem>
-                            <MenuItem value={"Close"}>Close</MenuItem>
+                            <MenuItem value={"Closed"}>Close</MenuItem>
                             <MenuItem value={"Responded"}>Responded</MenuItem>
                         </Select>
                         <Select
