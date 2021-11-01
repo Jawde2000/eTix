@@ -131,7 +131,7 @@ export const getUser = (id) => async (dispatch, getState) => {
         else if(data.is_customer){
             data = {
                 ...data,
-                vendorInfo: await axios.get(
+                customerInfo: await axios.get(
                     `http://127.0.0.1:8000/api/user/customer/${id}/`,
                     config2
                 )

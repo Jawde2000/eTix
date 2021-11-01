@@ -34,11 +34,21 @@ export const listHelp = () => async (dispatch, getState) => {
             }
         }
 
+        const config2 = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+
+        console.log(userInfo.vendorInfo.vendorID)
+
         const { data } = await axios.get(
-            'http://127.0.0.1:8000/api/user/vendorhelp/' + userInfo.userID + "/",
-            config
+            'http://127.0.0.1:8000/api/user/vendorreceiver/' + userInfo.vendorInfo.vendorID + '/',
+             config2
         )
-        
+
+        console.log(data)
+
         dispatch({
             type: HELP_LIST_SUCCESS,
             payload: data
