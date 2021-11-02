@@ -3,7 +3,7 @@ import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { userLoginReducer, userListReducer, userDeleteReducer, userDetailReducer, customerRegisterReducer, adminRegisterReducer, vendorRegisterReducer, userUpdateReducer, vendorUpdateReducer, customerUpdateReducer} from './reducers/userReducers'
 import { helpListReducer, helpDeleteReducer, helpDetailReducer, helpSaveReducer, helpSendReducer} from './reducers/helpReducers'
-import { serviceListReducer } from './reducers/serviceReducers'
+import { serviceListReducer, serviceDetailReducer, serviceDeleteReducer } from './reducers/serviceReducers'
 import { paymentListReducer, serviceListDataReducer } from './reducers/salesReducer'
 
 const reducer = combineReducers({
@@ -25,6 +25,10 @@ const reducer = combineReducers({
     serviceList: serviceListReducer,
     paymentList: paymentListReducer,
     servicesData: serviceListDataReducer,
+    serviceDetail: serviceDetailReducer,
+    serviceDelete: serviceDeleteReducer,
+    
+
 })
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

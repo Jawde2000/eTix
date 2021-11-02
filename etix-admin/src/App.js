@@ -54,6 +54,7 @@ function App() {
                   <Route exact path="/sales/datageneration" component={DataGenerationService} />
                   <Route exact path="/menu/sales" component={Sales} />
                   <Route exact path="/menu/servicemanagement" component={ServiceMan} />
+                  <Route exact path="/service/:id" component={Service} />
                   <Route exact path="/menu/users" component={UserManagement} />
                   <Route exact path="/menu/helpdesk" component={Help} /> 
                   <Route exact path="/user/:id" component={UserDetail}/>

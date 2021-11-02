@@ -14,7 +14,7 @@ import { InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import {Link} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-import { listService } from '../../actions/serviceActions';
+import { listService, deleteService } from '../../actions/serviceActions';
 import {useHistory} from 'react-router-dom'
 import CancelIcon from '@mui/icons-material/Cancel';
 //a npm package for generating PDF tables 
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         paddingTop: 3,
         paddingBottom: 3,
-        minHeight: 500,
+        minHeight: 700,
     },
     table: {
         marginTop: 50,
@@ -218,9 +218,9 @@ const EnhancedTableToolbar = (props) => {
             )}
 
             {numSelected > 0 ? (
-                <Tooltip title="Delete">
+                <Tooltip title="Delete Service">
                 <IconButton>
-                    <DeleteIcon />
+                    <DeleteIcon onClick={()=>props.handleDelete(props.selected)}/>
                 </IconButton>
                 </Tooltip>
             ) : (
@@ -252,6 +252,9 @@ const Services = () =>{
     const serviceList = useSelector(state => state.serviceList)
     const {services} = serviceList
 
+    const serviceDelete = useSelector(state => state.serviceDelete)
+    const {success: successDelete} = serviceDelete
+
     let history = useHistory()
 
     useEffect(() => {
@@ -261,7 +264,7 @@ const Services = () =>{
         else{
             history.push('/')
         }
-    }, [dispatch])
+    }, [dispatch, successDelete])
 
     const [rows, setRows] = useState([]);
 
@@ -376,9 +379,20 @@ const Services = () =>{
         setSearchedEnd("");
         requestSearchEnd(searchedEnd);
     };
+
+    const handleDelete = (ids) => {
+        ids.map((id) => {
+            dispatch(deleteService(id));
+        })
+
+        alert("Sucessfully Deleted");
+        setSelected([]);
+        history.push("/menu/servicemanagement");
+    }
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
+            <Container >
             <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>
@@ -434,7 +448,7 @@ const Services = () =>{
 
                         />
                     </Container>
-                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows}/>
+                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows} handleDelete={handleDelete}/>
                     <TableContainer>
                         <Table
                             sx={{minWidth:750}}
@@ -530,6 +544,7 @@ const Services = () =>{
                     />
                 </Paper>
             </Box>
+            </Container>
         </Container>
     );
 }

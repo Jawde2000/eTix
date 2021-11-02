@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         paddingTop: 3,
         paddingBottom: 3,
-        minHeight: 500,
+        minHeight: 700,
     },
     table: {
         marginTop: 50,
@@ -329,6 +329,7 @@ const DataGenerationService = () =>{
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
+            <Container>
             <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <Container style={{paddingTop: 20}}>
@@ -435,6 +436,7 @@ const DataGenerationService = () =>{
                     />
                 </Paper>
             </Box>
+        </Container>
         </Container>
     );
 }

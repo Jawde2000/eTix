@@ -16,11 +16,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Select from '@mui/material/Select';
 import { MenuItem } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import moscow from '../globalAssets/moscow.jpg';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundImage: `url(${moscow})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundBlendMode: "lighten",
         minHeight: 500,
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        padding: 20
     },
     box: {
         backgroundColor: "#CFDBD5",
@@ -174,7 +181,8 @@ const HelpdeskDetail = ({props}) => {
     }
 
     return (
-        <Container className={classes.root}>
+        <Container className={classes.root} maxWidth="Fixed">
+        <Container >
             {console.log(helpdesk)}
             {console.log(helpResponse)}
             {
@@ -428,6 +436,7 @@ const HelpdeskDetail = ({props}) => {
                 )
             }
             
+        </Container>
         </Container>
     )
 }
