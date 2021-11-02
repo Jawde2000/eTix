@@ -1,7 +1,5 @@
 import * as constants from '../actions/actionConstants'; 
 
-var lookupData = {}
-
 export const routeLookupReducer = (state = {route: []}, action) => {
     switch (action.type) {
         case constants.ROUTE_REQUEST:
@@ -17,11 +15,8 @@ export const routeLookupReducer = (state = {route: []}, action) => {
 
 export const routeDataManagementReducer = (state = {route: []}, action) => {
     switch (action.type) {
-        case constants.STORING_LOOKUP_DATA:
-            lookupData = action.payload
+        case constants.LOOKUP_DATA_MANAGEMENT:
             return action.payload
-        case constants.RETRIEVING_LOOKUP_DATA:
-            return lookupData
         default:
             return state
     }

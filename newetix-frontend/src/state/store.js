@@ -7,7 +7,6 @@ import { userLoginReducer } from './reducers/userReducers';
 const reducer = combineReducers({
     routeLookup: routeLookupReducer,
     storeLookup: routeDataManagementReducer,
-    retrieveLookup: routeDataManagementReducer,
     userLogin: userLoginReducer
 });
 

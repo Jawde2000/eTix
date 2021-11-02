@@ -106,7 +106,7 @@ function RegisterForm() {
 
     return (
         <Container>
-        {/*error && <Grid sx={{maxWidth: 290}} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>*/}
+        {error && <Grid sx={{maxWidth: 290}} container><Alert severity="error">User with this email already exist</Alert></Grid>}
         <Grid xs={12} container>
             <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
             label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}

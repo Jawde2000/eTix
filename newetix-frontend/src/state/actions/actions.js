@@ -26,22 +26,16 @@ export const routeLookup = (locationFrom, locationTo) => async(dispatch) => {
 }
 
 export const storeLookup = (locationFrom, locationTo, dateDeparture, dateReturn) => (dispatch) => {
-        const data = {
-            'locationFrom': locationFrom,
-            'locationTo': locationTo,
-            'dateDeparture': dateDeparture,
-            'dateReturn': dateReturn
-        }
+    const data = {
+        'locationFrom': locationFrom,
+        'locationTo': locationTo,
+        'dateDeparture': dateDeparture,
+        'dateReturn': dateReturn
+    }
 
-        dispatch({
-            type: actions.STORING_LOOKUP_DATA,
-            payload: data
-        })
-}
-
-export const retrieveLookup = () => (dispatch) => {
     dispatch({
-        type: actions.RETRIEVING_LOOKUP_DATA
+        type: actions.LOOKUP_DATA_MANAGEMENT,
+        payload: data
     })
 }
 

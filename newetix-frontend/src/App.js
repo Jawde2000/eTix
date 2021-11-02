@@ -13,7 +13,10 @@ import Attractions from './components/Static/Attractions';
 // Passport & Retrieval
 import Passport from './components/Passport/Passport';
 import PassportRetrieval from './components/Passport/Retrieval';
+// Routes
+import RouteQuery from './components/RouteQuery/RouteQuery';
 // Debugging
+
 
 const theme = createTheme({
     palette: {
@@ -47,6 +50,9 @@ function Router() {
                 </Route>
                 <Route path="/passport/retrieval" exact>
                     <PassportRetrieval />
+                </Route>
+                <Route path="/routes" exact>
+                    <RouteQuery />
                 </Route>
             </Switch>
             <Footer />
