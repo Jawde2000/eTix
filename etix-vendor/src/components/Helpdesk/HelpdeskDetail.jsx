@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 const HelpdeskDetail = ({props}) => {
     const classes = useStyles();
 
-    const {id} = useParams();
+    const {id} = useParams(); //get the id from url
 
     const dispatch = useDispatch();
     

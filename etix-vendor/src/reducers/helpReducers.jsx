@@ -13,6 +13,10 @@ import {
     HELP_DETAIL_FAIL,
     HELP_DETAIL_RESET,
 
+    HELP_USER_REQUEST,
+    HELP_USER_SUCCESS,
+    HELP_USER_FAIL,
+    HELP_USER_RESET
 } from '../constants/helpConstants/helpConstants'
 
 export const helpListReducer = (state = { helps: [] }, action) => {
@@ -62,6 +66,25 @@ export const helpDetailReducer = (state = { }, action) => {
            return {loading: false, error: action.payload}
 
         case HELP_DETAIL_RESET:
+           return {}
+
+        default:
+            return state
+    }
+}
+
+export const userHDetailReducer = (state = { }, action) => {
+    switch(action.type){
+        case HELP_USER_REQUEST:
+            return {loading: true}
+        
+        case HELP_USER_SUCCESS:
+           return {loading: false, userD: action.payload}
+        
+        case HELP_USER_FAIL:
+           return {loading: false, error: action.payload}
+
+        case HELP_USER_RESET:
            return {}
 
         default:

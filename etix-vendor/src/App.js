@@ -18,6 +18,7 @@ import Landing from './components/HelpCenter/Landing'
 import Profile from "./components/Profile/Profile";
 import {CookiesProvider} from 'react-cookie'
 import ServicesManagement from './components/ServiceManagement/ServicesManagement';
+import HelpManagement from './components/HelpMan/HelpManagement';
 
 function Router() {
 
@@ -72,6 +73,8 @@ function App() {
                 <Route exact path="/menu/helpdesk" component={Help}/>
                 <Route exact path="/menu/helpdesk/:id" component={HelpdeskDetail}/>
                 <Route exact path="/helpcentre" component={Landing}/>
+                <Route exact path="/menu/servicemanagement/:id" component={Service}/>
+                <Route exact path="/menu/helpmanage" component={HelpManagement}/>
               </Switch>
             <Footer />    
           </BrowserRouter>

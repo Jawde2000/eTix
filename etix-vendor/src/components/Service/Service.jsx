@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {makeStyles} from '@mui/styles';
-import { Container, Grid, Box, Tooltip} from '@mui/material';
+import { Container, Grid, Box, Tooltip, TextField} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -238,7 +238,8 @@ const Service = ({props}) => {
                                                     Start Terminus:
                                                 </Grid>
                                                 <Grid item xs={12} sm={9} className={classes.subtitle}>
-                                                    {service.startTerminus}
+                                                    <TextField variant="standard" sx={{ m: 1, width: '30ch'}}>
+                                                    </TextField>
                                                 </Grid>
                                             </Grid>
                                             <Grid item xs={12} container >

@@ -13,6 +13,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import PropTypes from 'prop-types';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -57,15 +59,30 @@ const columns = [
       field: 'time',
       headerName: 'Service Time',
       type: 'time',
-      width: 250,
+      width: 150,
       editable: true,
     },
     {
       field: 'status',
       headerName: 'Status',
-      width: 200,
-      editable: true,
+      width: 120,
+      editable: false,
+      renderCell: (params) => {
+        console.log(params);
+        return (
+          //style={{display:'flex';justifyContent:'center';alignItems:'center'}}
+          <Container >
+            {params.row.status === "Active"? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}
+          </Container>
+        );
+     },
     },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      editable: false,
+    }
   ];
 
 function ServicesManagement() {
@@ -97,7 +114,7 @@ function ServicesManagement() {
       var timeString = service.serviceTime // input string
       var arr = timeString.split(":"); // splitting the string by colon
       var suffix = arr[0] >= 12 ? " PM":" AM"
-      var t = timeString + suffix
+      var t = arr[0] + ":" + arr[1] + suffix
 
       return {
         id: service.serviceID,

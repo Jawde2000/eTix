@@ -115,7 +115,8 @@ export const getUser = (id) => async (dispatch, getState) => {
 
         const config2 = {
             headers:{
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
             }
         }
 
@@ -137,6 +138,8 @@ export const getUser = (id) => async (dispatch, getState) => {
                 )
             }
         }
+
+        console.log(data)
 
         dispatch({
             type: USER_DETAIL_SUCCESS,

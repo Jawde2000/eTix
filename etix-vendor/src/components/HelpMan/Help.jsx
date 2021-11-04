@@ -84,18 +84,6 @@ const headCells = [
         label: 'Sender',
     },
     {
-        id: 'to_vendor',
-        numeric: false,
-        disablePadding: true,
-        label: 'To Customer',
-    },
-    {
-        id: 'to_admin',
-        numeric: false,
-        disablePadding: true,
-        label: 'To Admin',
-    },
-    {
         id: 'helpdeskTitle',
         numeric: false,
         disablePadding: true,
@@ -502,12 +490,10 @@ const Help = () =>{
                                             {row.helpdeskID}
                                         </TableCell>
                                         <TableCell align="center">{row.user}</TableCell>
-                                        <TableCell align="center">{row.to_vendor? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
-                                        <TableCell align="center">{row.to_admin? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
                                         <TableCell align="center">{row.helpdeskTitle}</TableCell>
                                         <TableCell align="center">{row.helpdeskMessage.substring(0, 20) + "..."}</TableCell>
                                         <TableCell align="center">{row.helpdeskDateTime}</TableCell>
-                                        <TableCell align="center">{row.helpdeskStatus === "OP"? "Active" : "Closed"}</TableCell>
+                                        <TableCell align="center">{row.helpdeskStatus === "OP"? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
                                                 <IconButton>

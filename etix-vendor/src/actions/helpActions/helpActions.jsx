@@ -14,6 +14,11 @@ import {
     HELP_DETAIL_FAIL,
     HELP_DETAIL_RESET,
 
+    HELP_USER_REQUEST,
+    HELP_USER_SUCCESS,
+    HELP_USER_FAIL,
+    HELP_USER_RESET,
+
 } from '../../constants/helpConstants/helpConstants'
 
 //GET HELP LISTS
@@ -37,15 +42,43 @@ export const listHelp = () => async (dispatch, getState) => {
         const config2 = {
             headers: {
                 'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
             }
         }
 
         console.log(userInfo.vendorInfo.vendorID)
 
-        const { data } = await axios.get(
+        var { data } = await axios.get(
             'http://127.0.0.1:8000/api/user/vendorreceiver/' + userInfo.vendorInfo.vendorID + '/',
-             config2
+             config
         )
+
+        var userID = data?.map(help => {
+            return help.user
+        })
+
+        var username = []
+
+        for (let i of userID) {
+            let r = await axios.get(`http://127.0.0.1:8000/api/user/${i}/`, config2)
+            username.push(r.data.username)
+        }
+
+        var j = 0
+
+        for (let i of data) {
+            i.username = username[j]
+            j = j + 1
+        }
+
+        const Infotemp = userInfo
+
+        const user = {
+            ...Infotemp,
+            sender: data
+        }
+
+        console.log(user)
 
         console.log(data)
 
@@ -54,6 +87,7 @@ export const listHelp = () => async (dispatch, getState) => {
             payload: data
         })
 
+        localStorage.setItem('userInfo', JSON.stringify(user))
     }catch(error){
         dispatch({
             type: HELP_LIST_FAIL,
@@ -124,6 +158,86 @@ export const getHelp = (id) => async (dispatch, getState) => {
     }catch(error){
         dispatch({
             type: HELP_DETAIL_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const getHelpUser = (helps) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type:HELP_USER_REQUEST
+        })
+
+        console.log(helps)
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        // console.log(id)
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const config2 = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        var userID = helps?.map(help => {
+            return help.user
+        })
+
+        console.log(userID[0])
+
+        // var data = await axios.get(
+        //    `http://127.0.0.1:8000/api/user/${userID[0]}/`, config
+        // )
+
+        // console.log(data)
+
+        // var data = await userID?.map(idd => {     
+        //     return {Info: axios.get(`http://127.0.0.1:8000/api/user/${idd}/`, config2)}
+        // })
+
+        var username = []
+
+        for (let i of userID) {
+            let r = await axios.get(`http://127.0.0.1:8000/api/user/${i}/`, config2)
+            username.push(r.data.username)
+        }
+
+        console.log(username)
+
+        // const data = {
+        //     ...data,
+        //     Info: helps?.map(help => {
+        //     return axios.get(
+        //         `http://127.0.0.1:8000/api/user/${help.user}/`,
+        //         config
+        //     )
+        // })}
+        
+        // console.log(data)
+
+        dispatch({
+            type: HELP_USER_SUCCESS,
+            payload: username
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: HELP_USER_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
