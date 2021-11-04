@@ -285,7 +285,7 @@ function HelpManagement() {
                           </Tooltip> 
                           </Grid>
                           <Grid xs={6} item md={1}>
-                          <Tooltip title="Add Message">  
+                          <Tooltip title="Message">  
                           <IconButton> 
                           <AddCommentIcon style={{fontSize: 40}}/>
                           </IconButton>
