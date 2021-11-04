@@ -29,13 +29,13 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
         minHeight: 750,
+        padding: 20,
     },
     box: {
         backgroundColor: "#CFDBD5",
         marginTop: 20,
         marginBottom: 40,
         borderRadius: 5,
-        minHeight: 450,
         margin: 'auto',
         fontFamily: ['rubik', 'sans-serif'].join(','),
         padding: 20
@@ -299,6 +299,7 @@ const AddUser = ({props}) => {
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
+            <Container>
             <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
                 <Grid item xs={12} className={classes.action} container>
                     <Grid item xs={4}>
@@ -667,6 +668,7 @@ const AddUser = ({props}) => {
                     </Grid>
                 </Grid>
             </Box>
+            </Container>
         </Container>
     )
 }

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@material-ui/styles';
-import { Grid, Box, Typography, TextField} from '@material-ui/core';
+import { Grid, Box, Typography, TextField, Container} from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import DateRangePicker from '@mui/lab/DateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
         fontFamily: ['rubik', 'sans-serif'].join(','),
-        minHeight: 500,
+        minHeight: 600,
+        padding: 50,
+        margin: 'auto'
     },
     icons: {
         width: '120px',
@@ -117,6 +119,7 @@ function Sales() {
 
     return (
         <Box className={classes.whole}>
+            <Container style={{margin:"auto"}}>
             <Grid container direction="column" justifyContent="center" alignItems="center" spacing={4}>
                 <Grid item>
                     <Typography variant="p">Configure billing cycle</Typography>
@@ -187,7 +190,7 @@ function Sales() {
                                 </Grid>
                                 <Grid item>
                                     <Link to="/sales/datageneration" style={{color: '#66FCF1', textDecoration: "none"}}>
-                                        <Typography variant="h6">View Payment Data</Typography>
+                                        <Typography variant="h6">View Data</Typography>
                                     </Link>
                                 </Grid>
                             </Grid>
@@ -197,6 +200,7 @@ function Sales() {
                 <Grid item></Grid>
                 <Grid item></Grid>
             </Grid>
+            </Container>
         </Box>
     );
 }

@@ -19,14 +19,20 @@ import FormLabel from '@mui/material/FormLabel';
 
 import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
 import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../actions/userActions';
-
+import moscow from '../globalAssets/moscow.jpg';
 
 //koee
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundImage: `url(${moscow})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundBlendMode: "lighten",
         minHeight: 500,
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        padding: 20
     },
     box: {
         backgroundColor: "#CFDBD5",
@@ -316,6 +322,7 @@ const UserDetail = ({props}) => {
 
     return (
         <Container className={classes.root} maxWidth="Fixed">
+        <Container >
             {!user? 
                 <Box sx={{ display: 'flex' }}>
                     <CircularProgress />
@@ -854,6 +861,7 @@ const UserDetail = ({props}) => {
                     </Box>
                 </>
             }
+        </Container>
         </Container>
             
     )

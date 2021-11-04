@@ -6,9 +6,9 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import { Link, useParams } from 'react-router-dom';
-import { getHelp, saveHelp, sendResponse } from '../../actions/helpActions';
+import { deleteHelp, getHelp, saveHelp, sendResponse } from '../../actions/helpActions';
 import { getUser } from '../../actions/userActions';
-import { HELP_DETAIL_RESET, HELP_SAVE_RESET , HELP_SEND_RESPONSE_RESET} from '../../constants/helpConstants';
+import { HELP_DELETE_RESET, HELP_DETAIL_RESET, HELP_SAVE_RESET , HELP_SEND_RESPONSE_RESET} from '../../constants/helpConstants';
 import { USER_DETAIL_RESET } from '../../constants/userConstants';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -16,11 +16,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Select from '@mui/material/Select';
 import { MenuItem } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import moscow from '../globalAssets/moscow.jpg';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundImage: `url(${moscow})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundBlendMode: "lighten",
         minHeight: 500,
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        padding: 20
     },
     box: {
         backgroundColor: "#CFDBD5",
@@ -63,6 +70,9 @@ const HelpdeskDetail = ({props}) => {
 
     const helpSend = useSelector(state => state.helpSend)
     const {success: sendSuccess} = helpSend
+
+    const helpDelete = useSelector(state => state.helpDelete)
+    const {success: deleteSuccess, error: deleteError} = helpDelete
 
     const [helpdesk, setHelpdesk] = useState()
     const [helpResponse, setHelpResponse] = useState()
@@ -138,6 +148,19 @@ const HelpdeskDetail = ({props}) => {
         
     }, [saveSuccess])
 
+    const handleDelete = () => {
+        dispatch(deleteHelp(id));
+    }
+
+    useEffect(() => {
+        if(deleteSuccess){
+            alert("Successfully deleted Help");
+            dispatch({type: HELP_DELETE_RESET})
+            dispatch({type: HELP_DETAIL_RESET});
+            history.push('/menu/helpdesk');
+        }
+    }, [helpDelete])
+
     const handleChangeStatus = (e) => {
        if(e === "Closed"){
             setStatus("CL");
@@ -174,7 +197,8 @@ const HelpdeskDetail = ({props}) => {
     }
 
     return (
-        <Container className={classes.root}>
+        <Container className={classes.root} maxWidth="Fixed">
+        <Container >
             {console.log(helpdesk)}
             {console.log(helpResponse)}
             {
@@ -208,7 +232,7 @@ const HelpdeskDetail = ({props}) => {
                                 <Tooltip title="Delete Help Message">
                                     {/* Set onclick delete here, *create a delete function* */}
                                     <IconButton>
-                                        <DeleteIcon className={classes.functionicon} fontSize="large" />
+                                        <DeleteIcon className={classes.functionicon} fontSize="large" onClick={handleDelete}/>
                                     </IconButton>
                                 </Tooltip>
                             </Grid>
@@ -428,6 +452,7 @@ const HelpdeskDetail = ({props}) => {
                 )
             }
             
+        </Container>
         </Container>
     )
 }
