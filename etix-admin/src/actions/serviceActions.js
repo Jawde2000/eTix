@@ -16,6 +16,23 @@ import {
     SERVICE_DELETE_FAIL,
     SERVICE_DELETE_RESET,
 
+    SERVICE_SAVE_REQUEST, 
+    SERVICE_SAVE_SUCCESS,
+    SERVICE_SAVE_FAIL,
+
+    LOCATION_DETAIL_REQUEST, 
+    LOCATION_DETAIL_SUCCESS,
+    LOCATION_DETAIL_FAIL,
+
+    VENDOR_DETAIL_REQUEST, 
+    VENDOR_DETAIL_SUCCESS,
+    VENDOR_DETAIL_FAIL,
+
+    SERVICE_ADD_REQUEST, 
+    SERVICE_ADD_SUCCESS,
+    SERVICE_ADD_FAIL,
+    
+
 } from '../constants/serviceConstants'
 
 //GET Service Lists
@@ -161,6 +178,78 @@ export const getServiceDetail = (id) => async (dispatch, getState) => {
     }
 }
 
+//save help
+export const saveService = (id, seatID, locationfID, locationEID,service, seat, locationF, locationE) => async (dispatch, getState) => {
+    try{
+        
+        dispatch({
+            type:SERVICE_SAVE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        console.log(service)
+        const { data } = await axios.put(
+            `http://127.0.0.1:8000/api/service/${id}/`,
+            service,
+            config
+        )
+        
+        if(seat){
+            const updateSeat = await axios.put(
+                `http://127.0.0.1:8000/api/seat/${seatID}/`,
+                seat,
+                config
+            )
+        }
+
+        if(locationF){
+            const updateLocationF = await axios.put(
+                `http://127.0.0.1:8000/api/location/${locationfID}/`,
+                {
+                    locationName: locationF,
+                },
+                config
+            )
+        }
+
+        if(locationE){
+            if(locationE){
+                const updateLocationE = await axios.put(
+                    `http://127.0.0.1:8000/api/location/${locationEID}/`,
+                    {
+                        locationName: locationE
+                    },
+                    config
+                )
+            }
+        }
+        
+        
+        dispatch({
+            type: SERVICE_SAVE_SUCCESS,
+            payload: data
+        })
+
+    }catch(error){
+        dispatch({
+            type: SERVICE_SAVE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
 //delete service
 export const deleteService = (id) => async (dispatch, getState) => {
     try{
@@ -194,6 +283,155 @@ export const deleteService = (id) => async (dispatch, getState) => {
     }catch(error){
         dispatch({
             type: SERVICE_DELETE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//GET Location List
+export const getLocationDetail = () => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type: LOCATION_DETAIL_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `http://127.0.0.1:8000/api/location/`,
+            config
+        )
+        
+        dispatch({
+            type: LOCATION_DETAIL_SUCCESS,
+            payload: data
+        })
+
+    }catch(error){
+        dispatch({
+            type: LOCATION_DETAIL_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//get vendor list for selection
+export const getVendorDetail = () => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type: VENDOR_DETAIL_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        var { data } = await axios.get(
+            `http://127.0.0.1:8000/api/users/`,
+            config
+        )
+
+        data = data.filter((item) => {
+            return item.is_vendor === true && item.is_active === true
+        })
+
+
+        var vendorIDs = []
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/user/vendor/${i.userID}/`, config)
+            vendorIDs.push(rst.data.vendorID)
+        }
+
+        data = data.map((item, index) => ({
+            ...item,
+            vendorID: vendorIDs[index]
+        }))
+
+        console.log(data)
+        
+        dispatch({
+            type: VENDOR_DETAIL_SUCCESS,
+            payload: data
+        })
+
+    }catch(error){
+        dispatch({
+            type: VENDOR_DETAIL_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//new service
+export const addNewService = (seat, service) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type: SERVICE_ADD_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        console.log(seat)
+
+        var { data } = await axios.post(
+            `http://127.0.0.1:8000/api/seat/`,
+            seat,
+            config
+        )
+
+        console.log(data)
+        console.log(service)
+
+        data = await axios.post(
+            `http://127.0.0.1:8000/api/service/`,
+            {
+                ...service,
+                seat: data.seatID
+            },
+            config
+        )
+        
+
+        dispatch({
+            type: SERVICE_ADD_SUCCESS,
+            payload: data
+        })
+
+    }catch(error){
+        dispatch({
+            type: SERVICE_ADD_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

@@ -21,6 +21,9 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import CheckCircle from '@mui/icons-material/CheckCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { CircularProgress } from '@material-ui/core';
+import { SERVICE_DELETE_RESET } from '../../constants/serviceConstants';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -224,14 +227,27 @@ const EnhancedTableToolbar = (props) => {
                 </IconButton>
                 </Tooltip>
             ) : (
+                <>
                 <Tooltip title="Export to PDF file">
                     <IconButton>
                         <DownloadIcon
                             onClick={() => downloadPDF()}
                             style={{cursor: 'pointer'}}
+                            sx={{ color: 'blue' }}
                         />
                     </IconButton>
                 </Tooltip>
+                <Tooltip title="Add New Service">
+                    <Link to="/newService">
+                        <IconButton>
+                            <AddCircleIcon
+                                style={{cursor: 'pointer'}}
+                                sx={{ color: 'Green' }}
+                           />
+                        </IconButton>
+                    </Link>
+                </Tooltip>
+                </>
             )}
         </Toolbar>
     );
@@ -250,7 +266,7 @@ const Services = () =>{
     const {userInfo} = userLogin
 
     const serviceList = useSelector(state => state.serviceList)
-    const {services} = serviceList
+    const {services, loading} = serviceList
 
     const serviceDelete = useSelector(state => state.serviceDelete)
     const {success: successDelete} = serviceDelete
@@ -387,163 +403,174 @@ const Services = () =>{
 
         alert("Sucessfully Deleted");
         setSelected([]);
+        dispatch({type: SERVICE_DELETE_RESET})
         history.push("/menu/servicemanagement");
     }
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
             <Container >
-            <Box>
-                <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
-                    <Container style={{paddingTop: 30}}>
-                        <TextField
-                            placeholder="Search Vendor Name"
-                            type="search"
-                            label="vendor Name"
-                            style={{width: 300}} 
-                            value={searched} 
-                            onChange={(e) => requestSearchVendor(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchVendor()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                       <SearchIcon />
-                                    </InputAdornment>
-                                     ),
-                                  }}
-
-                        />
-                        <TextField
-                            placeholder="Search Start"
-                            type="search"
-                            label="Start Terminal"
-                            style={{paddingLeft: 10, width: 250}} 
-                            value={searchedStart} 
-                            onChange={(e) => requestSearchStart(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchStart()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                       <SearchIcon />
-                                    </InputAdornment>
-                                     ),
-                                  }}
-
-                        />
-                        <TextField
-                            placeholder="Search End"
-                            type="search"
-                            label="End Terminal"
-                            style={{paddingLeft: 10, width: 250}} 
-                            value={searchedEnd} 
-                            onChange={(e) => requestSearchEnd(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchEnd()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                       <SearchIcon />
-                                    </InputAdornment>
-                                     ),
-                                  }}
-
-                        />
-                    </Container>
-                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows} handleDelete={handleDelete}/>
-                    <TableContainer>
-                        <Table
-                            sx={{minWidth:750}}
-                            aria-labelledby="tableTitle"
-                            size={dense?'small':'medium'}
-                        >
-                            <EnhancedTableHead 
-                                numSelected={selected.length}
-                                order={order}
-                                orderBy={orderBy}
-                                onSelectedAllClick={handleSelectAllClick}
-                                onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
-                            />
-                            <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row, index) => {
-                                    const isItemSelected = isSelected(row.serviceID);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                                    return (
-                                        <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, row.serviceID)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={row.serviceID}
-                                        selected={isItemSelected}
-                                        >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                            color="primary"
-                                            checked={isItemSelected}
-                                            inputProps={{
-                                                'aria-labelledby': labelId,
-                                            }}
-                                            />
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            padding="none"
-                                            align="center"
-                                        >
-                                            {row.serviceID}
-                                        </TableCell>
-                                        <TableCell align="center">{row.vendorDetail}</TableCell>
-                                        <TableCell align="center">{row.servicedepartureTerminal}</TableCell>
-                                        <TableCell align="center">{row.servicearrivalTerminal}</TableCell>
-                                        <TableCell align="center">{row.route}</TableCell>
-                                        <TableCell align="center">{row.serviceStartDate}</TableCell>
-                                        <TableCell align="center">{row.serviceTime}</TableCell>
-                                        <TableCell align="center">{row.serviceStatus === 'O'? (<CheckCircle style={{color:'green'}}/>) : (<CancelIcon style={{color:'red'}} /> )}</TableCell>
-                                        <TableCell align="center">
-                                            <Tooltip title="Edit">
-                                                <IconButton>
-                                                    <Link to={`/service/${row.serviceID}`}>
-                                                        <EditIcon style={{cursor: 'pointer'}}/>
-                                                    </Link>
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableCell>
-                                        </TableRow>
-                                    );
-                                    })}
-                                {emptyRows > 0 && (
-                                    <TableRow
-                                        style={{
-                                            height: (dense ? 33 : 53) * emptyRows,
+            {loading?
+                (
+                    <Box sx={{ display: 'flex' }}>
+                        <CircularProgress />
+                    </Box>
+                )
+                :
+                (
+                    <Box>
+                        <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
+                            <Container style={{paddingTop: 30}}>
+                                <TextField
+                                    placeholder="Search Vendor Name"
+                                    type="search"
+                                    label="vendor Name"
+                                    style={{width: 300}} 
+                                    value={searched} 
+                                    onChange={(e) => requestSearchVendor(e.target.value)} 
+                                    onCancelSearch={()=>cancelSearchVendor()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <SearchIcon />
+                                            </InputAdornment>
+                                            ),
                                         }}
-                                        >
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination 
-                        rowsPerPageOptions = {[5,10,25]}
-                        component = "div"
-                        count = {rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange = {handleChangePage}
-                        onRowsPerPageChange = {handleChangeRowsPerPage}
-                    />
-                    <FormControlLabel
-                        control={<Switch checked={dense} onChange={handleChangeDense} />}
-                        label="Dense padding"
-                    />
-                </Paper>
-            </Box>
+
+                                />
+                                <TextField
+                                    placeholder="Search Start"
+                                    type="search"
+                                    label="Start Terminal"
+                                    style={{paddingLeft: 10, width: 250}} 
+                                    value={searchedStart} 
+                                    onChange={(e) => requestSearchStart(e.target.value)} 
+                                    onCancelSearch={()=>cancelSearchStart()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <SearchIcon />
+                                            </InputAdornment>
+                                            ),
+                                        }}
+
+                                />
+                                <TextField
+                                    placeholder="Search End"
+                                    type="search"
+                                    label="End Terminal"
+                                    style={{paddingLeft: 10, width: 250}} 
+                                    value={searchedEnd} 
+                                    onChange={(e) => requestSearchEnd(e.target.value)} 
+                                    onCancelSearch={()=>cancelSearchEnd()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <SearchIcon />
+                                            </InputAdornment>
+                                            ),
+                                        }}
+
+                                />
+                            </Container>
+                            <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows} handleDelete={handleDelete} selected={selected}/>
+                            <TableContainer>
+                                <Table
+                                    sx={{minWidth:750}}
+                                    aria-labelledby="tableTitle"
+                                    size={dense?'small':'medium'}
+                                >
+                                    <EnhancedTableHead 
+                                        numSelected={selected.length}
+                                        order={order}
+                                        orderBy={orderBy}
+                                        onSelectedAllClick={handleSelectAllClick}
+                                        onRequestSort={handleRequestSort}
+                                        rowCount={rows.length}
+                                    />
+                                    <TableBody>
+                                        {stableSort(rows, getComparator(order, orderBy))
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((row, index) => {
+                                            const isItemSelected = isSelected(row.serviceID);
+                                            const labelId = `enhanced-table-checkbox-${index}`;
+
+                                            return (
+                                                <TableRow
+                                                hover
+                                                onClick={(event) => handleClick(event, row.serviceID)}
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={row.serviceID}
+                                                selected={isItemSelected}
+                                                >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                    color="primary"
+                                                    checked={isItemSelected}
+                                                    inputProps={{
+                                                        'aria-labelledby': labelId,
+                                                    }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    padding="none"
+                                                    align="center"
+                                                >
+                                                    {row.serviceID}
+                                                </TableCell>
+                                                <TableCell align="center">{row.vendorDetail}</TableCell>
+                                                <TableCell align="center">{row.servicedepartureTerminal}</TableCell>
+                                                <TableCell align="center">{row.servicearrivalTerminal}</TableCell>
+                                                <TableCell align="center">{row.route}</TableCell>
+                                                <TableCell align="center">{row.serviceStartDate}</TableCell>
+                                                <TableCell align="center">{row.serviceTime}</TableCell>
+                                                <TableCell align="center">{row.serviceStatus === 'O'? (<CheckCircle style={{color:'green'}}/>) : (<CancelIcon style={{color:'red'}} /> )}</TableCell>
+                                                <TableCell align="center">
+                                                    <Tooltip title="Edit">
+                                                        <IconButton>
+                                                            <Link to={`/service/${row.serviceID}`}>
+                                                                <EditIcon style={{cursor: 'pointer'}}/>
+                                                            </Link>
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                                </TableRow>
+                                            );
+                                            })}
+                                        {emptyRows > 0 && (
+                                            <TableRow
+                                                style={{
+                                                    height: (dense ? 33 : 53) * emptyRows,
+                                                }}
+                                                >
+                                                <TableCell colSpan={6} />
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <TablePagination 
+                                rowsPerPageOptions = {[5,10,25]}
+                                component = "div"
+                                count = {rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange = {handleChangePage}
+                                onRowsPerPageChange = {handleChangeRowsPerPage}
+                            />
+                            <FormControlLabel
+                                control={<Switch checked={dense} onChange={handleChangeDense} />}
+                                label="Dense padding"
+                            />
+                        </Paper>
+                    </Box>
+                )
+            }
             </Container>
         </Container>
     );

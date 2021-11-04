@@ -8,6 +8,7 @@ import {
     HELP_DELETE_REQUEST, 
     HELP_DELETE_SUCCESS,
     HELP_DELETE_FAIL,
+    HELP_DELETE_RESET,
 
     HELP_DETAIL_REQUEST, 
     HELP_DETAIL_SUCCESS,
@@ -56,6 +57,9 @@ export const helpDeleteReducer = (state = { }, action) => {
         
         case HELP_DELETE_FAIL:
            return {loading: false, error: action.payload}
+
+        case HELP_DELETE_RESET:
+            return {}
 
         default:
             return state

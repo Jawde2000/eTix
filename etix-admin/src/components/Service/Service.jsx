@@ -10,10 +10,11 @@ import "../Font/fonts.css"
 import { useParams } from 'react-router';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getServiceDetail, deleteService } from '../../actions/serviceActions';
-import { SERVICE_DETAIL_RESET } from '../../constants/serviceConstants';
+import { getServiceDetail, deleteService, saveService } from '../../actions/serviceActions';
+import { SERVICE_DELETE_RESET, SERVICE_DETAIL_RESET , SERVICE_SAVE_RESET} from '../../constants/serviceConstants';
 import { useHistory } from 'react-router';
 import moscow from '../globalAssets/moscow.jpg';
+import SaveIcon from '@mui/icons-material/Save';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -67,6 +68,9 @@ const Service = ({props}) => {
     const serviceDetail = useSelector(state => state.serviceDetail)
     const {serviceD} = serviceDetail
 
+    const serviceSave = useSelector(state => state.serviceSave)
+    const {success: successSave} = serviceSave
+
     const serviceDelete = useSelector(state => state.serviceDelete)
     const {success: successDelete} = serviceDelete
 
@@ -86,7 +90,60 @@ const Service = ({props}) => {
     const [firstPrice, setFirstPrice] = useState()
     const [businessPrice, setBusinessPrice] = useState()
     const [economyPrice, setEconomyPrice] = useState()
-    const [capacity, setCapacity] = useState()
+
+    const [service, setService] = useState()
+    const [seat, setSeat] = useState()
+    const [locationFrom, setLocationFrom] = useState()
+    const [locationTO, setLocationTO] = useState()
+
+    useEffect(() => {
+        if(successSave ){
+            alert("Saved successfully!");
+            dispatch({type: SERVICE_SAVE_RESET});
+            dispatch({type: SERVICE_DETAIL_RESET});
+            setEditing(false);
+            history.push(`/service/${id}`);
+        }
+        
+    }, [successSave])
+
+    const handleSave = () => {
+        let lF = route.split("-")
+
+        setLocationFrom(lF[0])
+        setLocationTO(lF[1])
+
+
+
+        setService({
+            serviceName: serviceName,
+            serviceDesc: serviceDesc,
+            serviceStatus: status,
+            serviceTime: time,
+            serviceStartDate: startDate,
+            serviceEndDate: endDate,
+            servicedepartureTerminal: departure,
+            servicearrivalTerminal: arrival,
+            serviceFrequency: serviceD.serviceFrequency,
+        })
+
+        setSeat({
+            firstQuantity: firstQty,
+            businessQuantity: businessQty,
+            economyQuantity: economyQty,
+            firstPrice: firstPrice,
+            businessPrice: businessPrice,
+            economyPrice: economyPrice,
+        })
+
+        
+    }
+
+    useEffect(() => {
+        if(service && seat){
+            dispatch(saveService(id, serviceD.seat, serviceD.locationFrom, serviceD.locationTo, service, seat, locationFrom, locationTO ))
+        }
+    }, [service, seat])
 
     useEffect(() => {
         if(!userLogin){
@@ -113,38 +170,97 @@ const Service = ({props}) => {
             setBusinessPrice(serviceD.businessPrice)
             setEconomyQty(serviceD.economyQty)
             setEconomyPrice(serviceD.economyPrice)
-            setCapacity(serviceD.capacity)
         }
     }, [serviceD,id])
-    
-    const [service, setService] = useState({
-        "serviceID" : "SBS0124",
-        "vendorName": "SBS Transit Sdn Bhd",
-        "startTerminus": "Terminal Bersepadu Selatan, KL",
-        "endTerminus" : "Golden Mile Complex, Singpore",
-        "busModel": "Mercedes-Benz Daimler 330",
-        "plateNo": "N/A",
-        "columns" : 4,
-        "rows": 12,
-        "date": "1/10/2021",
-        "time": "16:20",
-        "status": "Disabled"
-    });
+
     const [editing, setEditing] = useState(false);
     
     // function to change service status, remember to update backend afterwards
     const changeStatus = () => {
-       if(service.status === "Disabled"){
-           setService({...service, status:"Active"});
-           return;
+       if(status==="O"){
+           setStatus("X")
        }
-       setService({...service, status:"Disabled"});
+       else{
+           setStatus("O")
+       }
     };
+
+    const handleDelete = () => {
+        dispatch(deleteService(id))
+    }
+
+    useEffect(() => {
+        if(successDelete){
+            alert("Service Deleted Successfully");
+            dispatch({type: SERVICE_DELETE_RESET})
+            dispatch({type: SERVICE_DETAIL_RESET});
+            history.push("/menu/servicemanagement");
+        }
+    }, [serviceDelete])
 
     const handleBack = () => {
         dispatch({type: SERVICE_DETAIL_RESET});
         history.push("/menu/servicemanagement");
     }
+
+    const handleChangefPrice = (event) => {
+        setFirstPrice(event.target.value)
+    }
+    
+    const handleChangebPrice = (event) => {
+        setBusinessPrice(event.target.value)
+    }
+    
+    const handleChangeePrice = (event) => {
+        setEconomyPrice(event.target.value)
+    }
+
+    const handleChangeFQty = (event) => {
+        setFirstQty(event.target.value)
+    }
+    
+    const handleChangeBQty = (event) => {
+        setBusinessQty(event.target.value)
+    }
+    
+    const handleChangeEQty = (event) => {
+        setEconomyQty(event.target.value)
+    }
+
+    const handleChangeDepart = (event) =>{
+        setDeparture(event.target.value)
+    }
+
+    const handleChangeArrival = (event) => {
+        setArrival(event.target.value)
+    }
+
+    const handleChangeRoute = (event) => {
+        setRoute(event.target.value)
+        //need to seperate the route 
+    }
+
+    const handleChangeSName = (event) => {
+        setServiceName(event.target.value)
+    }
+
+    const handleChangeDesc = (event) => {
+        setServiceDesc(event.target.value)
+    }
+
+    const handleChangeStart = (event) => {
+        setStartDate(event.target.value)
+    }
+
+    const handleChangeEnd = (event) => {
+        setEndDate(event.target.value)
+    }
+
+    const handleChangeTime = (event) => {
+        setTime(event.target.value)
+    }
+
+
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
@@ -162,16 +278,28 @@ const Service = ({props}) => {
                         Service ID: {id}
                     </Grid>
                     <Grid item xs={4} textAlign="right">
-                        <Tooltip title="Edit Service">
-                            {/* Set onclick edit here  with props*/}
-                            <IconButton onClick={() => setEditing(!editing)}>
-                                <EditIcon className={classes.functionicon} fontSize="large" />
-                            </IconButton>
-                        </Tooltip>
+                        {!editing?
+                            (
+                                <Tooltip title="Edit Service">
+                                    <IconButton onClick={() => setEditing(!editing)}>
+                                        <EditIcon className={classes.functionicon} fontSize="large" />
+                                    </IconButton>
+                                </Tooltip>
+                            )
+                            :
+                            (
+                                <Tooltip title="Save">
+                                    <IconButton >
+                                        <SaveIcon className={classes.functionicon} fontSize="large" onClick={handleSave}/>
+                                    </IconButton>
+                                </Tooltip>
+                            )
+                        }
+                        
                         <Tooltip title="Delete Service">
                             {/* Set onclick delete here with props */}
                             <IconButton>
-                                <DeleteIcon className={classes.functionicon} fontSize="large" />
+                                <DeleteIcon className={classes.functionicon} fontSize="large" onClick={handleDelete} style={{color: 'red'}}/>
                             </IconButton>
                         </Tooltip>
                     </Grid>
@@ -217,6 +345,108 @@ const Service = ({props}) => {
                                     {vendorName}
                                 </Grid>
                             </Grid>
+                            
+                            <Grid item xs={12} sm={12} className={classes.subtitle} style={{fontWeight: "bold"}}>
+                                Seat Price
+                            </Grid>
+                            {!editing?
+                                (
+                                    <>
+                                    <Grid item xs={12} sm={12} className={classes.subtitle} style={{paddingLeft: 50}} container>
+                                        <Grid item xs={5} style={{textAlign: 'right'}}>
+                                            First Class: 
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        <Grid item xs={6} style={{textAlign: 'left'}}>
+                                            MYR {firstPrice}                   
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} className={classes.subtitle} style={{paddingLeft: 50}} container>
+                                        <Grid item xs={5} style={{textAlign: 'right'}}>
+                                            Business Class: 
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        <Grid item xs={6} style={{textAlign: 'left'}}>
+                                            MYR {businessPrice}                   
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} className={classes.subtitle} style={{paddingLeft: 50}} container>
+                                        <Grid item xs={5} style={{textAlign: 'right'}}>
+                                            Economy: 
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        <Grid item xs={6} style={{textAlign: 'left'}}>
+                                            MYR {economyPrice}                   
+                                        </Grid>
+                                    </Grid>
+                                    </>
+                                )
+                                :
+                                (
+                                    <>
+                                    <Grid item xs={12} sm={12} className={classes.subtitle} style={{paddingLeft: 50}} container>
+                                        <Grid item xs={5} style={{textAlign: 'right'}}>
+                                            First Class: 
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        <Grid item xs={6} style={{textAlign: 'left'}}>
+                                            <TextField 
+                                                    id="fPrice" 
+                                                    variant="outlined"
+                                                    value={firstPrice}
+                                                    type="number"
+                                                    step="0.01"
+                                                    onChange={handleChangefPrice}
+                                                    size="small"
+                                                    InputProps={{
+                                                    style: {fontFamily: ['rubik', 'sans-serif'].join(','), maxWidth: 100}
+                                                }} 
+                                            />                   
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} className={classes.subtitle} style={{paddingLeft: 50}} container>
+                                        <Grid item xs={5} style={{textAlign: 'right'}}>
+                                            Business Class: 
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        <Grid item xs={6} style={{textAlign: 'left'}}>
+                                            <TextField 
+                                                    id="bPrice" 
+                                                    variant="outlined"
+                                                    value={businessPrice}
+                                                    type="number"
+                                                    step="0.01"
+                                                    size="small"
+                                                    onChange={handleChangebPrice}
+                                                    InputProps={{
+                                                    style: {fontFamily: ['rubik', 'sans-serif'].join(','), maxWidth: 100}
+                                                }} 
+                                            />                   
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} className={classes.subtitle} style={{paddingLeft: 50}} container>
+                                        <Grid item xs={5} style={{textAlign: 'right'}}>
+                                            Economy: 
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        <Grid item xs={6} style={{textAlign: 'left'}}>
+                                            <TextField 
+                                                    id="ePrice" 
+                                                    variant="outlined"
+                                                    value={economyPrice}
+                                                    type="number"
+                                                    step="0.01"
+                                                    size="small"
+                                                    onChange={handleChangeePrice}
+                                                    InputProps={{
+                                                    style: {fontFamily: ['rubik', 'sans-serif'].join(','), maxWidth: 100}
+                                                }} 
+                                            />                   
+                                        </Grid>
+                                    </Grid>
+                                    </>
+                                )
+                            }
                             {!editing?
                                 null
                                 :
@@ -225,13 +455,10 @@ const Service = ({props}) => {
                                         <Grid item xs={12} />
                                         <Grid item xs={12} />
                                         <Grid item xs={12} />
-                                        <Grid item xs={12} />
-                                        <Grid item xs={12} />
-                                        <Grid item xs={12} />
-                                        <Grid item xs={12} />
                                     </>
                                 )
                             }
+                            
                         </Grid>
                         <Grid item xs={12} sm={7} container textAlign='left' >
                             {
@@ -360,6 +587,7 @@ const Service = ({props}) => {
                                                         variant="outlined"
                                                         value={departure}
                                                         // margin="dense"
+                                                        onChange={handleChangeDepart}
                                                         fullWidth
                                                         size="small"
                                                         InputProps={{
@@ -378,6 +606,7 @@ const Service = ({props}) => {
                                                         variant="outlined"
                                                         value={arrival}
                                                         // margin="dense"
+                                                        onChange={handleChangeArrival}
                                                         fullWidth
                                                         size="small"
                                                         InputProps={{
@@ -396,6 +625,7 @@ const Service = ({props}) => {
                                                         variant="outlined"
                                                         value={route}
                                                         // margin="dense"
+                                                        onChange={handleChangeRoute}
                                                         fullWidth
                                                         size="small"
                                                         InputProps={{
@@ -420,6 +650,7 @@ const Service = ({props}) => {
                                                         variant="outlined"
                                                         value={serviceName}
                                                         // margin="dense"
+                                                        onChange={handleChangeSName}
                                                         fullWidth
                                                         size="small"
                                                         InputProps={{
@@ -438,6 +669,7 @@ const Service = ({props}) => {
                                                         variant="outlined"
                                                         value={serviceDesc}
                                                         // margin="dense"
+                                                        onChange={handleChangeDesc}
                                                         fullWidth
                                                         size="small"
                                                         InputProps={{
@@ -460,6 +692,7 @@ const Service = ({props}) => {
                                                             variant="outlined"
                                                             value={firstQty}
                                                             // margin="dense"
+                                                            onChange={handleChangeFQty}
                                                             type="number"
                                                             size="small"
                                                             InputProps={{
@@ -478,6 +711,7 @@ const Service = ({props}) => {
                                                             variant="outlined"
                                                             value={businessQty}
                                                             // margin="dense"
+                                                            onChange={handleChangeBQty}
                                                             type="number"
                                                             size="small"
                                                             InputProps={{
@@ -496,6 +730,7 @@ const Service = ({props}) => {
                                                             variant="outlined"
                                                             value={economyQty}
                                                             // margin="dense"
+                                                            onChange={handleChangeEQty}
                                                             type="number"
                                                             size="small"
                                                             InputProps={{
@@ -520,6 +755,7 @@ const Service = ({props}) => {
                                                         id="start" 
                                                         variant="outlined"
                                                         value={startDate}
+                                                        onChange={handleChangeStart}
                                                         // margin="dense"
                                                         type="date"
                                                         size="small"
@@ -538,6 +774,7 @@ const Service = ({props}) => {
                                                         id="end" 
                                                         variant="outlined"
                                                         value={endDate}
+                                                        onChange={handleChangeEnd}
                                                         // margin="dense"
                                                         type="date"
                                                         size="small"
@@ -557,6 +794,7 @@ const Service = ({props}) => {
                                                         variant="outlined"
                                                         value={time}
                                                         // margin="dense"
+                                                        onChange={handleChangeTime}
                                                         type="time"
                                                         size="small"
                                                         InputProps={{
