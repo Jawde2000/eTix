@@ -15,6 +15,7 @@ import { useHistory } from 'react-router';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
+
 const useStyles = makeStyles((theme) => ({
     root: {
         minHeight: 500,
@@ -111,8 +112,6 @@ const HelpdeskDetail = ({props}) => {
     //     "replies": false,
     // });
     
-    
-
     const changeStatus = () => {
        setStatus(!status)
     };

@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper, TextField, Tooltip} from '@mui/material';
+import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper, TextField, Tooltip, Toolbar} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, {useEffect, props, useState} from 'react';
 import moscow from '../globalAssets/moscow.jpg'
@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { listHelp, getHelpUser } from '../../actions/helpActions/helpActions'
+import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions'
 import { getUser } from '../../actions/userActions/userActions';
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
@@ -17,6 +17,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useHistory } from 'react-router';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { alpha } from '@mui/material/styles';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -70,13 +76,12 @@ const columns = [
       headerName: 'Status',
       headerAlign: 'center',
       width: 120,
-      sortable: false,
       editable: false,
       renderCell: (params) => {
         console.log(params.row.status);
         return (
-          //style={{display:'flex';justifyContent:'center';alignItems:'center'}}
-          <Container >
+          //style={{display:'flex';justifyContent:'center';alignItems:'center'}}  
+            <Toolbar>
             {params.row.status === "OP"? (
             <Tooltip title="Open">
             <CheckCircleIcon style={{color: 'green'}}/>
@@ -88,7 +93,7 @@ const columns = [
             <CheckCircleIcon style={{color: 'blue'}}/>
             </Tooltip>
             )}
-          </Container>
+            </Toolbar>
         );
      },
     },
@@ -105,19 +110,17 @@ const columns = [
         return (
           <Container >
             <Grid xs={12} display="flex">
-              <Grid xs={12} item>
+              <Grid xs={6} item>
+                <Toolbar>
                 <Tooltip title="Edit">
                 <IconButton href={`/menu/helpdesk/${params.row.id}`}>
                   <EditIcon />
                 </IconButton>
                 </Tooltip>
+                </Toolbar>
               </Grid>
               <Grid xs={6} item>
-              <Tooltip title="Delete">
-                <IconButton>
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
+                <DialogDelete props={params}/>
               </Grid>
             </Grid>
           </Container>
@@ -126,21 +129,75 @@ const columns = [
     },
   ];
 
+function DialogDelete(props) {
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch()
+  console.log(props)
+  let history = useHistory()
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = (ids) => {
+    ids.map((id) => {
+        dispatch(deleteHelp(id));
+    })
+
+    alert("Sucessfully Deleted");
+    HelpManagement.setSelection([]);
+    history.push("/menu/helpdesk");
+  }
+
+  return (
+    <Toolbar>
+      <Tooltip title="Delete" onClick={handleClickOpen}>
+          <IconButton >
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete Message(s)"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete the message(s)?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button style={{color: "red"}} onClick={handleDelete}>Yes</Button>
+          <Button onClick={handleClose} autoFocus>
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Toolbar>
+  );
+}
+
 function HelpManagement() {
     const defaultStyle = useStyles();
     
     const dispatch = useDispatch()
     const userLogin = useSelector(state => state.userLogin)
     const {userInfo} = userLogin
-    const helpList = useSelector(state => state.helpList)
-    const {helps} = helpList
     let history = useHistory()
 
     const deleteHelplist = useSelector(state => state.deleteHelplist)
     const {success: successDelete} = deleteHelplist
 
-
     const [search, setSearch] = useState();
+    const [select, setSelection] = useState([]);
     // const serviceList = useSelector(state => state.serviceList)
     // const {services} = serviceList
 
@@ -162,6 +219,7 @@ function HelpManagement() {
     const rows = userInfo.sender?.map(help => {
       // var s = help.HelpdeskStatus ==="OP"?"Active": help.HelpdeskStatus ==="CL"?"Closed":"Responded"
       console.log(help.helpdeskStatus)
+      console.log(select)
       var s = help.helpdeskStatus
       return {
         id: help.helpdeskID,
@@ -219,21 +277,14 @@ function HelpManagement() {
                   </Grid>
                   <Grid xs={4} alignItems="flex-end" alignContent="flex-end" flexWrap="wrap" justifyContent="flex-end" container spacing={0.5}>
                       <Grid xs={12} item display="flex" alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
-                          <Grid xs={4} item md={1} paddingRight={8}> 
-                          <Tooltip title="Edit">  
-                          <IconButton>                       
-                          <EditIcon style={{fontSize: 40}}/>   
-                          </IconButton>
-                          </Tooltip>      
-                          </Grid>
-                          <Grid xs={4} item md={1} paddingRight={8}>
+                          <Grid xs={6} item md={1} paddingRight={8}>
                           <Tooltip title="Delete">  
                           <IconButton> 
                           <DeleteIcon style={{fontSize: 40}}/>
                           </IconButton>
                           </Tooltip> 
                           </Grid>
-                          <Grid xs={4} item md={1}>
+                          <Grid xs={6} item md={1}>
                           <Tooltip title="Add Message">  
                           <IconButton> 
                           <AddCommentIcon style={{fontSize: 40}}/>
@@ -254,6 +305,13 @@ function HelpManagement() {
                       rowsPerPageOptions={[5]}
                       checkboxSelection
                       disableSelectionOnClick
+                      onSelectionModelChange={(ids) => {
+                        const selectedIDs = new Set(ids);
+                        const selectedRowData = rows.filter((row) =>
+                          selectedIDs.has(row.id.toString())
+                        )
+                        setSelection(selectedRowData)
+                      }}
                       components={{
                           Toolbar: CustomToolbar
                       }}
