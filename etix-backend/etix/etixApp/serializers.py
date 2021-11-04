@@ -50,10 +50,10 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
                   'vendorName', 'vendorBankName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
 
-class VendorSerializerNameOnly(serializers.ModelSerializer):
+class VendorSerializerStripped(serializers.ModelSerializer):
     class Meta:
         model = Vendor
-        fields = ['vendorName']
+        fields = ['vendorID', 'vendorName']
 
 
 class AdminSerializer(serializers.ModelSerializer):

@@ -211,12 +211,12 @@ class Customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     customerID = models.TextField(
         default=generate_customer_id, primary_key=True, unique=True, editable=False, max_length=8)
-    customerGender = models.CharField(max_length=1, choices=genderChoices)
+    customerGender = models.CharField(max_length=1, blank=True, choices=genderChoices)
     customerFirstName = models.CharField(max_length=100, blank=True)
     customerLastName = models.CharField(max_length=100, blank=True)
     customerContact_Number = models.TextField(max_length=16, blank=True)
     customerAddress = models.TextField(max_length=200, blank=True)
-    customerBirthday = models.DateField(auto_now=False, auto_now_add=False)
+    customerBirthday = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ['customerID']

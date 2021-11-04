@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
-from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly
+from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly, VendorSerializerStripped
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -82,14 +82,22 @@ def registerUser(request):
         user.is_staff = data['is_staff']
         user.is_superuser = data['is_superuser']
         user.is_active = data['is_active']
+    
+        user.save()      
 
-        user.save()
+        if data['is_customer'] == "True":
+            customer = Customer.objects.create( 
+                created_by = user,
+                customerContact_Number = data['phonenumber']
+            )
+
+            customer.save()
+
 
         return Response(serializer.data)
     except:
         message = {'detail': 'User with this email already exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['POST'])
 def getRoutes(request):
@@ -109,7 +117,25 @@ def getRoutes(request):
     except:
         message = {'detail': 'No routes exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def getLocationByID(request):
+    data = request.data 
+
+    try:
+        loc = Location.objects.all().filter(locationID = data['locationID'])
+        serializer = LocationSerializer(loc, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'ID not found'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
         
+@api_view(['POST'])
+def getAllVendors(reqeust):
+    vendors = Vendor.objects.all()
+    serializer = VendorSerializerStripped(vendors, many=True)
+    return Response(serializer.data)
+
 @api_view(['POST'])
 def getVendorName(request):
     data = request.data 
@@ -173,17 +199,18 @@ def updateCustomer(request, pk):
     customer = Customer.objects.get(created_by=pk)
 
     data = request.data
+    customer.customerFirstName = data['customerFirstName']
+    customer.customerLastName = data['customerLastName']
     customer.customerContact_Number = data['customerContact_Number']
     customer.customerAddress = data['customerAddress']
     customer.customerBirthday = data['customerBirthday']
-    customer.gender = data['customerGender']
+    customer.customerGender = data['customerGender']
 
     customer.save()
 
     serializer = CustomerSerializer(customer, many=False)
 
     return Response(serializer.data)
-
 # update vendor by userid
 
 

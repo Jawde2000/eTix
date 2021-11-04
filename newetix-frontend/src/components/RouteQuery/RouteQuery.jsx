@@ -1,6 +1,6 @@
 import {  Grid, Box,  Link, Typography, Autocomplete } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -16,8 +16,9 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { useDispatch, useSelector } from 'react-redux';
-import { retrieveLookup } from '../../state/actions/actions';
-import Query from './Query'
+import { routeLookup } from '../../state/actions/actions';
+import Query from './Query';
+import {getLocationName} from '../globalAssets/scripts/getLocationName';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -38,26 +39,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function RouteQuery() {
-  const defaultStyle = useStyles();
-  let history = useHistory()
-  const lookupDetails = useSelector(state => state.storeLookup)
+    const defaultStyle = useStyles();
+    let history = useHistory()
 
-  var from = lookupDetails.locationFrom, to = lookupDetails.locationTo, dateDeparture = lookupDetails.dateDeparture, dateReturn = lookupDetails.dateReturn
-  const [loc, setLocation] = useState(Location[0]);
 
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(null);
+    const [loc, setLocation] = useState(Location[0]);
+    const [open, setOpen] = React.useState(false);
+    const [value, setValue] = React.useState(null);
+    const [from, setFrom] = React.useState(null);
+    const [to, setTo] = React.useState(null);
+    const [departureDate, setDeparture] = React.useState(null);
+    const [returnDate, setReturn] = React.useState(null);
 
-  const handleClickOpen = (e) => {
-    console.log(e.target.id)
-    if (e.target.id === 'from'){
-        setLocation(lookupDetails.locationFrom)
-    } else if (e.target.id === 'to'){
-        setLocation(lookupDetails.locationTo)
-    }
+    const handleClickOpen = (e) => {
+        if (e.target.id === 'from'){
+            setLocation(from)
+        } else if (e.target.id === 'to'){
+            setLocation(to)
+        }
 
-    setOpen(true);
-  };
+        setOpen(true);
+    };
+
+
 
   const handleLocationChange = () => {
 
@@ -78,10 +82,10 @@ export default function RouteQuery() {
                             eTix Route Search
                         </Typography>
                         <Typography id='from' onClick={handleClickOpen}>
-                            {from} ({dateDeparture})
+                            {from} ({departureDate})
                         </Typography>
                         <Typography id='to' onClick={handleClickOpen}>
-                            {to} ({dateReturn})
+                            {to} ({returnDate})
                         </Typography>
                     </Breadcrumbs>
                     <Dialog open={open} onClose={handleClose}>

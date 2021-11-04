@@ -12,9 +12,12 @@ import HomeOperators from './components/HomeServices/Operators';
 import Attractions from './components/Static/Attractions';
 // Passport & Retrieval
 import Passport from './components/Passport/Passport';
-import PassportRetrieval from './components/Passport/Retrieval';
 // Routes
 import RouteQuery from './components/RouteQuery/RouteQuery';
+// Help Center
+import HelpLanding from './components/HelpCenter/Landing'
+import HelpMessaging from './components/HelpCenter/Messaging'
+//import HelpArticle1 from './components/HelpCenter/articles'
 // Debugging
 
 
@@ -48,10 +51,28 @@ function Router() {
                 <Route path="/passport" exact>
                     <Passport />
                 </Route>
-                <Route path="/passport/retrieval" exact>
-                    <PassportRetrieval />
-                </Route>
                 <Route path="/routes" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/help" exact>
+                    <HelpLanding />
+                </Route>
+                <Route path="/help/messages" exact>
+                    <HelpMessaging />
+                </Route>
+                <Route path="/help/articles/1/" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/help/articles/2/" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/help/articles/3/" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/help/articles/4/" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/help/articles/5/" exact>
                     <RouteQuery />
                 </Route>
             </Switch>

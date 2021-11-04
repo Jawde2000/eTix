@@ -1,9 +1,9 @@
 import {  Grid, Box,  Link, Typography, Autocomplete } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import {useHistory} from 'react-router-dom';
-import React, {useState} from 'react';
+import React, {Component, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { retrieveLookup, routeLookup } from '../../state/actions/actions';
+import { routeLookup } from '../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     filter: {
@@ -26,9 +26,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Query() {
     const defaultStyle = useStyles();
     let history = useHistory()
-    const lookupDetails = useSelector(state => state.storeLookup)
-    const dispatch = useDispatch()
-    dispatch(routeLookup(lookupDetails.locationFrom,lookupDetails.locationTo))
+    const lookupDetails = useSelector(state => state.routeLookup)
+    const { route } = lookupDetails;
 
     return (
         <Box>
@@ -38,13 +37,6 @@ export default function Query() {
                 </Grid>
                 <Grid item className={defaultStyle.queryblk}>
                     <Grid container direction="column" justifyContent="space-evenly" alignItems="flex-start">
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
-                        <Grid item className={defaultStyle.query}>xs=8</Grid>
                     </Grid>
                 </Grid>
             </Grid>

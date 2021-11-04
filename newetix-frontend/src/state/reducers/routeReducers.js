@@ -7,16 +7,31 @@ export const routeLookupReducer = (state = {route: []}, action) => {
         case constants.ROUTE_SUCCESS:
             return {loading: false, route: action.payload}
         case constants.ROUTE_FAIL:
+            console.log("No routes found!")
             return {loading: false, error: action.payload}
         default:
             return state
     }
 };
 
-export const routeDataManagementReducer = (state = {route: []}, action) => {
+export const dateReducer = (state = {date: []}, action) => {
     switch (action.type) {
-        case constants.LOOKUP_DATA_MANAGEMENT:
-            return action.payload
+        case constants.STORE_DATE:
+            return {date: action.payload}
+        default:
+            return state
+    }
+}
+
+export const seatListReducer = (state = {seat: []}, action) => {
+    switch (action.type) {
+        case constants.SEAT_LIST_REQUEST:
+            return {loading: true, seat:[]}
+        case constants.SEAT_LIST_SUCCESS:
+            return {loading: false, seat: action.payload}
+        case constants.SEAT_LIST_FAIL:
+            console.log("Failure to find seating/pricing information")
+            return {loading: false, error: action.payload}
         default:
             return state
     }

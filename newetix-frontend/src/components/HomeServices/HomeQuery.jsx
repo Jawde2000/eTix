@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Grid, Typography, TextField, Box, Button, Autocomplete } from '@mui/material';
@@ -11,7 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Locations from './../globalAssets/scripts/strings';
 import images from '../globalAssets/scripts/bgchange';
 import { useDispatch } from 'react-redux';
-import { storeLookup } from '../../state/actions/actions';
+import { routeLookup, dateData } from '../../state/actions/actions';
 
 const homeStyles = makeStyles((theme) => ({
   whole: {
@@ -28,7 +28,7 @@ const homeStyles = makeStyles((theme) => ({
   },
   title: {
     paddingTop: '5%',
-    paddingBottom: '2.5%'
+    paddingBottom: '2.5%',
   },
   queryFunc: {
     backgroundColor: 'rgba(247, 213, 124, 0.9)',
@@ -46,9 +46,14 @@ function HomeQuery() {
   const [value, setValue] = useState([null, null]);
   var history = useHistory();
 
+  async function process(from, to, departureDate, returnDate){
+      dispatch(routeLookup(from, to))
+      dispatch(dateData(departureDate, returnDate))
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(storeLookup(from.label, to.label, value[0].toISOString().split('T')[0], value[1].toISOString().split('T')[0]))
+    process(from.label, to.label, value[0].toISOString().split('T')[0], value[1].toISOString().split('T')[0])
     history.push('/routes')
   }
   

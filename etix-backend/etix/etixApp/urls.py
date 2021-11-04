@@ -67,9 +67,16 @@ urlpatterns = [
     path('api/user/profile/update/', views.updateUserProfile,
          name="user-profile-update"),
 
+    # get location by locationID
+    path('api/location', views.getLocationByID,
+         name="location-query"),
+
     # update user by id
     path('api/user/update/<str:pk>/', views.updateUser,
          name="user-update"),
+
+     path('api/vendor/list', views.getAllVendors,
+          name="vendor-list"),
 
     # update customer by userid
     path('api/user/customer/update/<str:pk>/',

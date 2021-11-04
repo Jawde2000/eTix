@@ -17,24 +17,55 @@ export const routeLookup = (locationFrom, locationTo) => async(dispatch) => {
 
     } catch(error) {
         dispatch({
-            type: actions.ROUTE_FAIL,
-            payload: error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message
+            type: actions.ROUTE_FAIL
         })
     }
 }
 
-export const storeLookup = (locationFrom, locationTo, dateDeparture, dateReturn) => (dispatch) => {
+export const vendorList = async(dispatch) => {
+    try {
+        dispatch({type: actions.VENDOR_LIST_REQUEST})
+
+        const { data } = await axios.post('http://127.0.0.1:8000/api/vendor/list')
+
+        dispatch({
+            type: actions.VENDOR_LIST_SUCCESS,
+            payload: data
+        })
+
+    } catch (e) {
+        dispatch({
+            type: actions.VENDOR_LIST_FAIL
+        })
+    }
+}
+
+export const seatList = async(dispatch) => {
+    try {
+        dispatch({type: actions.SEAT_LIST_REQUEST})
+        
+        const { data } = await axios.post('http://127.0.0.1:8000/api/vendor/list')
+
+        dispatch({
+            type: actions.SEAT_LIST_SUCCESS,
+            payload: data
+        })
+
+    } catch (e) {
+        dispatch({
+            type: actions.SEAT_LIST_FAIL
+        })
+    }
+}
+
+export const dateData = (departureDate, returnDate) => (dispatch) => {
     const data = {
-        'locationFrom': locationFrom,
-        'locationTo': locationTo,
-        'dateDeparture': dateDeparture,
-        'dateReturn': dateReturn
+        'departureDate': departureDate,
+        'returnDate': returnDate
     }
 
     dispatch({
-        type: actions.LOOKUP_DATA_MANAGEMENT,
+        type: actions.STORE_DATE,
         payload: data
     })
 }
@@ -67,8 +98,7 @@ export const login = (email, password) => async(dispatch) => {
                 type: actions.USER_LOGIN_FAIL,
                 payload: "Invalid User"
             })
-        }
-        else{
+        } else {
             dispatch({
                 type: actions.USER_LOGIN_SUCCESS,
                 payload: data
@@ -113,14 +143,17 @@ export const register = (email, password, username, phonenumber) => async(dispat
                 "email": email,
                 "password": password,
                 "username": username,
+                "phonenumber": phonenumber,
                 "is_customer": 'True',
                 "is_vendor": 'False',
                 "is_staff": 'False',
                 "is_superuser": 'False',
-                "is_active": 'True'
+                "is_active": 'True',
             },
             config
         )
+
+        console.log(data)
 
         dispatch({
             type: actions.USER_REGISTER,
@@ -146,6 +179,87 @@ export const register = (email, password, username, phonenumber) => async(dispat
     } catch(error) {
         dispatch({
             type: actions.USER_LOGIN_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const customerDetails = () => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.CUSTOMER_DETAILS_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const {customerInfo} = await axios.get(
+            `http://127.0.0.1:8000/api/user/customer/${userInfo.userID}`,
+            config
+        )
+
+        dispatch({
+            type: actions.CUSTOMER_DETAILS_SUCCESS,
+            payload: customerInfo
+        })
+    } catch (error) {
+        dispatch({
+            type: actions.CUSTOMER_DETAILS_FAILURE,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const customerEdit = (firstname, lastname, phonenumber, address, birthday, gender) => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.CUSTOMER_DETAILS_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const {customerInfo} = await axios.get(
+            `localhost:8000/api/user/customer/update/${userInfo.userID}`,
+            {
+                'customerFirstName': firstname,
+                'customerLastName': lastname,
+                'customerContact_Number': phonenumber,
+                'customerAddress': address,
+                'customerBirthday': birthday,
+                'customerGender': gender
+            },
+            config
+        )
+        
+        dispatch({
+            type: actions.CUSTOMER_DETAILS_SUCCESS,
+            payload: customerInfo
+        })
+
+    } catch (error) {
+        dispatch({
+            type: actions.CUSTOMER_DETAILS_FAILURE,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
