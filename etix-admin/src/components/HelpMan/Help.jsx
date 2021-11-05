@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         paddingTop: 3,
         paddingBottom: 3,
-        minHeight: 500,
+        minHeight: 700,
     },
     table: {
         marginTop: 50,
@@ -362,13 +362,18 @@ const Help = () =>{
             if(searchedVal == "---"){
                 return row.helpdeskStatus
             }
-            if(searchedVal === "Active"){
-                if(row.helpdeskStatus){
+            if(searchedVal === "Open"){
+                if(row.helpdeskStatus === "OP"){
                     return row.helpdeskStatus
                 }
             }
             else if(searchedVal === "Closed"){
-                if(!row.helpdeskStatus){
+                if(row.helpdeskStatus === "CL"){
+                    return row.helpdeskStatus
+                }
+            }
+            else if(searchedVal === "Responded"){
+                if(row.helpdeskStatus === "RP"){
                     return row.helpdeskStatus
                 }
             }
@@ -408,6 +413,7 @@ const Help = () =>{
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
+            <Container>
             <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <Container style={{paddingTop: 30}}>
@@ -436,8 +442,9 @@ const Help = () =>{
                             style={{marginLeft: 10}}
                         >
                             <MenuItem value={"---"}>----</MenuItem>
-                            <MenuItem value={"Active"}>Active</MenuItem>
-                            <MenuItem value={"Close"}>Close</MenuItem>
+                            <MenuItem value={"Open"}>Open</MenuItem>
+                            <MenuItem value={"Closed"}>Close</MenuItem>
+                            <MenuItem value={"Responded"}>Responded</MenuItem>
                         </Select>
                         <Select
                             id="searchReceiver"
@@ -507,7 +514,7 @@ const Help = () =>{
                                         <TableCell align="center">{row.helpdeskTitle}</TableCell>
                                         <TableCell align="center">{row.helpdeskMessage.substring(0, 20) + "..."}</TableCell>
                                         <TableCell align="center">{row.helpdeskDateTime}</TableCell>
-                                        <TableCell align="center">{row.helpdeskStatus === "OP"? "Active" : "Closed"}</TableCell>
+                                        <TableCell align="center">{row.helpdeskStatus === "OP"? "Open" : (row.helpdeskStatus==="CL"? "Closed" : "Responded")}</TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
                                                 <IconButton>
@@ -547,6 +554,7 @@ const Help = () =>{
                     />
                 </Paper>
             </Box>
+        </Container>
         </Container>
     );
 }

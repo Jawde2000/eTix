@@ -1,12 +1,14 @@
 import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon} from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import React, {useEffect} from 'react';
 import bangkok from '../globalAssets/bangkok.jpg';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import GroupIcon from '@mui/icons-material/Group';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import '../Header/header.css';
+import {useDispatch, useSelector} from 'react-redux'
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -54,6 +56,15 @@ const useStyles = makeStyles((theme) => ({
 
 function VendorMenu() {
   const defaultStyle = useStyles();
+  const userLogin = useSelector(state => state.userLogin)
+  const {userInfo} = userLogin
+  let history = useHistory()
+
+  useEffect(() => {
+    if(!userInfo) {
+        history.push('/')
+    }
+  },[userInfo])
 
   return (
       <div>
@@ -61,7 +72,7 @@ function VendorMenu() {
           <Grid xs={12} direction="column" container justify="center" alignItems="center" alignContent="center">
             <Grid xs={12} sm={2} item>
               <Typography variant="h2" className={defaultStyle.welcome} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
-                Welcome Back, Zhipeng
+                Welcome Back, {userInfo? userInfo.username : null}  
               </Typography>
             </Grid>
             <Grid xs={1} item direction="row" display="flex" spacing={20}>

@@ -29,6 +29,7 @@ urlpatterns = [
     # api path for login, method post
     path('api/users/login/', views.MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
+         
     # api path for register new user, method post
     path('api/users/register/', views.registerUser, name='register'),
 
@@ -47,6 +48,14 @@ urlpatterns = [
     # get vendor by userID
     path('api/user/vendor/<str:pk>/',
          views.getVendorByUserID, name='vendor-userid'),
+
+    # get service by vendorID
+    path('api/user/service/<str:pk>/',
+         views.getServiceByVendorID, name='service-vendorid'),
+
+    # get vendor helplist by vendorID
+    path('api/user/vendorhelp/<str:pk>/',
+         views.getVendorHelpByID, name='help-vendorid'),
   
     # get list of services by location
     path('api/service/routes', views.getRoutes, name='route-query'),

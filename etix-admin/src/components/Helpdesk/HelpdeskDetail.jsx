@@ -6,19 +6,28 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import { Link, useParams } from 'react-router-dom';
-import { getHelp } from '../../actions/helpActions';
+import { deleteHelp, getHelp, saveHelp, sendResponse } from '../../actions/helpActions';
 import { getUser } from '../../actions/userActions';
-import { HELP_DETAIL_RESET } from '../../constants/helpConstants';
+import { HELP_DELETE_RESET, HELP_DETAIL_RESET, HELP_SAVE_RESET , HELP_SEND_RESPONSE_RESET} from '../../constants/helpConstants';
 import { USER_DETAIL_RESET } from '../../constants/userConstants';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Select from '@mui/material/Select';
+import { MenuItem } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import moscow from '../globalAssets/moscow.jpg';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundImage: `url(${moscow})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundBlendMode: "lighten",
         minHeight: 500,
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        padding: 20
     },
     box: {
         backgroundColor: "#CFDBD5",
@@ -48,13 +57,22 @@ const HelpdeskDetail = ({props}) => {
     const userLogin = useSelector(state => state.userLogin)
     const {userInfo} = userLogin
     
-    // let history = useHistory()
+    let history = useHistory()
     
     const helpDetail = useSelector(state => state.helpDetail)
     const {loading: loadingHelp, helpD} = helpDetail
 
     const userDetail = useSelector(state => state.userDetail)
     const {loading: loadingSender, userD: senderD} = userDetail
+
+    const helpSave = useSelector(state => state.helpSave)
+    const {success: saveSuccess} = helpSave
+
+    const helpSend = useSelector(state => state.helpSend)
+    const {success: sendSuccess} = helpSend
+
+    const helpDelete = useSelector(state => state.helpDelete)
+    const {success: deleteSuccess, error: deleteError} = helpDelete
 
     const [helpdesk, setHelpdesk] = useState()
     const [helpResponse, setHelpResponse] = useState()
@@ -64,16 +82,20 @@ const HelpdeskDetail = ({props}) => {
     const [viewReply, setViewReply] = useState(false);
     const [addMessage, setAddMessage] = useState(false);
     const [respondMessage, setRespondMessage] = useState("");
-    const [respondDateTime, setRespondDateTime] = useState("");
     const [respondedUsername, setRespondedUsername] = useState("");
 
+    const [sendRes, setSendRes] = useState();
+
     useEffect(() => {
+        if(!userLogin){
+            history.push("/");
+        }
         if(!helpD || helpD.helpdeskID !== id){
             dispatch(getHelp(id))
             
         }else{
             setHelpdesk(helpD)
-            if(helpD.helpdeskStatus ==="CL")
+            if(helpD.helpdeskStatus ==="RP" || helpD.helpdeskStatus === "CL")
             {
                 setHelpResponse(helpD.helpResponse.data)
                 if(helpD.helpResponse.data){
@@ -91,33 +113,64 @@ const HelpdeskDetail = ({props}) => {
         else{
             setSenderDetail(senderD)
         }
-    }, [helpD, id])
+    }, [helpD, id, senderD])
+
+    useEffect(() => {
+        if(sendRes && !sendSuccess){
+            dispatch(sendResponse(sendRes, status, id))
+        }
+
+        if(sendSuccess){
+            alert("Send Respond Success")
+            dispatch({type: HELP_SEND_RESPONSE_RESET});
+            dispatch({type: USER_DETAIL_RESET});
+            dispatch({type: HELP_DETAIL_RESET});
+            history.push(`/menu/helpdesk`)
+        }
+
+    }, [sendRes, sendSuccess])
 
     useEffect(() => {
         if(respondedUser)
         {
             setRespondMessage(helpResponse.helpResponseMessage);
-            setRespondDateTime(helpResponse.helpResponseDateTime);
             setRespondedUsername(respondedUser.username);
         }
         
     }, [respondedUser])
 
-    // const [helpdesk, setHelpdesk] = useState({
-    //     "helpdeskID" : "HP0124",
-    //     "userName": "Mahiaddin",
-    //     "messageSubject": "Crypto Purchase",
-    //     "messageBody" : "I'm trying to purchase tickets via ETH but it doesn't want to accept it! Can someone help me?????",
-    //     "userEmail": "mahiaddin@malaysia.gov.my",
-    //     "userPhone": "+60123456789",
-    //     "status" : "ACTIVE",
-    //     "replies": false,
-    // });
-    
-    
+    useEffect(() => {
+        if(saveSuccess && !sendSuccess){
+            alert("Saved successfully!");
+            dispatch({type: HELP_SAVE_RESET});
+            history.push(`/help/${id}`)
+        }
+        
+    }, [saveSuccess])
 
-    const changeStatus = () => {
-       setStatus(!status)
+    const handleDelete = () => {
+        dispatch(deleteHelp(id));
+    }
+
+    useEffect(() => {
+        if(deleteSuccess){
+            alert("Successfully deleted Help");
+            dispatch({type: HELP_DELETE_RESET})
+            dispatch({type: HELP_DETAIL_RESET});
+            history.push('/menu/helpdesk');
+        }
+    }, [helpDelete])
+
+    const handleChangeStatus = (e) => {
+       if(e === "Closed"){
+            setStatus("CL");
+       }
+       else if(e === "Open"){
+           setStatus("OP");
+       }
+       else if(e === "Responded"){
+           setStatus("RP");
+       }
     };
 
     const changeRespondMessage = (event) => {
@@ -125,12 +178,27 @@ const HelpdeskDetail = ({props}) => {
     }
 
     const handleSendRespond = () => {
-        setHelpdesk({...helpdesk, replies: true, respondMessage: respondMessage});
-        setAddMessage(false);
+        setSendRes({
+            helpResponseMessage: respondMessage,
+            helpdesk: id,
+            user: userInfo.userID
+        })
+        setStatus("RP")
+    }
+
+    const handleBack = () => {
+        dispatch({type: USER_DETAIL_RESET});
+        dispatch({type: HELP_DETAIL_RESET});
+        history.push('/menu/helpdesk/');
+    }
+
+    const handleSave = () => {
+        dispatch(saveHelp(id, status));
     }
 
     return (
-        <Container className={classes.root}>
+        <Container className={classes.root} maxWidth="Fixed">
+        <Container >
             {console.log(helpdesk)}
             {console.log(helpResponse)}
             {
@@ -147,27 +215,24 @@ const HelpdeskDetail = ({props}) => {
                         <Grid item xs={12} className={classes.action} container>
                             <Grid item xs={4}>
                                 <Tooltip title="Back">
-                                    <Link to="/menu/helpdesk">
-                                        <IconButton  href="/menu/helpdesk">
-                                            <ArrowBackIcon fontSize="large" />
-                                        </IconButton>
-                                    </Link>
+                                    <IconButton  onClick={handleBack}>
+                                        <ArrowBackIcon fontSize="large" />
+                                    </IconButton>
                                 </Tooltip>
                             </Grid>
                             <Grid item xs={4} textAlign="center" style={{fontSize:20}}>
                                 Helpdesk ID: {id}
                             </Grid>
                             <Grid item xs={4} textAlign="right">
-                                <Tooltip title="Reply Help Message">
-                                    {/* Set onclick and go to the reply page here */}
+                                <Tooltip title="Save">
                                     <IconButton >
-                                        <ReplyIcon className={classes.functionicon} fontSize="large" />
+                                        <SaveIcon className={classes.functionicon} fontSize="large" onClick={handleSave}/>
                                     </IconButton>
                                 </Tooltip>
                                 <Tooltip title="Delete Help Message">
                                     {/* Set onclick delete here, *create a delete function* */}
                                     <IconButton>
-                                        <DeleteIcon className={classes.functionicon} fontSize="large" />
+                                        <DeleteIcon className={classes.functionicon} fontSize="large" onClick={handleDelete}/>
                                     </IconButton>
                                 </Tooltip>
                             </Grid>
@@ -184,7 +249,7 @@ const HelpdeskDetail = ({props}) => {
                                             User Name: 
                                         </Grid>
                                         <Grid item xs={9} textAlign="left">
-                                            {senderD.username}
+                                            {senderD? senderD.username : null}
                                         </Grid>
                                     </Grid>
                                     {/* Message subject */}
@@ -256,12 +321,33 @@ const HelpdeskDetail = ({props}) => {
                                             Status: 
                                         </Grid>
                                         <Grid item xs={10} style={status === "CL" ? ({color: "red"}) : ({color: "green"})}>
-                                            <Tooltip title="Change status">
-                                                <IconButton onClick={()=>changeStatus()}>
-                                                    <ChangeCircleIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            {status}
+                                            {helpD.helpdeskStatus ==="RP" || helpD.helpdeskStatus === "CL"? 
+                                                (
+                                                    <Select
+                                                        id="helpStatus"
+                                                        value={status === "CL"? "Closed" : (status==="RP"? "Responded" : "Open")}
+                                                        label="Status"
+                                                        onChange={(e) => handleChangeStatus(e.target.value)}
+                                                        style={{marginLeft: 10}}
+                                                    >
+                                                        <MenuItem value={"Responded"}>Responded</MenuItem>
+                                                        <MenuItem value={"Closed"}>Closed</MenuItem>
+                                                    </Select>
+                                                )
+                                                :
+                                                (
+                                                    <Select
+                                                        id="helpStatus"
+                                                        value={status === "CL"? "Closed" : (status==="RP"? "Responded" : "Open")}
+                                                        label="Status"
+                                                        onChange={(e) => handleChangeStatus(e.target.value)}
+                                                        style={{marginLeft: 10}}
+                                                    >
+                                                        <MenuItem value={"Open"}>Open</MenuItem>
+                                                    </Select>
+                                                )
+                                            }
+                                            
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12} container style={{marginTop: 20,}}>
@@ -269,7 +355,7 @@ const HelpdeskDetail = ({props}) => {
                                             Replies: 
                                         </Grid>
                                         <Grid item xs={10} style={{ textAlign: 'left'}}>
-                                            {helpResponse? "Responded" : "Not yet Respond"} 
+                                            {helpResponse? `Responded by ${respondedUsername}` : "Not yet Respond"} 
                                         </Grid>
                                     </Grid>
                                     {helpResponse ? 
@@ -304,7 +390,7 @@ const HelpdeskDetail = ({props}) => {
                                                     )
                                                     :
                                                     <Grid item xs={12}>
-                                                        <Button onClick={()=>setViewReply(!viewReply)} variant="text">View Respond Message</Button>
+                                                        <Button onClick={()=>setViewReply(!viewReply)} variant="text" style={{fontWeight: 'bold'}}>View Respond Message</Button>
                                                     </Grid>
                                                 }
                                                 
@@ -366,6 +452,7 @@ const HelpdeskDetail = ({props}) => {
                 )
             }
             
+        </Container>
         </Container>
     )
 }

@@ -8,14 +8,22 @@ import IconButton from '@mui/material/IconButton';
 import PropTypes from 'prop-types';
 import moscow from '../globalAssets/moscow.jpg';
 import DownloadIcon from '@mui/icons-material/Download';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import {Link} from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { listService, deleteService } from '../../actions/serviceActions';
+import {useHistory} from 'react-router-dom'
+import CancelIcon from '@mui/icons-material/Cancel';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
+import CheckCircle from '@mui/icons-material/CheckCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { CircularProgress } from '@material-ui/core';
+import { SERVICE_DELETE_RESET } from '../../constants/serviceConstants';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,38 +34,12 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         paddingTop: 3,
         paddingBottom: 3,
-        minHeight: 500,
+        minHeight: 700,
     },
     table: {
         marginTop: 50,
     },
 }));
-
-function createData(sID, vName, startTerminal, endTerminal, date_time, status) {
-    return  {
-        sID,
-        vName,
-        startTerminal,
-        endTerminal,
-        date_time,
-        status,
-    };
-}
-
-const originalRows = [
-    createData(1, 'ali1', "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(2, "ali2", "KLCC SENTRAL, KL", "Pesta, JHR", "12 December 2021","CLOSED"),
-    createData(3, "najib1", "KLCC SENTRAL, KL", "Pesta, KDH", "12 December 2021","ACTIVE"),
-    createData(4, "najib2", "BAYAN LEPAS, PEN", "TPS, KL", "12 December 2021","ACTIVE"),
-    createData(5, "najib3", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(6, "najib4", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(7, "mahiyadin1", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(8, "mahiyadin2", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(9, "mahathir1", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(10, "mahathir2", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-    createData(11, "mahathir3", "KLCC SENTRAL, KL", "Pesta, PEN", "12 December 2021","ACTIVE"),
-]
-
 
 function descendingComparator(a,b,orderBy){
     if (b[orderBy] < a[orderBy]) {
@@ -89,37 +71,49 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'sID',
+        id: 'serviceID',
         numeric: true,
         disablePadding: true,
         label: 'Service ID',
     },
     {
-        id: 'vName',
+        id: 'vendorDetail',
         numeric: false,
         disablePadding: true,
         label: 'Vendor Name',
     },
     {
-        id: 'startTerminal',
+        id: 'servicedepartureTerminal',
         numeric: false,
         disablePadding: true,
         label: 'Start Terminal',
     },
     {
-        id: 'endTerminal',
+        id: 'servicearrivalTerminal',
         numeric: false,
         disablePadding: true,
         label: 'End Terminal',
     },
     {
-        id: 'date_time',
+        id: 'route',
         numeric: false,
         disablePadding: true,
-        label: 'Date/Time',
+        label: 'Route',
     },
     {
-        id: 'status',
+        id: 'serviceStartDate',
+        numeric: false,
+        disablePadding: true,
+        label: 'Date',
+    },
+    {
+        id: 'serviceTime',
+        numeric: false,
+        disablePadding: true,
+        label: 'Departure time',
+    },
+    {
+        id: 'serviceStatus',
         numeric: false,
         disablePadding: true,
         label: 'Status',
@@ -190,7 +184,7 @@ const EnhancedTableToolbar = (props) => {
         doc.text("Services Data",20,10)
         doc.autoTable({
             columns: headCells.map(head=>({header:head.label, dataKey:head.id})),
-            body: originalRows,
+            body: props.originalRows,
         })
         doc.save("ServicesData.pdf")
     }
@@ -227,20 +221,33 @@ const EnhancedTableToolbar = (props) => {
             )}
 
             {numSelected > 0 ? (
-                <Tooltip title="Delete">
+                <Tooltip title="Delete Service">
                 <IconButton>
-                    <DeleteIcon />
+                    <DeleteIcon onClick={()=>props.handleDelete(props.selected)}/>
                 </IconButton>
                 </Tooltip>
             ) : (
+                <>
                 <Tooltip title="Export to PDF file">
                     <IconButton>
                         <DownloadIcon
                             onClick={() => downloadPDF()}
                             style={{cursor: 'pointer'}}
+                            sx={{ color: 'blue' }}
                         />
                     </IconButton>
                 </Tooltip>
+                <Tooltip title="Add New Service">
+                    <Link to="/newService">
+                        <IconButton>
+                            <AddCircleIcon
+                                style={{cursor: 'pointer'}}
+                                sx={{ color: 'Green' }}
+                           />
+                        </IconButton>
+                    </Link>
+                </Tooltip>
+                </>
             )}
         </Toolbar>
     );
@@ -252,10 +259,44 @@ EnhancedTableToolbar.propTypes = {
 
 
 const Services = () =>{
+
+    const dispatch = useDispatch()
+
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+
+    const serviceList = useSelector(state => state.serviceList)
+    const {services, loading} = serviceList
+
+    const serviceDelete = useSelector(state => state.serviceDelete)
+    const {success: successDelete} = serviceDelete
+
+    let history = useHistory()
+
+    useEffect(() => {
+        if(userInfo){
+            dispatch(listService())
+        }
+        else{
+            history.push('/')
+        }
+    }, [dispatch, successDelete])
+
+    const [rows, setRows] = useState([]);
+
+    const [originalRows, setOriginalRows] = useState([]);
+
+    useEffect(() => {
+        if(services){
+            setOriginalRows(services)
+            setRows(services)
+        }
+    }, [serviceList])
+
     const classes = useStyles();
-    const [rows, setRows] = useState(originalRows);
+
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('sID');
+    const [orderBy, setOrderBy] = React.useState('serviceID');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -272,7 +313,7 @@ const Services = () =>{
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n)=> n.sID);
+            const newSelecteds = rows.map((n)=> n.serviceID);
             setSelected(newSelecteds);
             return;
         }
@@ -312,13 +353,13 @@ const Services = () =>{
         setDense(event.target.checked);
     };
     
-    const isSelected = (sID) => selected.indexOf(sID) !== -1;
+    const isSelected = (serviceID) => selected.indexOf(serviceID) !== -1;
     
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
 
     const requestSearchVendor = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.vName.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.vendorDetail.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
         setSearched(searchedVal);
@@ -331,7 +372,7 @@ const Services = () =>{
 
     const requestSearchStart = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.startTerminal.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.servicedepartureTerminal.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
         setSearchedStart(searchedVal);
@@ -344,7 +385,7 @@ const Services = () =>{
 
     const requestSearchEnd = (searchedVal) => {
         const filteredRows = originalRows.filter((row) => {
-          return row.endTerminal.toLowerCase().includes(searchedVal.toLowerCase());
+          return row.servicearrivalTerminal.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
         setSearchedEnd(searchedVal);
@@ -354,158 +395,183 @@ const Services = () =>{
         setSearchedEnd("");
         requestSearchEnd(searchedEnd);
     };
+
+    const handleDelete = (ids) => {
+        ids.map((id) => {
+            dispatch(deleteService(id));
+        })
+
+        alert("Sucessfully Deleted");
+        setSelected([]);
+        dispatch({type: SERVICE_DELETE_RESET})
+        history.push("/menu/servicemanagement");
+    }
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
-            <Box>
-                <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
-                    <Container style={{paddingTop: 30}}>
-                        <TextField
-                            placeholder="Search Vendor Name"
-                            type="search"
-                            label="vendor Name"
-                            style={{width: 300}} 
-                            value={searched} 
-                            onChange={(e) => requestSearchVendor(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchVendor()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                       <SearchIcon />
-                                    </InputAdornment>
-                                     ),
-                                  }}
-
-                        />
-                        <TextField
-                            placeholder="Search Start"
-                            type="search"
-                            label="Start Terminal"
-                            style={{paddingLeft: 10, width: 250}} 
-                            value={searchedStart} 
-                            onChange={(e) => requestSearchStart(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchStart()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                       <SearchIcon />
-                                    </InputAdornment>
-                                     ),
-                                  }}
-
-                        />
-                        <TextField
-                            placeholder="Search End"
-                            type="search"
-                            label="End Terminal"
-                            style={{paddingLeft: 10, width: 250}} 
-                            value={searchedEnd} 
-                            onChange={(e) => requestSearchEnd(e.target.value)} 
-                            onCancelSearch={()=>cancelSearchEnd()}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                       <SearchIcon />
-                                    </InputAdornment>
-                                     ),
-                                  }}
-
-                        />
-                    </Container>
-                    <EnhancedTableToolbar numSelected={selected.length} />
-                    <TableContainer>
-                        <Table
-                            sx={{minWidth:750}}
-                            aria-labelledby="tableTitle"
-                            size={dense?'small':'medium'}
-                        >
-                            <EnhancedTableHead 
-                                numSelected={selected.length}
-                                order={order}
-                                orderBy={orderBy}
-                                onSelectedAllClick={handleSelectAllClick}
-                                onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
-                            />
-                            <TableBody>
-                                {stableSort(rows, getComparator(order, orderBy))
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row, index) => {
-                                    const isItemSelected = isSelected(row.sID);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                                    return (
-                                        <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, row.sID)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={row.sID}
-                                        selected={isItemSelected}
-                                        >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                            color="primary"
-                                            checked={isItemSelected}
-                                            inputProps={{
-                                                'aria-labelledby': labelId,
-                                            }}
-                                            />
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            padding="none"
-                                            align="center"
-                                        >
-                                            {row.sID}
-                                        </TableCell>
-                                        <TableCell align="center">{row.vName}</TableCell>
-                                        <TableCell align="center">{row.startTerminal}</TableCell>
-                                        <TableCell align="center">{row.endTerminal}</TableCell>
-                                        <TableCell align="center">{row.date_time}</TableCell>
-                                        <TableCell align="center">{row.status}</TableCell>
-                                        <TableCell align="center">
-                                            <Tooltip title="Edit">
-                                                <IconButton>
-                                                    <Link to={`/service/${row.sID}`}>
-                                                        <EditIcon style={{cursor: 'pointer'}}/>
-                                                    </Link>
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableCell>
-                                        </TableRow>
-                                    );
-                                    })}
-                                {emptyRows > 0 && (
-                                    <TableRow
-                                        style={{
-                                            height: (dense ? 33 : 53) * emptyRows,
+            <Container >
+            {loading?
+                (
+                    <Box sx={{ display: 'flex' }}>
+                        <CircularProgress />
+                    </Box>
+                )
+                :
+                (
+                    <Box>
+                        <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
+                            <Container style={{paddingTop: 30}}>
+                                <TextField
+                                    placeholder="Search Vendor Name"
+                                    type="search"
+                                    label="vendor Name"
+                                    style={{width: 300}} 
+                                    value={searched} 
+                                    onChange={(e) => requestSearchVendor(e.target.value)} 
+                                    onCancelSearch={()=>cancelSearchVendor()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <SearchIcon />
+                                            </InputAdornment>
+                                            ),
                                         }}
-                                        >
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination 
-                        rowsPerPageOptions = {[5,10,25]}
-                        component = "div"
-                        count = {rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange = {handleChangePage}
-                        onRowsPerPageChange = {handleChangeRowsPerPage}
-                    />
-                    <FormControlLabel
-                        control={<Switch checked={dense} onChange={handleChangeDense} />}
-                        label="Dense padding"
-                    />
-                </Paper>
-            </Box>
+
+                                />
+                                <TextField
+                                    placeholder="Search Start"
+                                    type="search"
+                                    label="Start Terminal"
+                                    style={{paddingLeft: 10, width: 250}} 
+                                    value={searchedStart} 
+                                    onChange={(e) => requestSearchStart(e.target.value)} 
+                                    onCancelSearch={()=>cancelSearchStart()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <SearchIcon />
+                                            </InputAdornment>
+                                            ),
+                                        }}
+
+                                />
+                                <TextField
+                                    placeholder="Search End"
+                                    type="search"
+                                    label="End Terminal"
+                                    style={{paddingLeft: 10, width: 250}} 
+                                    value={searchedEnd} 
+                                    onChange={(e) => requestSearchEnd(e.target.value)} 
+                                    onCancelSearch={()=>cancelSearchEnd()}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <SearchIcon />
+                                            </InputAdornment>
+                                            ),
+                                        }}
+
+                                />
+                            </Container>
+                            <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows} handleDelete={handleDelete} selected={selected}/>
+                            <TableContainer>
+                                <Table
+                                    sx={{minWidth:750}}
+                                    aria-labelledby="tableTitle"
+                                    size={dense?'small':'medium'}
+                                >
+                                    <EnhancedTableHead 
+                                        numSelected={selected.length}
+                                        order={order}
+                                        orderBy={orderBy}
+                                        onSelectedAllClick={handleSelectAllClick}
+                                        onRequestSort={handleRequestSort}
+                                        rowCount={rows.length}
+                                    />
+                                    <TableBody>
+                                        {stableSort(rows, getComparator(order, orderBy))
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((row, index) => {
+                                            const isItemSelected = isSelected(row.serviceID);
+                                            const labelId = `enhanced-table-checkbox-${index}`;
+
+                                            return (
+                                                <TableRow
+                                                hover
+                                                onClick={(event) => handleClick(event, row.serviceID)}
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={row.serviceID}
+                                                selected={isItemSelected}
+                                                >
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox
+                                                    color="primary"
+                                                    checked={isItemSelected}
+                                                    inputProps={{
+                                                        'aria-labelledby': labelId,
+                                                    }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    padding="none"
+                                                    align="center"
+                                                >
+                                                    {row.serviceID}
+                                                </TableCell>
+                                                <TableCell align="center">{row.vendorDetail}</TableCell>
+                                                <TableCell align="center">{row.servicedepartureTerminal}</TableCell>
+                                                <TableCell align="center">{row.servicearrivalTerminal}</TableCell>
+                                                <TableCell align="center">{row.route}</TableCell>
+                                                <TableCell align="center">{row.serviceStartDate}</TableCell>
+                                                <TableCell align="center">{row.serviceTime}</TableCell>
+                                                <TableCell align="center">{row.serviceStatus === 'O'? (<CheckCircle style={{color:'green'}}/>) : (<CancelIcon style={{color:'red'}} /> )}</TableCell>
+                                                <TableCell align="center">
+                                                    <Tooltip title="Edit">
+                                                        <IconButton>
+                                                            <Link to={`/service/${row.serviceID}`}>
+                                                                <EditIcon style={{cursor: 'pointer'}}/>
+                                                            </Link>
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </TableCell>
+                                                </TableRow>
+                                            );
+                                            })}
+                                        {emptyRows > 0 && (
+                                            <TableRow
+                                                style={{
+                                                    height: (dense ? 33 : 53) * emptyRows,
+                                                }}
+                                                >
+                                                <TableCell colSpan={6} />
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <TablePagination 
+                                rowsPerPageOptions = {[5,10,25]}
+                                component = "div"
+                                count = {rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange = {handleChangePage}
+                                onRowsPerPageChange = {handleChangeRowsPerPage}
+                            />
+                            <FormControlLabel
+                                control={<Switch checked={dense} onChange={handleChangeDense} />}
+                                label="Dense padding"
+                            />
+                        </Paper>
+                    </Box>
+                )
+            }
+            </Container>
         </Container>
     );
 }

@@ -1,6 +1,6 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
+import { Grid, Box, Container, IconButton, Link, Typography, Button, Paper} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -10,6 +10,12 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import '../Header/header.css';
+import {useCookies} from 'react-cookie';
+import {useHistory} from 'react-router-dom';
+import APIService from '../../APIService'
+import { login } from '../../actions/userActions/userActions'
+import {useDispatch, useSelector} from 'react-redux'
+import Alert from '@mui/material/Alert'
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -73,8 +79,21 @@ const useStyles = makeStyles((theme) => ({
 function LoginForm() {
   const defaultStyle = useStyles();
 
+  let history = useHistory()
+
+  const userLogin = useSelector(state => state.userLogin)
+  const {error,  userInfo} = userLogin
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if(userInfo) {
+        history.push('/menu')
+    }
+  }, [userInfo])
+
   const [values, setValues] = useState({
     password: '',
+    email: '',
     showPassword: false,
   });
 
@@ -82,7 +101,8 @@ function LoginForm() {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  const handleClickShowPassword = () => {
+  const handleClickShowPassword = (event) => {
+    event.preventDefault();
     setValues({
       ...values,
       showPassword: !values.showPassword,
@@ -93,11 +113,21 @@ function LoginForm() {
     event.preventDefault();
   };
 
+  const loginBtn = (e) => {
+    e.preventDefault();
+    console.log(values.email, values.password)
+    dispatch(login(values.email, values.password))
+  }
+
+
   return (
       <Container>
+        <form onSubmit={loginBtn}>
+        {error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
-          label={'Username/Email'} variant="filled" InputProps={{ disableUnderline: true }}
+          label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
+          type="email" value={values.email} onChange={handleChange('email')}
           ></TextField>
         </Grid>
         <Grid container  xs={12} >        
@@ -129,32 +159,32 @@ function LoginForm() {
           <Grid item xs={12} className={defaultStyle.loginButton}>
           <Button 
            sx={{ m: 1 }}
-           id="new-sumbit"
            type="submit"
-           color='primary'
+           color='success'
            variant="contained"
-           href="/menu"
+          //  href="/menu"
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
-           startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
+           startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black", textShadow: '1px 1px 2px white'}}/>}
            >
-          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}} >
+          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black", textShadow: '1px 1px 2px white',}} >
             Login
           </Typography>
           </Button>
           </Grid>
           <Grid item xs={12} >
-            <Link className={defaultStyle.forgot} style={{textDecoration: "none",}} href="/forgotpassword">
+            <Link className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 20}} href="/forgotpassword">
               Forgot Password?
             </Link>
           </Grid>
           <Grid item xs={12}>
             <Box>
-            <Link className={defaultStyle.create} style={{textDecoration: "none",}} href="/register">
+            <Link className={defaultStyle.create} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 20}} href="/register">
               Create a new account?
             </Link>
             </Box>
           </Grid>
         </Grid>
+        </form>
       </Container>
   );
 

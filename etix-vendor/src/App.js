@@ -13,7 +13,11 @@ import VendorMenu from './components/VendorMenu/VendorMenu'
 import DataGeneration from './components/DataGeneration/DataGeneration'
 import Service from "./components/Service/Service";
 import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
+import Help from './components/HelpMan/Help';
+import Landing from './components/HelpCenter/Landing'
 import Profile from "./components/Profile/Profile";
+import {CookiesProvider} from 'react-cookie'
+import ServicesManagement from './components/ServiceManagement/ServicesManagement';
 
 function Router() {
 
@@ -23,9 +27,6 @@ function Router() {
     <NavBar />
     <Route path="/" exact>
       <Login />
-    </Route>
-    <Route path="/forgotpassword" exact>
-      <ForgotPassword />
     </Route>
     <Route path="/register" exact>
       <Register />
@@ -50,14 +51,31 @@ function Router() {
   )
 }
 
-
-
 function App() {
 
   return (
     <div> 
       <div>
-        <Router />
+      <CookiesProvider>
+          <BrowserRouter>
+          <Switch>
+             <Route exact path="/menu" component={Header}/>
+          </Switch>
+          <NavBar />
+              <Switch>
+                <Route exact path="/" component={Login} />
+                <Route exact path="/menu" component={VendorMenu}  />
+                <Route exact path="/register" component={Register}/>
+                <Route exact path="/register/registersuccess" component={RegistrationSuccess}/>
+                <Route exact path="/forgotpassword" component={ForgotPassword}/>
+                <Route exact path="/menu/servicemanagement" component={ServicesManagement}/>
+                <Route exact path="/menu/helpdesk" component={Help}/>
+                <Route exact path="/menu/helpdesk/:id" component={HelpdeskDetail}/>
+                <Route exact path="/helpcentre" component={Landing}/>
+              </Switch>
+            <Footer />    
+          </BrowserRouter>
+      </CookiesProvider>
       </div>
     </div>
   );
