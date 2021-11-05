@@ -48,87 +48,6 @@ function CustomToolbar() {
     );
 }
 
-const columns = [
-    { field: 'id', headerName: 'Help ID', headerAlign: 'center',width: 130 },
-    {
-      field: 'sender',
-      headerName: 'Sender',
-      headerAlign: 'center',
-      width: 150,
-      editable: false,
-    },
-    {
-      field: 'title',
-      headerName: 'Title',
-      headerAlign: 'center',
-      width: 230,
-      editable: false,
-    },
-    {
-      field: 'dateTime',
-      headerName: 'Date Time',
-      headerAlign: 'center',
-      width: 250,
-      editable: false,
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
-      headerAlign: 'center',
-      width: 120,
-      editable: false,
-      renderCell: (params) => {
-        console.log(params.row.status);
-        return (
-          //style={{display:'flex';justifyContent:'center';alignItems:'center'}}  
-            <Toolbar>
-            {params.row.status === "OP"? (
-            <Tooltip title="Open">
-            <CheckCircleIcon style={{color: 'green'}}/>
-            </Tooltip>): params.row.status === "CL"?(
-            <Tooltip title="Closed">
-            <CancelIcon style={{color: 'red'}}/>
-            </Tooltip>):(
-            <Tooltip title="Responded">
-            <CheckCircleIcon style={{color: 'blue'}}/>
-            </Tooltip>
-            )}
-            </Toolbar>
-        );
-     },
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 250, 
-      headerAlign: 'center',
-      editable: false,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => {
-        console.log(params);
-        return (
-          <Container >
-            <Grid xs={12} display="flex">
-              <Grid xs={6} item>
-                <Toolbar>
-                <Tooltip title="Edit">
-                <IconButton href={`/menu/helpdesk/${params.row.id}`}>
-                  <EditIcon />
-                </IconButton>
-                </Tooltip>
-                </Toolbar>
-              </Grid>
-              <Grid xs={6} item>
-                <DialogDelete props={params}/>
-              </Grid>
-            </Grid>
-          </Container>
-        );
-     },
-    },
-  ];
-
 function DialogDelete(props) {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch()
@@ -187,6 +106,87 @@ function DialogDelete(props) {
 
 function HelpManagement() {
     const defaultStyle = useStyles();
+
+    const columns = [
+      { field: 'id', headerName: 'Help ID', headerAlign: 'center',width: 130 },
+      {
+        field: 'sender',
+        headerName: 'Sender',
+        headerAlign: 'center',
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'title',
+        headerName: 'Title',
+        headerAlign: 'center',
+        width: 230,
+        editable: false,
+      },
+      {
+        field: 'dateTime',
+        headerName: 'Date Time',
+        headerAlign: 'center',
+        width: 250,
+        editable: false,
+      },
+      {
+        field: 'status',
+        headerName: 'Status',
+        headerAlign: 'center',
+        width: 120,
+        editable: false,
+        renderCell: (params) => {
+          console.log(params.row.status);
+          return (
+            //style={{display:'flex';justifyContent:'center';alignItems:'center'}}  
+              <Toolbar>
+              {params.row.status === "OP"? (
+              <Tooltip title="Open">
+              <CheckCircleIcon style={{color: 'green'}}/>
+              </Tooltip>): params.row.status === "CL"?(
+              <Tooltip title="Closed">
+              <CancelIcon style={{color: 'red'}}/>
+              </Tooltip>):(
+              <Tooltip title="Responded">
+              <CheckCircleIcon style={{color: 'blue'}}/>
+              </Tooltip>
+              )}
+              </Toolbar>
+          );
+       },
+      },
+      {
+        field: 'actions',
+        headerName: 'Actions',
+        width: 250, 
+        headerAlign: 'center',
+        editable: false,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: (params) => {
+          console.log(params);
+          return (
+            <Container >
+              <Grid xs={12} display="flex">
+                <Grid xs={6} item>
+                  <Toolbar>
+                  <Tooltip title="Edit">
+                  <IconButton href={`/menu/helpdesk/${params.row.id}`}>
+                    <EditIcon />
+                  </IconButton>
+                  </Tooltip>
+                  </Toolbar>
+                </Grid>
+                <Grid xs={6} item>
+                  <DialogDelete props={params}/>
+                </Grid>
+              </Grid>
+            </Container>
+          );
+       },
+      },
+    ];
     
     const dispatch = useDispatch()
     const userLogin = useSelector(state => state.userLogin)
@@ -203,6 +203,11 @@ function HelpManagement() {
 
     useEffect(() => {
         if(userInfo){
+          if (document.referrer !== document.location.href) {
+            setTimeout(function() {
+                document.location.reload(2)
+          }, 5000);
+          }
             dispatch(listHelp())
         }
         else{
@@ -216,11 +221,12 @@ function HelpManagement() {
     //   }
     // }, [loading])
 
+    
+
     const rows = userInfo.sender?.map(help => {
       // var s = help.HelpdeskStatus ==="OP"?"Active": help.HelpdeskStatus ==="CL"?"Closed":"Responded"
-      console.log(help.helpdeskStatus)
-      console.log(select)
       var s = help.helpdeskStatus
+      console.log(select)
       return {
         id: help.helpdeskID,
         title: help.helpdeskTitle,

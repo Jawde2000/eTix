@@ -196,14 +196,59 @@ const HelpdeskDetail = ({props}) => {
             </Dialog>
           </Toolbar>
         );
-      }
+    }
+
+    const DialogOk = () => {
+      
+        const handleClickOpen = () => {
+          setOpen(true);
+        };
+      
+        const handleClose = () => {
+          setOpen(false);
+        };
+
+        return (
+          <Toolbar>
+            <Dialog
+              open={true}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Notification"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Message(s) deleted
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
 
     useEffect(() => {
         if(deleteSuccess){
-            alert("Successfully deleted Help");
             dispatch({type: HELP_DELETE_RESET})
             dispatch({type: HELP_DETAIL_RESET});
-            history.push('/menu/helpdesk');
+            history.push('/menu/helpmanage');
+            if (document.referrer !== document.location.href) {
+                setTimeout(function() {
+                    document.location.reload()
+              }, 5000);
+            }
+        } else {
+            return (
+                <Box sx={{ display: 'flex' }}>
+                  <CircularProgress />
+                </Box>
+            );
         }
     }, [deleteHelplist])
 
