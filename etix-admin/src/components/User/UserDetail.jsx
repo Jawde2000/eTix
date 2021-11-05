@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button} from '@mui/material';
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -16,12 +16,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
+import S3FileUpload from 'react-s3'
 import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
 import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../actions/userActions';
 import moscow from '../globalAssets/moscow.jpg';
-
-//koee
+import S3 from 'react-aws-s3';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -259,6 +258,24 @@ const UserDetail = ({props}) => {
         history.push("/menu/users");
     }
 
+    const file = '/' + id + '.jpg'
+
+    const config = {
+        bucketName: 'etixbucket',
+        dirName: 'etix', 
+        region: 'ap-southeast-1',
+        accessKeyId: 'AKIA4TYMPNP6EQNIB7HV',
+        secretAccessKey: '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'
+    }
+
+    const ReactS3Client = new S3(config);
+
+    const upload = (e) => {
+        ReactS3Client.uploadFile(e.target.files[0], file)
+        .then(data => console.log(data))
+        .catch(err => console.error(err))
+    }
+
     const handleChangeUserName = (event) => {
         setUsername(event.target.value);
     }
@@ -372,6 +389,7 @@ const UserDetail = ({props}) => {
                                             alt="logo"
                                             style={{marginTop: 10,minHeight: 150, maxWidth:150}}
                                         />
+                                        {!editing? "":(<input type="file" onChange={upload}/>)}
                                     </Grid>
                                     <Grid item xs={12} style={{marginTop:10}}>
                                         Status
