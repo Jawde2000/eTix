@@ -328,7 +328,6 @@ const UserDetail = ({props}) => {
         ReactS3Client.uploadFile(e.target.files[0], file)
         .then(data =>{
             setPloading(false);
-            setEditing(true);
             // window.setTimeout(function(){window.location.reload()},3000)
             console.log(data);
         })

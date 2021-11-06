@@ -1,4 +1,4 @@
-import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container} from '@mui/material';
 import { makeStyles} from '@mui/styles';
 import React from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -6,6 +6,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useHistory } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import { logout } from '../../actions/userActions'
+import Avatar from '@mui/material/Avatar';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -21,11 +22,12 @@ const useStyles = makeStyles((theme) => ({
   },
   rightItem: {
     float: "right"
-  },customizeText: {
+  },
+  customizeText: {
     paddingLeft: 5,
     color: '#F5CB5C',
     font: 'robo',
-    fontSize: 13,
+    fontSize: 25,
     fontWeight: 'bold',
     fontFamily: ['rubik', 'sans-serif'].join(','),
 },
@@ -98,15 +100,17 @@ const Header = () => {
                 <Grid item sm={5} md={7}>
                 <div>
                 {/*<Tooltip title="User">*/}
+                <Container>
                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 >
-                   <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
+                   {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
                    <Typography className={defaultStyle.customizeText}>
                       {userInfo.username}
                    </Typography>
                 </Button>
+                </Container>
                 <Menu
                 id="account"
                 MenuListProps={{
