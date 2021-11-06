@@ -49,7 +49,7 @@ def getUserProfile(request):
 # only admin user can get the lists of users
 
 
-@api_view(['GET']) 
+@api_view(['GET'])
 @permission_classes([IsAdminUser])
 def getUsers(request):
     users = User.objects.all()
@@ -58,7 +58,6 @@ def getUsers(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def getUserById(request, pk):
     user = User.objects.get(userID=pk)
     serializer = UserSerializer(user, many=False)
@@ -82,54 +81,56 @@ def registerUser(request):
         user.is_staff = data['is_staff']
         user.is_superuser = data['is_superuser']
         user.is_active = data['is_active']
-    
-        user.save()      
+
+        user.save()
 
         if data['is_customer'] == "True":
-            customer = Customer.objects.create( 
-                created_by = user,
-                customerContact_Number = data['phonenumber']
+            customer = Customer.objects.create(
+                created_by=user,
+                customerContact_Number=data['phonenumber']
             )
 
             customer.save()
-
 
         return Response(serializer.data)
     except:
         message = {'detail': 'User with this email already exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 def getRoutes(request):
-    data = request.data 
+    data = request.data
 
     try:
-        locationone = Location.objects.get(locationName = data['locationFrom'])
+        locationone = Location.objects.get(locationName=data['locationFrom'])
         serializerone = LocationSerializerIDonly(locationone, many=False)
 
-        locationtwo = Location.objects.get(locationName = data['locationTo'])
+        locationtwo = Location.objects.get(locationName=data['locationTo'])
         serializertwo = LocationSerializerIDonly(locationtwo, many=False)
 
-        services = Services.objects.all().filter(locationFrom = serializerone.data['locationID']).filter(locationTo = serializertwo.data['locationID'])
+        services = Services.objects.all().filter(locationFrom=serializerone.data['locationID']).filter(
+            locationTo=serializertwo.data['locationID'])
         serializer = ServicesSerializer(services, many=True)
-        
+
         return Response(serializer.data)
     except:
         message = {'detail': 'No routes exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 def getLocationByID(request):
-    data = request.data 
+    data = request.data
 
     try:
-        loc = Location.objects.all().filter(locationID = data['locationID'])
+        loc = Location.objects.all().filter(locationID=data['locationID'])
         serializer = LocationSerializer(loc, many=True)
         return Response(serializer.data)
     except:
         message = {'detail': 'ID not found'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 @api_view(['POST'])
 def getAllVendors(reqeust):
@@ -137,10 +138,11 @@ def getAllVendors(reqeust):
     serializer = VendorSerializerStripped(vendors, many=True)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 def getVendorName(request):
-    data = request.data 
-    
+    data = request.data
+
     try:
         vendor = Vendor.objects.get(vendorID=data['vendorID'])
         serializer = VendorSerializer(vendor, many=False)
@@ -234,6 +236,7 @@ def updateVendor(request, pk):
 
     return Response(serializer.data)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def createHelpDesk(request, pk):
@@ -244,22 +247,22 @@ def createHelpDesk(request, pk):
 
     if (pk == 'admin'):
         helpreq = HelpDesk.objects.create(
-            helpdeskTitle = data['title'],
-            helpdeskMessage = data['message'],
-            user = userreq,
-            to_admin = True,
-            helpdeskStatus = 'OP'
+            helpdeskTitle=data['title'],
+            helpdeskMessage=data['message'],
+            user=userreq,
+            to_admin=True,
+            helpdeskStatus='OP'
         )
     else:
         vendor = Vendor.objects.get(vendorID=pk)
 
         helpreq = HelpDesk.objects.create(
-            helpdeskTitle = data['title'],
-            helpdeskMessage = data['message'],
-            user = userreq,
-            receiver = vendor,
-            to_vendor = True,
-            helpdeskStatus = 'OP'
+            helpdeskTitle=data['title'],
+            helpdeskMessage=data['message'],
+            user=userreq,
+            receiver=vendor,
+            to_vendor=True,
+            helpdeskStatus='OP'
         )
 
     helpreq.save()
@@ -268,6 +271,7 @@ def createHelpDesk(request, pk):
 
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def listHelpDeskbyUser(request, pk):
@@ -275,6 +279,7 @@ def listHelpDeskbyUser(request, pk):
     serializer = HelpDeskSerializer(helpreq, many=True)
 
     return Response(serializer.data)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
@@ -297,11 +302,13 @@ class CustomerViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
+
 @api_view(['GET'])
 def getVendorByUserID(reqeust, pk):
     vendor = Vendor.objects.get(created_by=pk)
     serializer = VendorSerializer(vendor, many=False)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def getServiceByVendorID(request, pk):
@@ -313,6 +320,7 @@ def getServiceByVendorID(request, pk):
         message = {'detail': 'service not exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def getVendorHelpByID(request, pk):
     try:
@@ -322,6 +330,18 @@ def getVendorHelpByID(request, pk):
     except:
         message = {'detail': 'vendor helplist is empty'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def getVendorDByVID(request, pk):
+    try:
+        vendor = Vendor.objects.get(vendorID=pk)
+        serializer = VendorSerializer(vendor, many=False)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'vendor not found'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
@@ -387,6 +407,13 @@ class ServicesViewSet(viewsets.ModelViewSet):
     # authentication_classes = (TokenAuthentication, )
 
 
+@api_view(['GET'])
+def getSeatByID(reqeust, pk):
+    seat = Seat.objects.get(seatID=pk)
+    serializer = SeatSerializer(seat, many=False)
+    return Response(serializer.data)
+
+
 class SeatViewSet(viewsets.ModelViewSet):
     queryset = Seat.objects.all()
     serializer_class = SeatSerializer
@@ -397,4 +424,3 @@ class SeatViewSet(viewsets.ModelViewSet):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = [IsAuthenticated]

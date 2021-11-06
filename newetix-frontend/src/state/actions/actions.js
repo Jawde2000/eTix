@@ -1,14 +1,73 @@
 import * as actions from './actionConstants';
 import axios from 'axios'
 
-export const routeLookup = (locationFrom, locationTo) => async(dispatch) => {
+export const routeLookup = (locationFrom, locationTo, departureDate) => async(dispatch) => {
     try {
         dispatch({type: actions.ROUTE_REQUEST})
 
-        const { data } = await axios.post('http://127.0.0.1:8000/api/service/routes', { 
+        console.log(locationFrom)
+        var { data } = await axios.post('http://127.0.0.1:8000/api/service/routes', { 
             "locationFrom": locationFrom, 
             "locationTo": locationTo 
         })
+
+        console.log(data)
+
+        data = data.filter((item) => {
+            return item.serviceStatus === "O"
+        })
+
+        console.log(data)
+
+        data = data.filter((item) => {
+            return item.serviceStartDate === departureDate
+        })
+
+        data = data.map((item) => ({
+            ...item,
+            searchedFrom: locationFrom,
+            searchedTo: locationTo,
+        }))
+
+        let seatD = []
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json'
+            }
+        }
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/seat/detail/${i.seat}/`, config)
+            seatD.push(rst.data);
+        }
+
+        let vendorD = []
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/vendorD/${i.vendor}/`, config)
+            vendorD.push(rst.data)
+        }
+
+        let userD = []
+
+        for(let x of vendorD){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/user/${x.created_by}/`)
+            userD.push(rst.data)
+        }
+
+        vendorD.map((item, i) => ({
+            ...item,
+            userD: userD[i]
+        }))
+
+
+
+        data = data.map((item, index) => ({
+            ...item,
+            seatD: seatD[index],
+            vendorD: vendorD[index],
+        }))
 
         dispatch({
             type: actions.ROUTE_SUCCESS,
@@ -298,10 +357,42 @@ export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState)
             type: actions.HELP_LIST_CREATE,
             payload: helpinfo
         })
-
     } catch (error) {
         dispatch({
             type: actions.HELP_LIST_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+//get locations for searching route
+export const getLocations = () => async(dispatch) => {
+    try {
+        dispatch({
+            type: actions.LOCATION_LIST_REQUEST
+        })
+
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+
+        const {data} = await axios.get(
+            `http://127.0.0.1:8000/api/location/`,
+            config
+        )
+        
+        dispatch({
+            type: actions.LOCATION_LIST_SUCCESS,
+            payload: data
+        })
+
+    } catch (error) {
+        dispatch({
+            type: actions.LOCATION_LIST_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

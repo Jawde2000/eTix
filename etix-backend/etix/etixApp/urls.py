@@ -29,7 +29,7 @@ urlpatterns = [
     # api path for login, method post
     path('api/users/login/', views.MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
-         
+
     # api path for register new user, method post
     path('api/users/register/', views.registerUser, name='register'),
 
@@ -56,7 +56,7 @@ urlpatterns = [
     # get vendor helplist by vendorID
     path('api/user/vendorhelp/<str:pk>/',
          views.getVendorHelpByID, name='help-vendorid'),
-  
+
     # get list of services by location
     path('api/service/routes', views.getRoutes, name='route-query'),
 
@@ -75,8 +75,8 @@ urlpatterns = [
     path('api/user/update/<str:pk>/', views.updateUser,
          name="user-update"),
 
-     path('api/vendor/list', views.getAllVendors,
-          name="vendor-list"),
+    path('api/vendor/list', views.getAllVendors,
+         name="vendor-list"),
 
     # update customer by userid
     path('api/user/customer/update/<str:pk>/',
@@ -92,10 +92,15 @@ urlpatterns = [
 
     # create helpdesk request
     path('api/help/request/create/<str:pk>/',
-          views.createHelpDesk, name="help-create"),
+         views.createHelpDesk, name="help-create"),
 
     path('api/help/request/list/<str:pk>/',
-          views.listHelpDeskbyUser, name="help-list-user"),
+         views.listHelpDeskbyUser, name="help-list-user"),
+    # get seat details by id for customer,
+    path('api/seat/detail/<str:pk>/', views.getSeatByID, name="seat-detail"),
+
+    # get vendor details by vendor id,
+    path('api/vendorD/<str:pk>/', views.getVendorDByVID, name="vDetail"),
 
     # api path to delete users
     path('api/user/delete/<str:pk>/', views.deleteUser, name='user-delete'),

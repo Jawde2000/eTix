@@ -29,5 +29,8 @@ export const helpdeskReducer = (state = {}, action) => {
         
         case action.HELP_LIST_FAIL:
             return {loading: false, error: action.payload}
+
+        default:
+            return state
     }
 }
