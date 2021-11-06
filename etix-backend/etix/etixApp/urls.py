@@ -90,6 +90,12 @@ urlpatterns = [
     path('api/help/response/<str:pk>/',
          views.getHelpResponseByHelpID, name="help-detail"),
 
+    # create helpdesk request
+    path('api/help/request/create/<str:pk>/',
+          views.createHelpDesk, name="help-create"),
+
+    path('api/help/request/list/<str:pk>/',
+          views.listHelpDeskbyUser, name="help-list-user"),
 
     # api path to delete users
     path('api/user/delete/<str:pk>/', views.deleteUser, name='user-delete'),

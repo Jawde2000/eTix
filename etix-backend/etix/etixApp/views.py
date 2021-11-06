@@ -130,6 +130,7 @@ def getLocationByID(request):
         message = {'detail': 'ID not found'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
         
+
 @api_view(['POST'])
 def getAllVendors(reqeust):
     vendors = Vendor.objects.all()
@@ -233,6 +234,47 @@ def updateVendor(request, pk):
 
     return Response(serializer.data)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def createHelpDesk(request, pk):
+
+    data = request.data
+
+    userreq = User.objects.get(userID=data['userID'])
+
+    if (pk == 'admin'):
+        helpreq = HelpDesk.objects.create(
+            helpdeskTitle = data['title'],
+            helpdeskMessage = data['message'],
+            user = userreq,
+            to_admin = True,
+            helpdeskStatus = 'OP'
+        )
+    else:
+        vendor = Vendor.objects.get(vendorID=pk)
+
+        helpreq = HelpDesk.objects.create(
+            helpdeskTitle = data['title'],
+            helpdeskMessage = data['message'],
+            user = userreq,
+            receiver = vendor,
+            to_vendor = True,
+            helpdeskStatus = 'OP'
+        )
+
+    helpreq.save()
+
+    serializer = HelpDeskSerializer(helpreq, many=False)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listHelpDeskbyUser(request, pk):
+    helpreq = HelpDesk.objects.filter(user=pk)
+    serializer = HelpDeskSerializer(helpreq, many=True)
+
+    return Response(serializer.data)
 
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
