@@ -44,9 +44,8 @@ function Landing() {
     
     let history = useHistory()
 
-
     useEffect(() => {
-        if(userInfo) {
+        if(userInfo == null) {
             history.push('/')
         }
         dispatch(vendorList)

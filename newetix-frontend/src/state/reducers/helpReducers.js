@@ -16,7 +16,7 @@ export const vendorListReducer = (state = { }, action) => {
     }
 }
 
-export const helpdeskReducer = (state = {}, action) => {
+export const helpdeskReducer = (state = { }, action) => {
     switch(action.type){
         case actions.HELP_LIST_REQUEST:
             return {loading: true}
@@ -29,5 +29,8 @@ export const helpdeskReducer = (state = {}, action) => {
         
         case action.HELP_LIST_FAIL:
             return {loading: false, error: action.payload}
+
+        default:
+            return state
     }
 }

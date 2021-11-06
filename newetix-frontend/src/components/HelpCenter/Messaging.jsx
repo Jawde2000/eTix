@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
     },
     tf: {
         width: '550px'
+    },
+    ole: {
+        backgroundColor: 'rgba(31,40,51,0.75)',
+        color: 'white',
+        padding: '5px'
     }
 }));
 
@@ -47,10 +52,10 @@ function Messaging() {
     return (
         <Box className={classes.whole}>
             <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={4} className={classes.inside}>
-                <Grid item xs>
+                <Grid item xs={3}>
                     <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={1}>
                         <Grid item>
-                            <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={1}>
+                            <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                                 <Grid item>
                                     <HelpIcon fontSize='large' sx={{fontSize: '75px'}}></HelpIcon>
                                 </Grid>
@@ -60,30 +65,30 @@ function Messaging() {
                             </Grid>
                         </Grid>
                         <Grid item className={`${classes.sect} ${classes.articles}`}>
-                            <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={1}>
+                            <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
                                 <Grid item>
                                     <Typography variant="h4">Articles</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant="filled">How to purchase?</Button>
+                                    <Typography variant="h5">How to purchase?</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant="filled">How to use eTix?</Button>
+                                    <Typography variant="h5">How to use eTix?</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant="filled">Card payments</Button>
+                                    <Typography variant="h5">Card payments</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant="filled">Crypto payments</Button>
+                                    <Typography variant="h5">Crypto payments</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant="filled">Digital tickets</Button>
+                                    <Typography variant="h5">Digital tickets</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item className={`${classes.sect} ${classes.mainwin}`} xs={9}>
+                <Grid item xs={8} className={classes.ole}>
                     <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4}>
                         <Grid item>
                             <Typography variant="h3">Messaging System</Typography>

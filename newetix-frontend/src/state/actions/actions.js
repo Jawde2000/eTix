@@ -240,7 +240,7 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
         }
 
         const {customerInfo} = await axios.put(
-            `localhost:8000/api/user/customer/update/${userInfo.userID}`,
+            `http://localhost:8000/api/user/customer/update/${userInfo.userID}`,
             {
                 'customerFirstName': firstname,
                 'customerLastName': lastname,
@@ -274,8 +274,19 @@ export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState)
         })
 
         const {
-            userLogin: {userInfo}
+            userLogin: {userInfo},
+            vendorList: {vendorInfo}
         } = getState()
+
+        for (let vendor in vendorInfo){
+            if (vendorInfo[vendor].vendorName == rcv){
+                rcv = vendorInfo[vendor].vendorID
+            }
+        }
+
+        if (rcv == 'eTix'){
+            rcv = 'admin'
+        }
 
         const config = {
             headers: {
@@ -285,7 +296,7 @@ export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState)
         }
 
         const {helpinfo} = await axios.put(
-            `localhost:8000/api/help/request/${rcv}`,
+            `http://localhost:8000/api/help/request/create/${rcv}/`,
             {
                 'title': title,
                 'message': message,
@@ -293,7 +304,7 @@ export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState)
             },
             config
         )
-        
+
         dispatch({
             type: actions.HELP_LIST_CREATE,
             payload: helpinfo
@@ -327,7 +338,7 @@ export const helpdeskList = () => async(dispatch, getState) => {
         }
 
         const {helpinfo} = await axios.get(
-            `localhost:8000/api/help/request/${userInfo.userID}`,
+            `http://localhost:8000/api/help/request/${userInfo.userID}`,
             config
         )
         

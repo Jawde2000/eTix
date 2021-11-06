@@ -3,6 +3,8 @@ import { makeStyles } from '@mui/styles';
 import { Grid, Box, Typography, TextField, Button, Autocomplete } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
+import { helpdeskCreate } from '../../state/actions/actions';
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -17,24 +19,43 @@ const useStyles = makeStyles((theme) => ({
 
 function Compose() {
     const classes = useStyles();
-
+    let history = useHistory()
+    const dispatch = useDispatch()
     const vendorList = useSelector(state => state.vendorList)
+    const userLogin = useSelector(state => state.userLogin)
+
+    const {userInfo} = userLogin
 
     const { vendorInfo } = vendorList
 
-    async function testing(vendorInfo) {
-        console.log(vendorInfo)
-        var vendorNames = []
-        for (var i of vendorInfo){
-            vendorNames.push(vendorInfo[i].vendorNames)
+    function vendorlistName(vendorInfo){
+        let nameArray = [];
+
+        for (let key in vendorInfo){
+            nameArray.push(vendorInfo[key].vendorName)
         }
-        return vendorNames
+
+        nameArray.push('eTix')
+
+        return nameArray
     }
 
-    console.log(testing(vendorInfo))
+    const [receiver, setReceiver] = useState(vendorlistName[0])
+    const [subject, setSubject] = useState("");
+    const [body, setBody] = useState("");
 
+    function onClickSubmit(){
+        dispatch(helpdeskCreate(receiver, subject, body))
+        history.push('/help/inbox')
+    }
 
-    const [reciever, setreciever] = useState('Receiver');
+    const handleBodyChanges = (event) => {
+        setBody(event.target.value)
+    }
+
+    const handleSubjectChanges = (event) => {
+        setSubject(event.target.value)
+    }
 
 
     return (
@@ -54,10 +75,10 @@ function Compose() {
                             disablePortal
                             className={classes.tf}
                             onChange={(event, newValue) => {
-                                setreciever(newValue);
+                                setReceiver(newValue);
                             }}
+                            options={vendorlistName(vendorInfo)}
                             id="receiverCombo"
-                            options={testing}
                             sx={{ width: 300 }}
                             renderInput={(params) => <TextField {...params} label="From" />}
                         />
@@ -70,7 +91,7 @@ function Compose() {
                         <Typography variant="h5">Subject:</Typography>
                     </Grid>
                     <Grid item>
-                        <TextField className={classes.tf} label="Subject" variant="filled"/>
+                        <TextField className={classes.tf} onChange={handleSubjectChanges} label="Subject" variant="filled"/>
                     </Grid>
                 </Grid>
             </Grid>
@@ -80,14 +101,14 @@ function Compose() {
                         <Typography variant="h5">Body:</Typography>
                     </Grid>
                     <Grid item>
-                        <TextField className={classes.tf} label="Body" variant="filled" rows={10} multiline/>
+                        <TextField className={classes.tf} onChange={handleBodyChanges} label="Body" variant="filled" rows={10} multiline/>
                     </Grid>
                 </Grid>
             </Grid>
             <Grid item>
                 <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={4}>
                     <Grid item>
-                        <Button variant="contained">Submit</Button>
+                        <Button variant="contained" onClick={() => {onClickSubmit()}}>Submit</Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained">Inbox</Button>
