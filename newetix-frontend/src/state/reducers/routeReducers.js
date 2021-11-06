@@ -23,6 +23,26 @@ export const dateReducer = (state = {date: []}, action) => {
     }
 }
 
+export const locationListReducer = (state = {locations: []}, action) => {
+    switch (action.type) {
+        case constants.LOCATION_LIST_REQUEST:
+            return {loading: true}
+            
+        case constants.LOCATION_LIST_SUCCESS:
+            return {loading: false, locations: action.payload}
+
+        case constants.LOCATION_LIST_FAIL:
+            return {loading: false, error: true}
+
+        case constants.LOCATION_LIST_RESET:
+            return {loading: false, locations:[]}
+
+        default:
+            return state
+            
+    }
+}
+
 export const seatListReducer = (state = {seat: []}, action) => {
     switch (action.type) {
         case constants.SEAT_LIST_REQUEST:

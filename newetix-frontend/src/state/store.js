@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { routeLookupReducer, dateReducer } from './reducers/routeReducers';
+import { routeLookupReducer, dateReducer, locationListReducer } from './reducers/routeReducers';
 import { userLoginReducer, customerDetailsReducer } from './reducers/userReducers';
 import { vendorListReducer, helpdeskReducer } from './reducers/helpReducers';
 
@@ -13,7 +13,8 @@ const reducer = combineReducers({
     customerEdit: customerDetailsReducer,
     dateData: dateReducer,
     helpdeskCreate: helpdeskReducer,
-    helpdeskList: helpdeskReducer
+    helpdeskList: helpdeskReducer,
+    locationList: locationListReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?
