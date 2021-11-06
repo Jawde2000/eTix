@@ -57,7 +57,7 @@ function Router() {
                 <Route path="/help" exact>
                     <HelpLanding />
                 </Route>
-                <Route path="/help/messages" exact>
+                <Route path="/help/inbox" exact>
                     <HelpMessaging />
                 </Route>
                 <Route path="/help/articles/1/" exact>
