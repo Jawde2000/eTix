@@ -239,7 +239,7 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
             }
         }
 
-        const {customerInfo} = await axios.get(
+        const {customerInfo} = await axios.put(
             `localhost:8000/api/user/customer/update/${userInfo.userID}`,
             {
                 'customerFirstName': firstname,
@@ -260,6 +260,85 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
     } catch (error) {
         dispatch({
             type: actions.CUSTOMER_DETAILS_FAILURE,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.HELP_LIST_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo}
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const {helpinfo} = await axios.put(
+            `localhost:8000/api/help/request/${rcv}`,
+            {
+                'title': title,
+                'message': message,
+                'userID': userInfo.userID
+            },
+            config
+        )
+        
+        dispatch({
+            type: actions.HELP_LIST_CREATE,
+            payload: helpinfo
+        })
+
+    } catch (error) {
+        dispatch({
+            type: actions.HELP_LIST_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const helpdeskList = () => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.HELP_LIST_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo}
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const {helpinfo} = await axios.get(
+            `localhost:8000/api/help/request/${userInfo.userID}`,
+            config
+        )
+        
+        dispatch({
+            type: actions.HELP_LIST_SUCCESS,
+            payload: helpinfo
+        })
+
+    } catch (error) {
+        dispatch({
+            type: actions.HELP_LIST_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
