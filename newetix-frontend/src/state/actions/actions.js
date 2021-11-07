@@ -447,3 +447,84 @@ export const helpdeskList = () => async(dispatch, getState) => {
         })
     }
 }
+
+//add to cart 
+export const addToCart = (service, seatType, seatPrice) => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.CART_ADD_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo}
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `http://localhost:8000/api/cart/`,
+            config
+        )
+
+        let cart = ""
+
+        for(let i of data){
+            if(i.user === userInfo.userID){
+                cart = i.cartID
+            }
+        }
+
+        //if cart exist, just create item. If it does not exist create a new cart and create item 
+        if(cart){
+            let rst = await axios.post(
+                `http://127.0.0.1:8000/api/cartitems/`,
+                {
+                    seat_Type: seatType,
+                    seat_price: seatPrice,
+                    cart: cart,
+                    service: service.serviceID
+                },
+                config
+            )
+        }
+        else{
+            let rst = await axios.post(
+                `http://127.0.0.1:8000/api/cart/`,
+                {
+                    user: userInfo.userID
+                },
+                config
+            )
+            
+            if(rst){
+                let rst1 = await axios.post(
+                    `http://127.0.0.1:8000/api/cartitems/`,
+                    {
+                        seat_Type: seatType,
+                        seat_price: seatPrice,
+                        cart: rst.data.cartID,
+                        service: service.serviceID
+                    }
+                )
+            }   
+            
+        }
+        
+        dispatch({
+            type: actions.CART_ADD_SUCCESS,
+        })
+
+    } catch (error) {
+        dispatch({
+            type: actions.CART_ADD_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
