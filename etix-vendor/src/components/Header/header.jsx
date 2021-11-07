@@ -1,4 +1,4 @@
-import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container} from '@mui/material';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container, useIsFocusVisible} from '@mui/material';
 import { makeStyles} from '@mui/styles';
 import React, {useEffect, useState} from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -78,7 +78,7 @@ menu: {
   
 }));
 
-const Header = () => {
+const Header = (props) => {
   const defaultStyle = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openD, setOpen] = useState(false);
@@ -117,8 +117,19 @@ const Header = () => {
     handleClose();
   }
 
-  const userLogin = useSelector(state => state.userLogin);
-  const {userInfo} = userLogin;
+  const userLogin = useSelector(state => state.userLogin)
+  const { userInfo} = userLogin
+
+  const userDetail = useSelector(state => state.userDetail)
+  const {userD} = userDetail
+
+  const [name, setName] = useState(null);
+  const [id, setID] = useState();
+
+  useEffect(() => {
+    setName(userInfo? userInfo.username:null);
+    setID(userInfo? userInfo.userID:null);
+  }, [userInfo])
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -134,9 +145,9 @@ const Header = () => {
                 aria-expanded={open ? 'true' : undefined}
                 onClick={userInfo? handleClick: handleClickOpenD}
                 >
-                   {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
+                   {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + id + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
                    <Typography className={defaultStyle.customizeText}> 
-                   {userInfo? userInfo.username:"User"}
+                   {userInfo? name:"User"}
                    </Typography>
                 </Button>
                 </Container>

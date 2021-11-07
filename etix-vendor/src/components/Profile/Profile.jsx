@@ -22,6 +22,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import Header from '../Header/header';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -133,13 +134,13 @@ const Profile = ({props}) => {
             alert("Successfully Updated User");
             dispatch({type: USER_UPDATE_RESET});
             setEditing(!editing);
-            window.setTimeout(function(){window.location.reload()},3000)
+            window.setTimeout(function(){window.location.reload()},1000)
         }
         else if(successVendor){
             alert("Successfully Updated User");
             dispatch({type: USER_VENDOR_UPDATE_RESET});
             setEditing(!editing);
-            window.setTimeout(function(){window.location.reload()},3000)
+            window.setTimeout(function(){window.location.reload()},1000)
         }
         else if(errorUsr || errorVen){
             alert("Fail to Update");
@@ -320,7 +321,7 @@ const Profile = ({props}) => {
                                 </Tooltip>
                             </Grid>
                             <Grid item xs={4} textAlign="center" style={{fontSize:20}}>
-                                User ID: {userD.vendorInfo.data.vendorID}
+                                User ID: {userInfo.vendorInfo.vendorID}
                             </Grid>
                             <Grid item xs={4} textAlign="right">
                                 <Tooltip title="Edit User">

@@ -7,6 +7,7 @@ import {
     USER_DETAIL_REQUEST, 
     USER_DETAIL_SUCCESS,
     USER_DETAIL_FAIL,
+    USER_DETAIL_RESET,
 
     USER_VENDOR_UPDATE_REQUEST,
     USER_VENDOR_UPDATE_SUCCESS,
@@ -94,6 +95,7 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
     localStorage.removeItem('userInfo')
     dispatch({type: USER_LOGOUT})
+    dispatch({type: USER_DETAIL_RESET})
 }
 
 //GET ONLY ONE USER 
@@ -171,7 +173,7 @@ export const updateVendor = (user, vendor, id) => async (dispatch, getState) => 
             type:USER_VENDOR_UPDATE_REQUEST
         })
 
-        const {
+        var {
             userLogin: {userInfo},
         } = getState()
 
@@ -195,12 +197,10 @@ export const updateVendor = (user, vendor, id) => async (dispatch, getState) => 
             vendor,
             config
         )
-        
     
         dispatch({
             type: USER_VENDOR_UPDATE_SUCCESS,
         })
-
 
     }catch(error){
         dispatch({
