@@ -103,6 +103,16 @@ def generate_cart_id():
     return code
 
 
+def generate_cart_items_id():
+
+    while True:
+        code = "E" + str(random.randint(100000, 999999)) + "C"
+        if CartItems.objects.filter(cartItemsID=code).count() == 0:
+            break
+
+    return code
+
+
 def generate_payment_id():
 
     while True:
@@ -122,13 +132,14 @@ def generate_location_id():
 
     return code
 
+
 def get_token():
 
     while True:
         tk = get_random_string(length=32)
         if Ticket.objects.filter(Token=tk).count() == 0:
             break
-    
+
     return str(tk)
 
 # Create your models here.
@@ -211,7 +222,8 @@ class Customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     customerID = models.TextField(
         default=generate_customer_id, primary_key=True, unique=True, editable=False, max_length=8)
-    customerGender = models.CharField(max_length=1, blank=True, choices=genderChoices)
+    customerGender = models.CharField(
+        max_length=1, blank=True, choices=genderChoices)
     customerFirstName = models.CharField(max_length=100, blank=True)
     customerLastName = models.CharField(max_length=100, blank=True)
     customerContact_Number = models.TextField(max_length=16, blank=True)
@@ -292,7 +304,7 @@ class Services(models.Model):
     serviceStatus = models.CharField(max_length=1, choices=service_status)
     serviceTime = models.TimeField(blank=True, null=True)
     serviceFrequency = models.CharField(
-        max_length=7, choices=service_frequency) 
+        max_length=7, choices=service_frequency)
     serviceEndDate = models.DateField()
     serviceStartDate = models.DateField()
     servicedepartureTerminal = models.TextField(max_length=1000)
@@ -314,7 +326,8 @@ class Ticket(models.Model):
     ownBy = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     Token = models.TextField(
         default=get_token, unique=True, editable=False, max_length=32)
-    
+
+
 class HelpDesk(models.Model):
     help_desk_status = [
         ("OP", "Open"),
@@ -353,11 +366,26 @@ class HelpResponse(models.Model):
 class Cart(models.Model):
     cartID = models.TextField(
         default=generate_cart_id, primary_key=True, unique=True, editable=False, max_length=8)
-    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     cartTotal = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True)
+
+
+class CartItems(models.Model):
+    seat_type = [
+        ("F", "First Class"),
+        ("B", "Business Class"),
+        ("E", "Economy Class"),
+    ]
+    cartItemsID = models.TextField(
+        default=generate_cart_items_id, primary_key=True, unique=True, editable=False, max_length=8)
+    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
+    seat_Type = models.CharField(max_length=1, choices=seat_type)
+    seat_price = models.DecimalField(
+        max_digits=10, decimal_places=2
+    )
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
 
 
 class Payment(models.Model):

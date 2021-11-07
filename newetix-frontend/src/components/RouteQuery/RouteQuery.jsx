@@ -229,9 +229,11 @@ export default function RouteQuery() {
                                                 <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
                                                     <Grid item xs={12} >
                                                         <Typography style={{fontSize: 30}}>
-                                                            {`${item.servicedepartureTerminal} - ${item.servicearrivalTerminal}`}
+                                                            {`${item.servicedepartureTerminal} (${item.searchedFrom}) - ${item.servicearrivalTerminal} (${item.searchedTo})`}
                                                         </Typography>
-
+                                                    </Grid>
+                                                    <Grid item xs={12} container>
+                                                        
                                                     </Grid>
                                                     <Grid item xs={12} container>
                                                         <Grid item xs={12} />

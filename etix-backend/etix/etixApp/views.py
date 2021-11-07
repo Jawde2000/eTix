@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
-from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly, VendorSerializerStripped
+from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location, CartItems
+from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, CartItemsSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly, VendorSerializerStripped
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -389,6 +389,13 @@ class HelpResponseViewSet(viewsets.ModelViewSet):
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+    # authentication_classes = (TokenAuthentication, )
+
+
+class CartItemsViewSet(viewsets.ModelViewSet):
+    queryset = CartItems.objects.all()
+    serializer_class = CartItemsSerializer
     permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
