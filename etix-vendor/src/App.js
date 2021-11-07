@@ -59,9 +59,7 @@ function App() {
       <div>
       <CookiesProvider>
           <BrowserRouter>
-          <Switch>
-             <Route exact path="/menu" component={Header}/>
-          </Switch>
+          <Header />
           <NavBar />
               <Switch>
                 <Route exact path="/" component={Login} />
@@ -75,6 +73,7 @@ function App() {
                 <Route exact path="/helpcentre" component={Landing}/>
                 <Route exact path="/menu/servicemanagement/:id" component={Service}/>
                 <Route exact path="/menu/helpmanage" component={HelpManagement}/>
+                <Route exact path="/menu/profile" component={Profile}/>
               </Switch>
             <Footer />    
           </BrowserRouter>

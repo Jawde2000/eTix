@@ -100,6 +100,12 @@ function Header() {
     history.push("/"); // whichever component you want it to route to
   }
 
+  const handleProfile = () => {
+    history.push('/menu/profile');
+  }
+
+
+
   const userLogin = useSelector(state => state.userLogin)
   const { userInfo} = userLogin
 
@@ -132,7 +138,7 @@ function Header() {
                 onClose={handleClose}
                 TransitionComponent={Fade}
                 >
-                <MenuItem onClick={handleClose} >Profile</MenuItem>
+                <MenuItem onClick={handleProfile} >Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>

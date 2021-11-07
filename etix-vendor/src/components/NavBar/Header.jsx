@@ -15,6 +15,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -77,11 +78,6 @@ menu: {
   
 }));
 
-function logout() {
-  localStorage.clear();
-  window.location.href = '/';
-}
-
 function Header() {
   const defaultStyle = useStyles();
   
@@ -93,6 +89,9 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const userLogin = useSelector(state => state.userLogin)
+  const {userInfo} = userLogin
 
   let history = useHistory();
 

@@ -7,7 +7,14 @@ import {
     USER_DETAIL_REQUEST, 
     USER_DETAIL_SUCCESS,
     USER_DETAIL_FAIL,
-    USER_DETAIL_RESET,
+
+    USER_VENDOR_UPDATE_REQUEST,
+    USER_VENDOR_UPDATE_SUCCESS,
+    USER_VENDOR_UPDATE_FAIL,
+
+    USER_UPDATE_REQUEST,
+    USER_UPDATE_SUCCESS,
+    USER_UPDATE_FAIL,
 } from '../../constants/userConstants/userConstants'
 import axios from 'axios'
 
@@ -150,6 +157,99 @@ export const getUser = (id) => async (dispatch, getState) => {
     }catch(error){
         dispatch({
             type: USER_DETAIL_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//VENDOR update
+export const updateVendor = (user, vendor, id) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type:USER_VENDOR_UPDATE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        console.log(userInfo.token)
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        var { data } = await axios.put(
+            `http://127.0.0.1:8000/api/user/update/${id}/`,
+            user,
+            config
+        )
+
+        var { data2 } = await axios.put(
+            `http://127.0.0.1:8000/api/user/vendor/update/${id}/`,
+            vendor,
+            config
+        )
+        
+    
+        dispatch({
+            type: USER_VENDOR_UPDATE_SUCCESS,
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: USER_VENDOR_UPDATE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const updateUser = (user, id) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type:USER_UPDATE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        console.log(userInfo.token)
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        
+        var { data } = await axios.put(
+            `http://127.0.0.1:8000/api/user/update/${id}/`,
+            user,
+            config
+        )
+
+        dispatch({
+            type: USER_UPDATE_SUCCESS,
+        })
+
+        dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: data,
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: USER_UPDATE_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
