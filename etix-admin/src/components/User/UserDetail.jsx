@@ -21,6 +21,7 @@ import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../act
 import moscow from '../globalAssets/moscow.jpg';
 import S3 from 'react-aws-s3';
 import defaultJpg from '../User/default.jpg'
+import Avatar from '@mui/material/Avatar';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -287,21 +288,7 @@ const UserDetail = ({props}) => {
     var s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: 'AKIA4TYMPNP6EQNIB7HV', secretAccessKey: 'Vd8K2yLQrKZermLm4VxV1XJp9k73UPLLwQjfR', region: "ap-southeast-1"});
     
     useEffect(async () => {
-        const params = {
-            Bucket: "etixbucket",
-            Key: "etix/" + file,
-        }; 
-    
-        try {
-        s3.headObject(params).promise()
-        
         PicExist()
-        console.log("File Found in S3")
-        // setFound(true);
-        } catch (err) {
-        // setFound(false);
-        console.log("File not Found ERROR : " + err.code)
-    }
     })
 
     const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file));
@@ -311,8 +298,10 @@ const UserDetail = ({props}) => {
         await fetch(url).then((res) => {
             if (res.status == 404) {
                 setFound(false)
+                console.log("not found")
             } 
             else {
+                console.log("found")
                 setFound(true)
             }
         }).catch((err) => {
@@ -444,15 +433,16 @@ const UserDetail = ({props}) => {
                                     <Grid item xs={12} >
                                         Profile Picture
                                     </Grid>
-                                    <Grid item xs={12} column>   
-                                        <img 
-                                        style={{justifyContent:'center', alignItems:'center'}}
+                                    <Grid item xs={12} column > 
+                                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', paddingBottom:10}}>  
+                                        <Avatar
+                                        style={{ height: '150px', width: '150px' }}
                                             src={found? imgSrc
                                                  :
                                                  (defaultJpg)}
-                                            alt="profile"
-                                            style={{marginTop: 10,minHeight: 150, maxWidth:150}}
-                                        />                               
+                                            alt="profile"        
+                                        />
+                                        </Grid>                             
                                         {!editing? "":
                                         (
                                         <div>

@@ -1,12 +1,13 @@
 import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container} from '@mui/material';
 import { makeStyles} from '@mui/styles';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 // import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useHistory } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import { logout } from '../../actions/userActions'
 import Avatar from '@mui/material/Avatar';
+import { getUser } from '../../actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 5,
     color: '#F5CB5C',
     font: 'robo',
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: 'bold',
     fontFamily: ['rubik', 'sans-serif'].join(','),
 },
@@ -91,6 +92,15 @@ const Header = () => {
   const userLogin = useSelector(state => state.userLogin)
   const { userInfo} = userLogin
 
+  const userDetail = useSelector(state => state.userDetail)
+  const {userD} = userDetail
+
+  const [username, setName] = useState(null);
+
+  useEffect(() => {
+    setName(userInfo.username);
+  }, [userInfo])
+
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
             <Grid xs={12} container >
@@ -107,7 +117,7 @@ const Header = () => {
                 >
                    {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
                    <Typography className={defaultStyle.customizeText}>
-                      {userInfo.username}
+                      {userInfo? username:"User"}
                    </Typography>
                 </Button>
                 </Container>
