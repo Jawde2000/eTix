@@ -17,6 +17,7 @@ import RouteQuery from './components/RouteQuery/RouteQuery';
 // Help Center
 import HelpLanding from './components/HelpCenter/Landing'
 import HelpMessaging from './components/HelpCenter/Messaging'
+import HelpDetail from './components/HelpCenter/Detail'
 //import HelpArticle1 from './components/HelpCenter/articles'
 // Debugging
 
@@ -60,19 +61,10 @@ function Router() {
                 <Route path="/help/inbox" exact>
                     <HelpMessaging />
                 </Route>
-                <Route path="/help/articles/1/" exact>
-                    <RouteQuery />
+                <Route path="/help/message/:id" exact>
+                    <HelpDetail />
                 </Route>
-                <Route path="/help/articles/2/" exact>
-                    <RouteQuery />
-                </Route>
-                <Route path="/help/articles/3/" exact>
-                    <RouteQuery />
-                </Route>
-                <Route path="/help/articles/4/" exact>
-                    <RouteQuery />
-                </Route>
-                <Route path="/help/articles/5/" exact>
+                <Route path="/help/articles/:id" exact>
                     <RouteQuery />
                 </Route>
             </Switch>

@@ -34,3 +34,19 @@ export const helpdeskReducer = (state = { }, action) => {
             return state
     }
 }
+
+export const helpResponseReducer = (state = { }, action) => {
+    switch (action.type) {
+        case actions.HELP_RESPONSE_REQUEST:
+            return {loading: true}
+
+        case actions.HELP_RESPONSE_SUCCESS:
+            return {loading: false, responseList: action.payload}
+
+        case action.HELP_RESPONSE_FAIL:
+            return {loading: false, error: action.payload}
+
+        default:
+            return state
+    }
+}

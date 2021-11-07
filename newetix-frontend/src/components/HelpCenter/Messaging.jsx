@@ -1,8 +1,15 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button, Paper } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Grid, Box, Typography, Link, Button, Paper, Tooltip, IconButton } from '@mui/material';
+import { Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material';
+import TableCell, { tableCellClasses  } from '@mui/material/TableCell';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HelpIcon from '@mui/icons-material/Help';
+import {useHistory} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux'
+import { helpdeskList, helpResponseList } from '../../state/actions/actions';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -29,29 +36,46 @@ const useStyles = makeStyles((theme) => ({
         width: '550px'
     },
     ole: {
-        backgroundColor: 'rgba(31,40,51,0.75)',
-        color: 'white',
-        padding: '5px'
+        backgroundColor: 'rgba(245, 203, 92, 0.75)',
+        color: 'black',
+        padding: '5px',
+        borderRadius: '25px'
+    },
+    datagrid: {
+        marginBottom: '75px',
     }
 }));
-
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-  ];
-
+  
 function Messaging() {
+    let history = useHistory()
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const hlist = useSelector(state => state.helpdeskList)
+    const vlist = useSelector(state => state.vendorList)
+    const {helpList} = hlist
+    const {vendorInfo} = vlist
+
+    const [rows, setRows] = useState([]);
+    const ids = []
+
+    const getVendorName = (vendorID) => {
+        for (let key in vendorInfo){
+            if (vendorInfo[key].vendorID == vendorID) {
+                return vendorInfo[key].vendorName
+            }
+        }
+        return 'null'
+    }
+
+    useEffect(() => {
+        if (helpList) {
+            setRows(helpList)
+        }
+    });
+
     return (
         <Box className={classes.whole}>
-            <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" spacing={4} className={classes.inside}>
+            <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" className={classes.inside}>
                 <Grid item xs={3}>
                     <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={1}>
                         <Grid item>
@@ -88,46 +112,48 @@ function Messaging() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={8} className={classes.ole}>
-                    <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4}>
+                <Grid item xs={8}>
+                    <Grid container direction="column" direction="column" alignItems="center" spacing={4} className={classes.ole}>
                         <Grid item>
                             <Typography variant="h3">Messaging System</Typography>
                         </Grid>
                         <Grid item>
                         </Grid>
                         <Grid item>
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                    <TableHead>
-                                    <TableRow>
-                                        <TableCell>Dessert (100g serving)</TableCell>
-                                        <TableCell align="right">Calories</TableCell>
-                                        <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                                        <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                                        <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                                    </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                    {rows.map((row) => (
-                                        <TableRow
-                                        key={row.name}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                        <TableCell component="th" scope="row">
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell align="right">{row.calories}</TableCell>
-                                        <TableCell align="right">{row.fat}</TableCell>
-                                        <TableCell align="right">{row.carbs}</TableCell>
-                                        <TableCell align="right">{row.protein}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                            <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={4}>
+                                <Grid item sx={{ width: '98%', overflow: 'hidden' }}>
+                                    <TableContainer sx={{ maxHeight: 500 }} component={Paper} className={classes.datagrid}>
+                                        <Table stickyHeader aria-label="customized table">
+                                            <TableHead>
+                                            <TableRow>
+                                                <TableCell>ID</TableCell>
+                                                <TableCell>Receiver</TableCell>
+                                                <TableCell>Subject</TableCell>
+                                                <TableCell>Body</TableCell>
+                                                <TableCell>Status</TableCell>
+                                                <TableCell></TableCell>
+                                            </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {rows.map((rows) => (
+                                                    <TableRow key={rows.helpdeskID}>
+                                                        <TableCell>{rows.helpdeskID}</TableCell>
+                                                        <TableCell>{rows.receiver ? getVendorName(rows.receiver) : 'eTix'}</TableCell>
+                                                        <TableCell>{rows.helpdeskTitle}</TableCell>
+                                                        <TableCell sx={{whiteSpace: 'normal', wordWrap: 'break-word'}}>{rows.helpdeskMessage}</TableCell>
+                                                        <TableCell>{rows.helpdeskStatus}</TableCell>
+                                                        <TableCell>{rows.protein}</TableCell>
+                                                        <TableCell><Tooltip title="View"><IconButton onClick={() => {dispatch(helpResponseList(`${rows.helpdeskID}`));history.push(`/help/message/${rows.helpdeskID}`)}}><VisibilityIcon style={{cursor: 'pointer'}} /></IconButton></Tooltip></TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item>
-                            <Button variant="contained">Back</Button>
+                            <Button variant="contained" onClick={() => {history.push('/help')}}>Back</Button>
                         </Grid>
                     </Grid>
                 </Grid>

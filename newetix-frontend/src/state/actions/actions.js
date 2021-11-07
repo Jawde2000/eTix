@@ -354,7 +354,7 @@ export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState)
             }
         }
 
-        const {helpinfo} = await axios.put(
+        const {data} = await axios.put(
             `http://localhost:8000/api/help/request/create/${rcv}/`,
             {
                 'title': title,
@@ -366,7 +366,7 @@ export const helpdeskCreate = (rcv, title, message) => async(dispatch, getState)
 
         dispatch({
             type: actions.HELP_LIST_CREATE,
-            payload: helpinfo
+            payload: data
         })
     } catch (error) {
         dispatch({
@@ -428,19 +428,56 @@ export const helpdeskList = () => async(dispatch, getState) => {
             }
         }
 
-        const {helpinfo} = await axios.get(
-            `http://localhost:8000/api/help/request/${userInfo.userID}`,
+        const {data} = await axios.get(
+            `http://localhost:8000/api/help/request/list/${userInfo.userID}/`,
             config
         )
         
         dispatch({
             type: actions.HELP_LIST_SUCCESS,
-            payload: helpinfo
+            payload: data
         })
 
     } catch (error) {
         dispatch({
             type: actions.HELP_LIST_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const helpResponseList = (helpID) => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.HELP_RESPONSE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo}
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const {data} = await axios.get(
+            `http://localhost:8000/api/help/response/${helpID}/`,
+            config
+        )
+
+        dispatch({
+            type: actions.HELP_RESPONSE_SUCCESS,
+            payload: data
+        })
+
+    } catch (error) {
+        dispatch({
+            type: actions.HELP_RESPONSE_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

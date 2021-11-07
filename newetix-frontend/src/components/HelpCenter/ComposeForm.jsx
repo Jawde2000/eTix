@@ -3,14 +3,16 @@ import { makeStyles } from '@mui/styles';
 import { Grid, Box, Typography, TextField, Button, Autocomplete } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { helpdeskCreate } from '../../state/actions/actions';
+import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
+import { borderRadius } from '@mui/system';
 
 
 const useStyles = makeStyles((theme) => ({
     whole: {
-        backgroundColor: 'rgba(31,40,51,0.75)',
-        color: 'white',
-        padding: '5px'
+        backgroundColor: 'rgba(245, 203, 92, 0.75)',
+        color: 'black',
+        padding: '5px',
+        borderRadius: '25px'
     },
     tf: {
         width: '550px'
@@ -46,6 +48,7 @@ function Compose() {
 
     function onClickSubmit(){
         dispatch(helpdeskCreate(receiver, subject, body))
+        dispatch(helpdeskList())
         history.push('/help/inbox')
     }
 
@@ -111,7 +114,7 @@ function Compose() {
                         <Button variant="contained" onClick={() => {onClickSubmit()}}>Submit</Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained">Inbox</Button>
+                        <Button variant="contained" onClick={() => {dispatch(helpdeskList()); history.push('/help/inbox')}}>Inbox</Button>
                     </Grid>
                 </Grid>
             </Grid>

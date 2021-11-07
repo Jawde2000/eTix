@@ -94,8 +94,10 @@ urlpatterns = [
     path('api/help/request/create/<str:pk>/',
          views.createHelpDesk, name="help-create"),
 
+    # list help requests by user
     path('api/help/request/list/<str:pk>/',
          views.listHelpDeskbyUser, name="help-list-user"),
+
     # get seat details by id for customer,
     path('api/seat/detail/<str:pk>/', views.getSeatByID, name="seat-detail"),
 

@@ -6,7 +6,7 @@ import ComposeForm from './ComposeForm'
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { vendorList } from '../../state/actions/actions'
+import { vendorList, helpResponse } from '../../state/actions/actions'
 
 const useStyles = makeStyles((theme) => ({
     whole: {
