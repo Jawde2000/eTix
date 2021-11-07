@@ -133,13 +133,13 @@ const Profile = ({props}) => {
             alert("Successfully Updated User");
             dispatch({type: USER_UPDATE_RESET});
             setEditing(!editing);
-            return;
+            window.setTimeout(function(){window.location.reload()},3000)
         }
         else if(successVendor){
             alert("Successfully Updated User");
             dispatch({type: USER_VENDOR_UPDATE_RESET});
             setEditing(!editing);
-            return;
+            window.setTimeout(function(){window.location.reload()},3000)
         }
         else if(errorUsr || errorVen){
             alert("Fail to Update");

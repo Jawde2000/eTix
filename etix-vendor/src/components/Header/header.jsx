@@ -7,6 +7,13 @@ import { useHistory } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import { logout, getUser } from '../../actions/userActions/userActions'
 import Avatar from '@mui/material/Avatar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -23,13 +30,15 @@ const useStyles = makeStyles((theme) => ({
   },
   rightItem: {
     float: "right"
-  },customizeText: {
+  },
+  customizeText: {
     paddingLeft: 5,
     color: '#F5CB5C',
     font: 'robo',
     fontSize: 13,
     fontWeight: 'bold',
     fontFamily: ['rubik', 'sans-serif'].join(','),
+    whiteSpace: "nowrap"
 },
 LoginButton: {
     float: 'right',
@@ -72,33 +81,44 @@ menu: {
 const Header = () => {
   const defaultStyle = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openD, setOpen] = useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleClickOpenD = () => {
+    setOpen(true);
+  };
+
+  const handleCloseD = () => {
+    setOpen(false);
+  };
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const dispatch = useDispatch()
+
+  const dispatch = useDispatch();
 
   let history = useHistory();
 
   function handleLogOut() {
+    setAnchorEl(null);
     dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
 
-  const userLogin = useSelector(state => state.userLogin)
-  const { userInfo} = userLogin
+  function handleProfile() {
+    history.push("/menu/profile"); // whichever component you want it to route to
+    handleClose();
+  }
 
-  const userDetail = useSelector(state => state.userDetail)
-  const {userD} = userDetail
-
-  const [username, setName] = useState(null);
-
-  useEffect(() => {
-    setName(userInfo.username);
-  }, [userInfo])
+  const userLogin = useSelector(state => state.userLogin);
+  const {userInfo} = userLogin;
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -112,15 +132,15 @@ const Header = () => {
                 <Container>
                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex"
                 aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
+                onClick={userInfo? handleClick: handleClickOpenD}
                 >
                    {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
-                   <Typography className={defaultStyle.customizeText}>
-                      {userInfo? username:"User"}
+                   <Typography className={defaultStyle.customizeText}> 
+                   {userInfo? userInfo.username:"User"}
                    </Typography>
                 </Button>
                 </Container>
-                <Menu
+                {anchorEl? (<Menu
                 id="account"
                 MenuListProps={{
                   'aria-labelledby': 'fade-button',
@@ -130,10 +150,32 @@ const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
                 >
-                <MenuItem onClick={'/menu/profile'}>Profile</MenuItem>
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
-                </Menu>
+                </Menu>)
+                :
+                (<Dialog
+                fullScreen={fullScreen}
+                open={openD}
+                onClose={handleCloseD}
+                aria-labelledby="responsive-dialog-title"
+                >
+                <DialogTitle id="responsive-dialog-title">
+                  {"Notification"}
+                </DialogTitle>
+                <DialogContent>
+                <DialogContentText>
+                  Please Log In to use this actions
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleCloseD} autoFocus>
+                  OK
+                </Button>
+                </DialogActions>
+                </Dialog>)
+                }
                 </div>
                 </Grid>
                 </Grid>
