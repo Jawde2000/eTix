@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button} from '@mui/material';
+import React, {useState, useEffect, useReducer, useCallback} from 'react'
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -16,12 +16,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
 import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
 import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../actions/userActions';
 import moscow from '../globalAssets/moscow.jpg';
-
-//koee
+import S3 from 'react-aws-s3';
+import defaultJpg from '../User/default.jpg'
+import Avatar from '@mui/material/Avatar';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -74,6 +74,11 @@ const UserDetail = ({props}) => {
 
     const ven = useSelector(state => state.vendorUpdate)
     const {success: successVendor, error: errorVen} = ven
+
+    const useForceUpdate = () => {
+        const [, updateState] = useState();
+        return useCallback(() => updateState({}), []);
+    }
     
     const [user, setUser] = useState();
     const [uptUser, setUptUser] = useState();
@@ -103,6 +108,8 @@ const UserDetail = ({props}) => {
     const [vendor, setVendor] = useState();
     const [submit, setSubmit] = useState(false);
     const [editing,setEditing] = useState(false);
+    const [found, setFound] = useState(true);
+    const [picloading, setPloading] = useState(false);
 
     const handleSubmit = () =>{
         setUptUser(
@@ -259,6 +266,66 @@ const UserDetail = ({props}) => {
         history.push("/menu/users");
     }
 
+    const file = id + '.jpg'
+    
+    const config = {
+        bucketName: 'etixbucket',
+        dirName: 'etix', 
+        region: 'ap-southeast-1',
+        accessKeyId: 'AKIA4TYMPNP6EQNIB7HV',
+        secretAccessKey: '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'
+    }
+    
+    const AWS = require('aws-sdk')
+    AWS.config.update({
+        accessKeyId: "AKIA4TYMPNP6EQNIB7HV",
+        secretAccessKey: "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",
+        region: "ap-southeast-1",
+    });
+
+    const ReactS3Client = new S3(config);
+    
+    var s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: 'AKIA4TYMPNP6EQNIB7HV', secretAccessKey: 'Vd8K2yLQrKZermLm4VxV1XJp9k73UPLLwQjfR', region: "ap-southeast-1"});
+    
+    useEffect(async () => {
+        PicExist()
+    })
+
+    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file));
+
+    async function PicExist() {
+        const url = "https://etixbucket.s3.amazonaws.com/etix/" + file
+        await fetch(url).then((res) => {
+            if (res.status == 404) {
+                setFound(false)
+                console.log("not found")
+            } 
+            else {
+                console.log("found")
+                setFound(true)
+            }
+        }).catch((err) => {
+            setFound(false)
+        });
+    }
+
+    
+    const upload = (e) => {
+        const image = URL.createObjectURL(e.target.files[0]);
+        setPloading(true);
+        setImgSrc(image);
+        ReactS3Client.uploadFile(e.target.files[0], file)
+        .then(data =>{
+            setPloading(false);
+            // window.setTimeout(function(){window.location.reload()},3000)
+            console.log(data);
+        })
+        .catch(err => {
+            console.error(err)
+            setPloading(false);
+        })
+    }
+    
     const handleChangeUserName = (event) => {
         setUsername(event.target.value);
     }
@@ -366,12 +433,29 @@ const UserDetail = ({props}) => {
                                     <Grid item xs={12} >
                                         Profile Picture
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <img 
-                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png"
-                                            alt="logo"
-                                            style={{marginTop: 10,minHeight: 150, maxWidth:150}}
+                                    <Grid item xs={12} column > 
+                                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', paddingBottom:10}}>  
+                                        <Avatar
+                                        style={{ height: '150px', width: '150px' }}
+                                            src={found? imgSrc
+                                                 :
+                                                 (defaultJpg)}
+                                            alt="profile"        
                                         />
+                                        </Grid>                             
+                                        {!editing? "":
+                                        (
+                                        <div>
+                                        <label htmlFor="contained-button-file">
+                                        <input type="file"  accept="image/*" id="contained-button-file" onChange={upload}
+                                        style={{justifyContent:'center', alignItems:'center', display: 'none'}}
+                                        />
+                                        {picloading? (<Box sx={{ display: 'flex' }}
+                                        style={{justifyContent:'center', alignItems:'center'}}
+                                        ><CircularProgress /></Box>):(<Button variant="contained" component="span" >Upload</Button>)}
+                                        </label>                            
+                                        </div>
+                                        )}
                                     </Grid>
                                     <Grid item xs={12} style={{marginTop:10}}>
                                         Status
