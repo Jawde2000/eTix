@@ -4,6 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { routeLookupReducer, dateReducer, locationListReducer } from './reducers/routeReducers';
 import { userLoginReducer, customerDetailsReducer } from './reducers/userReducers';
 import { vendorListReducer, helpdeskReducer, helpResponseReducer } from './reducers/helpReducers';
+import { cartAddReducer } from './reducers/cartReducers';
 
 const reducer = combineReducers({
     routeLookup: routeLookupReducer,
@@ -15,7 +16,8 @@ const reducer = combineReducers({
     helpdeskCreate: helpdeskReducer,
     helpdeskList: helpdeskReducer,
     locationList: locationListReducer,
-    helpResponseList: helpResponseReducer
+    helpResponseList: helpResponseReducer,
+    cartAdd: cartAddReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

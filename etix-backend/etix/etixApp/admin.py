@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location, CartItems
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -88,7 +88,14 @@ class TicketModel(admin.ModelAdmin):
 @admin.register(Cart)
 class TicketModel(admin.ModelAdmin):
     list_filter = ('cartID', 'user')
-    list_display = ('cartID', 'service', 'cartTotal', 'user')
+    list_display = ('cartID', 'cartTotal', 'user')
+
+
+@admin.register(CartItems)
+class TicketModel(admin.ModelAdmin):
+    list_filter = ('cartItemsID', 'cart')
+    list_display = ('cartItemsID', 'service',
+                    'seat_Type', 'seat_price', 'cart')
 
 
 @admin.register(Payment)

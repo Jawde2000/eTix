@@ -19,7 +19,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import { CircularProgress } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { addToCart } from '../../state/actions/actions';
+import { CART_ADD_RESET } from '../../state/actions/actionConstants';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -51,13 +57,20 @@ export default function RouteQuery() {
     const locationList = useSelector(state => state.locationList)
     const {locations} = locationList
 
+    const cartAdd = useSelector(state => state.cartAdd)
+    const {loading: addLoading, success: addSuccess} = cartAdd
+
     const [to, setTo] = useState("");
     const [from, setFrom] = useState("");
     const [departureDate, setDepartureDate] = useState(null)
     const [filter, setFilter] = useState(false)
     const [priceFlt, setPriceFlt] = useState("")
+    const [selectedSeat, setSelectedSeat] = useState("")
 
     const [serviceList, setServiceList] = useState()
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const [selectedItem,setSelectedItem] = useState()
+    const [selectedSeatPrice, setSelectedSeatPrice] = useState();
 
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
@@ -110,6 +123,30 @@ export default function RouteQuery() {
     const handleToInputChange = (event, value) => {
         setTo(value)
     }
+
+    useEffect(() => {
+        if(addSuccess){
+            setOpenDialog(false);
+            setSelectedItem(null);
+            setSelectedSeat("");
+            alert(`added to cart Successfully`);
+        }
+    }, [addSuccess])
+
+
+    const handleAddToCart = (item) => {
+        dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
+    }
+
+    const handleClose = () => {
+        setOpenDialog(false);
+        setSelectedItem(null);
+    };
+
+    const handleOpenDialog = (item) => {
+        setOpenDialog(true);
+        setSelectedItem(item);
+    } 
 
   return (
       <Container className={classes.whole} maxWidth="Fixed">
@@ -216,27 +253,62 @@ export default function RouteQuery() {
                             (
                                 serviceList?
                                 (
-                                    serviceList.map((item) => {
+                                    serviceList.map((item, index) => {
                                         return (
                                             <Grid item xs={12} container style={{background: 'linear-gradient(to right, rgb(15, 12, 41), rgb(48, 43, 99), rgb(36, 36, 62))', margin: 10}}>
                                                 <Grid item xs={3}>
                                                     <img 
                                                         src="https://i.pinimg.com/originals/16/53/70/1653702ba566a449348ef2c3010259ce.jpg"
                                                         alt={`serviceLogo${item.vendor}`}
-                                                        style={{margin: 10, maxHeight: 170, maxWidth:250, minWidth: 250}}
+                                                        style={{margin: 10, maxHeight: 170, maxWidth:250,}}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
                                                     <Grid item xs={12} >
                                                         <Typography style={{fontSize: 30}}>
-                                                            {`${item.servicedepartureTerminal} - ${item.servicearrivalTerminal}`}
+                                                            {`${item.servicedepartureTerminal} (${item.searchedFrom}) - ${item.servicearrivalTerminal} (${item.searchedTo})`}
                                                         </Typography>
-
                                                     </Grid>
                                                     <Grid item xs={12} container>
-                                                        <Grid item xs={12} />
-                                                        <Grid item xs={12} />
-                                                        <Grid item xs={12} />
+                                                        <Grid item xs={8} style={{paddingLeft: 20}}>
+                                                            {item.seatD.firstQuantity>0?
+                                                                (
+                                                                    <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
+                                                                        {`First Class : RM ${item.seatD.firstPrice}`}
+                                                                    </Typography>
+                                                                )
+                                                                : 
+                                                                (
+                                                                    null
+                                                                )
+                                                            }
+                                                            {item.seatD.businessQuantity>0?
+                                                                (
+                                                                    <Typography style={{fontSize: 20 , fontStyle: 'italic'}}>
+                                                                        {`Business Class : RM ${item.seatD.businessPrice}`}
+                                                                    </Typography>
+                                                                )
+                                                                : 
+                                                                null
+                                                            }
+                                                            {item.seatD.economyQuantity>0?
+                                                                (
+                                                                    <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
+                                                                        {`Economy Class : RM ${item.seatD.economyPrice}`}
+                                                                    </Typography>
+                                                                )
+                                                                : 
+                                                                null
+                                                            }
+                                                        </Grid>
+                                                        <Grid item xs={4} style={{textAlign: 'right'}} >
+                                                            Start From: RM
+                                                            <Typography style={{fontSize: 40}} >
+                                                                {`${item.seatD.economyPrice}`}
+                                                            </Typography>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Grid item xs={12} container>
                                                         <Grid item xs={12}  container>
                                                             <Grid item xs={8}>
                                                                 <Typography style={{fontSize: 20}}>
@@ -245,10 +317,52 @@ export default function RouteQuery() {
                                                             </Grid> 
                                                             <Grid item xs={4} style={{textAlign: 'right'}}>
                                                                 <Tooltip title="Add to Cart">
-                                                                    <IconButton  onClick={() => alert("Add to cart lol")} >
+                                                                    <IconButton  onClick={() => handleOpenDialog(item)} >
                                                                         <AddShoppingCartIcon style={{fontSize: 28, color: 'white'}}/>
                                                                     </IconButton>
                                                                 </Tooltip>
+                                                                {selectedItem?
+                                                                    (
+                                                                        <Dialog
+                                                                            open={openDialog}
+                                                                            onClose={handleClose}
+                                                                            aria-labelledby="draggable-dialog-title"
+                                                                        >
+                                                                            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                                                                            Add to Cart
+                                                                            </DialogTitle>
+                                                                                <DialogContent>
+                                                                                    <DialogContentText>
+                                                                                        Please Choose Seat Type You Want.
+                                                                                    </DialogContentText>
+                                                                                    <FormControl component="fieldset">
+                                                                                        <RadioGroup
+                                                                                            aria-label="stype"
+                                                                                            name="controlled-radio-buttons-group"
+                                                                                            value={selectedSeat}
+                                                                                            onChange={(e) => setSelectedSeat(e.target.value)}
+                                                                                        >
+                                                                                            <FormControlLabel value="F" control={<Radio />} label={`First Class - RM ${selectedItem.seatD.firstPrice}`} />
+                                                                                            <FormControlLabel value="B" control={<Radio />} label={`Business Class - RM ${selectedItem.seatD.businessPrice}`} />
+                                                                                            <FormControlLabel value="E" control={<Radio />} label={`Economy Class - RM ${selectedItem.seatD.economyPrice}`} />
+                                                                                        </RadioGroup>
+                                                                                    </FormControl>
+                                                                                </DialogContent>
+                                                                            <DialogActions>
+                                                                            <Button autoFocus onClick={handleClose}>
+                                                                                Cancel
+                                                                            </Button>
+                                                                            <Button onClick={() => handleAddToCart(selectedItem)}>Add</Button>
+                                                                            </DialogActions>
+                                                                        </Dialog>
+                                                                    )
+                                                                    :
+                                                                    (
+                                                                        null
+                                                                    )
+                                                                }
+                                                                
+                                                                
                                                             </Grid>
                                                         </Grid>
                                                     </Grid>
@@ -270,61 +384,6 @@ export default function RouteQuery() {
                 </Grid>
           </Container>
       </Container>
-    //   <div>
-    //     <Grid container className={defaultStyle.whole}>
-    //       <Grid xs={12} spacing={4} direction="column" container justify="center" alignItems="center" alignContent="center">
-    //         <Grid xs={12} sm={2} item>
-    //             <Grid container justifyContent="space-between" direction="row" className={defaultStyle.breadcrumbgrid}>
-    //                 <Breadcrumbs aria-label="breadcrumb" className={defaultStyle.breadcrumb}>
-    //                     <Typography>
-    //                         eTix Route Search
-    //                     </Typography>
-    //                     <Typography id='from' onClick={handleClickOpen}>
-    //                         {from} ({departureDate})
-    //                     </Typography>
-    //                     <Typography id='to' onClick={handleClickOpen}>
-    //                         {to} ({returnDate})
-    //                     </Typography>
-    //                 </Breadcrumbs>
-    //                 <Dialog open={open} onClose={handleClose}>
-    //                     <DialogTitle>Change Location and Date</DialogTitle>
-    //                     <DialogContent>
-    //                         <Autocomplete
-    //                             disablePortal
-    //                             value={loc}
-    //                             onChange={(event, newValue) => {
-    //                             setLocation(newValue);
-    //                             }}
-    //                             id="locCombobox"
-    //                             className={defaultStyle.ac}
-    //                             options={Locations}
-    //                             sx={{ width: 300 }}
-    //                             renderInput={(params) => <TextField {...params} label="Location" />}
-    //                         />
-    //                         <LocalizationProvider dateAdapter={AdapterDateFns}>
-    //                             <DatePicker
-    //                                 label="Date"
-    //                                 value={value}
-    //                                 onChange={(newValue) => {
-    //                                 setValue(newValue);
-    //                                 }}
-    //                                 renderInput={(params) => <TextField {...params} />}
-    //                             />
-    //                         </LocalizationProvider>
-    //                     </DialogContent>
-    //                     <DialogActions>
-    //                     <Button onClick={handleClose}>Cancel</Button>
-    //                     <Button onClick={handleLocationChange}>Change</Button>
-    //                     </DialogActions>
-    //                 </Dialog>
-    //             </Grid>
-    //         </Grid>
-    //         <Grid item>
-    //             <Query />
-    //         </Grid>
-    //       </Grid>
-    //     </Grid>
-    //   </div>
   );
 
 }

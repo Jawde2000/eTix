@@ -19,7 +19,7 @@ router.register('ticket', TicketViewSet, basename='ticket')
 router.register('helpdesk', HelpDeskViewSet, basename='helpdesk')
 router.register('helpresponse', HelpResponseViewSet, basename='helpresponse')
 router.register('cart', CartViewSet, basename='cart')
-router.register('cart', CartViewSet, basename='cart')
+router.register('cartitems', views.CartItemsViewSet, basename='cartitems')
 router.register('location', LocationViewSet, basename='location')
 
 
