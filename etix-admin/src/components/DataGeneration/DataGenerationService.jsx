@@ -9,11 +9,14 @@ import PropTypes from 'prop-types';
 import moscow from '../globalAssets/moscow.jpg';
 import DownloadIcon from '@mui/icons-material/Download';
 import SearchBar from "material-ui-search-bar";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputAdornment } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { useDispatch, useSelector } from 'react-redux';
+import { listServicesData } from '../../actions/salesActions';
 import {Link} from 'react-router-dom'
+import { useHistory } from 'react-router';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -27,39 +30,12 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         paddingTop: 3,
         paddingBottom: 3,
-        minHeight: 500,
+        minHeight: 700,
     },
     table: {
         marginTop: 50,
     },
 }));
-
-function createData(sID, route, date_time, status, NetIncome_vendor, NetIncome_eTix, Taxation) {
-    return  {
-        sID,
-        route,
-        date_time,
-        status,
-        NetIncome_vendor,
-        NetIncome_eTix,
-        Taxation,
-    };
-}
-
-const originalRows = [
-    createData(1, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 16:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(2, "KlCC SENTRAL, KL - Pesta SENTRAL, Penang", "1/10/2021 14:20", "CLOSED", 752000.00, 7520.00, 520.00),
-    createData(3, "PESTA, PEN - TBS, KL", "1/10/2021 19:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(4, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 12:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(5, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 18:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(6, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 11:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(7, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 12:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(8, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 15:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(9, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 12:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(10, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 10:20", "ACTIVE", 752000.00, 7520.00, 520.00),
-    createData(11, "LARKIN SENTRAL, JB - TBS, KL", "1/10/2021 14:00", "ACTIVE", 752000.00, 7520.00, 520.00),
-]
-
 
 function descendingComparator(a,b,orderBy){
     if (b[orderBy] < a[orderBy]) {
@@ -91,7 +67,7 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'sID',
+        id: 'serviceID',
         numeric: true,
         disablePadding: true,
         label: 'Service ID',
@@ -103,31 +79,25 @@ const headCells = [
         label: 'Route',
     },
     {
-        id: 'date_time',
+        id: 'serviceStartDate',
         numeric: false,
         disablePadding: true,
-        label: 'Date/Time',
+        label: 'Date',
     },
     {
-        id: 'status',
-        numeric: false,
-        disablePadding: true,
-        label: 'Status',
-    },
-    {
-        id: 'NetIncome_vendor',
+        id: 'VendorNett',
         numeric: true,
         disablePadding: true,
         label: 'Net income (Vendor) (MYR)',
     },
     {
-        id: 'NetIncome_eTix',
+        id: 'eTixNett',
         numeric: true,
         disablePadding: true,
         label: 'Net Income (eTix) (MYR)',
     },
     {
-        id: 'Taxation',
+        id: 'tax',
         numeric: true,
         disablePadding: true,
         label: 'Taxation (MYR)',
@@ -198,7 +168,7 @@ const EnhancedTableToolbar = (props) => {
         doc.text("Services Data",20,10)
         doc.autoTable({
             columns: headCells.map(head=>({header:head.label, dataKey:head.id})),
-            body: originalRows,
+            body: props.originalRows,
         })
         doc.save("ServicesData.pdf")
     }
@@ -234,13 +204,6 @@ const EnhancedTableToolbar = (props) => {
                 </Typography>
             )}
 
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                <IconButton>
-                    <DeleteIcon />
-                </IconButton>
-                </Tooltip>
-            ) : (
                 <Tooltip title="Export to PDF file">
                     <IconButton>
                         <DownloadIcon
@@ -249,7 +212,6 @@ const EnhancedTableToolbar = (props) => {
                         />
                     </IconButton>
                 </Tooltip>
-            )}
         </Toolbar>
     );
 };
@@ -260,10 +222,40 @@ EnhancedTableToolbar.propTypes = {
 
 
 const DataGenerationService = () =>{
+
+    const dispatch = useDispatch()
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+
+    const servicesData = useSelector(state => state.servicesData)
+    const {servicesD} = servicesData
+
+    let history = useHistory()
+
+    useEffect(() => {
+        if(userInfo){
+            dispatch(listServicesData())
+        }
+        else{
+            history.push('/')
+        }
+    }, [dispatch])
+
+    const [rows, setRows] = useState([]);
+
+    const [originalRows, setOriginalRows] = useState([]);
+
+    useEffect(() => {
+        if(servicesD){
+            setOriginalRows(servicesD)
+            setRows(servicesD)
+        }
+    }, [servicesData])
+
     const classes = useStyles();
-    const [rows, setRows] = useState(originalRows);
+    
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('sID');
+    const [orderBy, setOrderBy] = React.useState('serviceID');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
@@ -278,7 +270,7 @@ const DataGenerationService = () =>{
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n)=> n.sID);
+            const newSelecteds = rows.map((n)=> n.serviceID);
             setSelected(newSelecteds);
             return;
         }
@@ -318,7 +310,7 @@ const DataGenerationService = () =>{
         setDense(event.target.checked);
     };
     
-    const isSelected = (sID) => selected.indexOf(sID) !== -1;
+    const isSelected = (serviceID) => selected.indexOf(serviceID) !== -1;
     
     const emptyRows = page > 0 ? Math.max(0,(1+page) * rowsPerPage - rows.length) : 0;
 
@@ -337,6 +329,7 @@ const DataGenerationService = () =>{
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
+            <Container>
             <Box>
                 <Paper sx={{width:'100%', mb: 2}} className={classes.table}>
                     <Container style={{paddingTop: 20}}>
@@ -358,7 +351,7 @@ const DataGenerationService = () =>{
                         />
                     </Container>
 
-                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <EnhancedTableToolbar numSelected={selected.length} originalRows={originalRows}/>
                     <TableContainer>
                         <Table
                             sx={{minWidth:750}}
@@ -377,17 +370,17 @@ const DataGenerationService = () =>{
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                    const isItemSelected = isSelected(row.sID);
+                                    const isItemSelected = isSelected(row.serviceID);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                         hover
-                                        onClick={(event) => handleClick(event, row.sID)}
+                                        onClick={(event) => handleClick(event, row.serviceID)}
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
-                                        key={row.sID}
+                                        key={row.serviceID}
                                         selected={isItemSelected}
                                         >
                                         <TableCell padding="checkbox">
@@ -406,21 +399,13 @@ const DataGenerationService = () =>{
                                             padding="none"
                                             align="center"
                                         >
-                                            {row.sID}
+                                            {row.serviceID}
                                         </TableCell>
                                         <TableCell align="center">{row.route}</TableCell>
-                                        <TableCell align="cemter">{row.date_time}</TableCell>
-                                        <TableCell align="center">{row.status}</TableCell>
-                                        <TableCell align="center">{row.NetIncome_vendor}</TableCell>
-                                        <TableCell align="center">{row.NetIncome_eTix}</TableCell>
-                                        <TableCell align="center">{row.Taxation}</TableCell>
-                                        <TableCell align="center">
-                                            <Tooltip title="Edit">
-                                                    <Link to={`/sale/${row.sID}`}>
-                                                        <EditIcon style={{cursor: 'pointer'}}/>
-                                                    </Link>
-                                            </Tooltip>
-                                        </TableCell>
+                                        <TableCell align="cemter">{row.serviceStartDate}</TableCell>
+                                        <TableCell align="center">{row.VendorNett}</TableCell>
+                                        <TableCell align="center">{row.eTixNett}</TableCell>
+                                        <TableCell align="center">{row.tax}</TableCell>
                                         </TableRow>
                                     );
                                     })}
@@ -451,6 +436,7 @@ const DataGenerationService = () =>{
                     />
                 </Paper>
             </Box>
+        </Container>
         </Container>
     );
 }

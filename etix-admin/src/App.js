@@ -20,6 +20,7 @@ import UserDetail from './components/User/UserDetail';
 import AddUser from './components/User/AddUser';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AddService from './components/ServiceMan/AddService';
 const theme = createTheme({
     palette: {
         type: 'light',
@@ -54,11 +55,13 @@ function App() {
                   <Route exact path="/sales/datageneration" component={DataGenerationService} />
                   <Route exact path="/menu/sales" component={Sales} />
                   <Route exact path="/menu/servicemanagement" component={ServiceMan} />
+                  <Route exact path="/service/:id" component={Service} />
                   <Route exact path="/menu/users" component={UserManagement} />
                   <Route exact path="/menu/helpdesk" component={Help} /> 
                   <Route exact path="/user/:id" component={UserDetail}/>
                   <Route exact path="/addUser" component={AddUser} />
                   <Route exact path="/help/:id" component={Helpdesk} />
+                  <Route exact path="/newService" component={AddService}/>
                 </Switch>
               <Footer />    
             </BrowserRouter>
