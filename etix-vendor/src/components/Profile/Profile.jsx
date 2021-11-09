@@ -23,6 +23,7 @@ import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Header from '../Header/header';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -305,10 +306,10 @@ const Profile = ({props}) => {
     return (
         <Container className={classes.root} maxWidth="Fixed">
         <Container >
-            {!user? 
-                <Box sx={{ display: 'flex' }}>
-                    <CircularProgress />
-                </Box>
+            {loading? 
+                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                <CircularProgress  style={{color: '#F5CB5C'}}/>
+                </Backdrop>
                 :
                 <>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
@@ -345,11 +346,9 @@ const Profile = ({props}) => {
                                     <Grid item xs={12} column > 
                                         <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', paddingBottom:10}}>  
                                         <Avatar
-                                        style={{ height: '150px', width: '150px' }}
-                                            src={found? imgSrc
-                                                 :
-                                                 (defaultJpg)}
-                                            alt="profile"        
+                                            style={{ height: '150px', width: '150px' }}
+                                            src={imgSrc}
+                                            alt={userInfo.username}        
                                         />
                                         </Grid>                             
                                         {!editing? "":

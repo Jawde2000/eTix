@@ -93,7 +93,7 @@ function VendorMenu() {
                 </Link>
               </Grid>
               <Grid item xs={4} sm={4} md={4} >
-                <Link href="/menu/helpdesk" style={{textDecoration: "none"}}>
+                <Link href="/menu/helpmanage" style={{textDecoration: "none"}}>
                 <Button style={{maxWidth: '350px', maxHeight: '350px', minWidth: '350px', minHeight: '350px'}}>
                   <Grid xs={12}>
                   <Grid xs={12}>

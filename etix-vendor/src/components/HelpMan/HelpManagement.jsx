@@ -62,7 +62,7 @@ function HelpManagement() {
     const deleteHelplist = useSelector(state => state.deleteHelplist)
     const {success: successDelete, loading: loadDel} = deleteHelplist;
     const helpList = useSelector(state => state.helpList);
-    const {helps} = helpList;
+    const {helps, loading: loadhelp} = helpList;
 
     const [search, setSearch] = useState("");
     const [select, setSelection] = useState([]);
@@ -420,9 +420,17 @@ function HelpManagement() {
                 {
                   loadDel? 
                   <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
-                  <CircularProgress />
+                  <CircularProgress  style={{color: '#F5CB5C'}}/>
                   </Backdrop>:null
                 }
+              </Grid>
+              <Grid>
+              {
+                  loadhelp? 
+                  <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                  <CircularProgress  style={{color: '#F5CB5C'}}/>
+                  </Backdrop>:null
+              }
               </Grid>
               </Paper>
           </Grid>

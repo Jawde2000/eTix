@@ -16,6 +16,8 @@ import APIService from '../../APIService'
 import { login } from '../../actions/userActions/userActions'
 import {useDispatch, useSelector} from 'react-redux'
 import Alert from '@mui/material/Alert'
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -82,7 +84,8 @@ function LoginForm() {
   let history = useHistory()
 
   const userLogin = useSelector(state => state.userLogin)
-  const {error,  userInfo} = userLogin
+  const {error,  userInfo, loading} = userLogin
+  const [isLoading, setLoad] = useState(false);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -90,6 +93,12 @@ function LoginForm() {
         history.push('/menu')
     }
   }, [userInfo])
+
+  useEffect(() => {
+    if(loading) {
+      setLoad(true);
+    }
+  }, [loading, isLoading])
 
   const [values, setValues] = useState({
     password: '',
@@ -183,6 +192,13 @@ function LoginForm() {
             </Link>
             </Box>
           </Grid>
+        </Grid>
+        <Grid>
+          {isLoading?
+          <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress  style={{color: '#F5CB5C', fontSize: 10}}/>
+          </Backdrop>:null
+          }
         </Grid>
         </form>
       </Container>
