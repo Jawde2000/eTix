@@ -164,6 +164,7 @@ def updateUser(request, pk):
     serializer = UserSerializer(user, many=False)
 
     return Response(serializer.data)
+
 # update customer by userid
 
 

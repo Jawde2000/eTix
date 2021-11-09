@@ -28,6 +28,11 @@ import {
     HELP_SEND_RESPONSE_SUCCESS,
     HELP_SEND_RESPONSE_FAIL,
     HELP_SEND_RESPONSE_RESET,
+
+    HELP_SEND_HELP_REQUEST,
+    HELP_SEND_HELP_SUCCESS,
+    HELP_SEND_HELP_FAIL,
+    HELP_SEND_HELP_RESET,
 } from '../constants/helpConstants/helpConstants'
 
 export const helpListReducer = (state = { helps: [] }, action) => {
@@ -137,6 +142,25 @@ export const helpSendReducer = (state = { }, action) => {
            return {loading: false, error: action.payload}
 
         case HELP_SEND_RESPONSE_RESET:
+           return {}
+
+        default:
+            return state
+    }
+}
+
+export const helpSendAddReducer = (state = { }, action) => {
+    switch(action.type){
+        case HELP_SEND_HELP_REQUEST:
+            return {loading: true}
+        
+        case HELP_SEND_HELP_SUCCESS:
+           return {loading: false, success: true}
+        
+        case HELP_SEND_HELP_FAIL:
+           return {loading: false, error: action.payload}
+
+        case HELP_SEND_HELP_RESET:
            return {}
 
         default:

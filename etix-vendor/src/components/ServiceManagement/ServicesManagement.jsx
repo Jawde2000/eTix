@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper, TextField} from '@mui/material';
+import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper, TextField, Tooltip, Toolbar} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, {useEffect, props, useState} from 'react';
 import moscow from '../globalAssets/moscow.jpg'
@@ -8,6 +8,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import { servicelist } from '../../actions/serviceActions/serviceActions';
+import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions'
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
 import PropTypes from 'prop-types';
@@ -15,6 +16,12 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterBut
 import CircularProgress from '@mui/material/CircularProgress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -40,31 +47,90 @@ function CustomToolbar() {
     );
 }
 
+
+function DialogDelete(props) {
+  const [openDD, setOpenDD] = useState(false);
+  const dispatch = useDispatch()
+  console.log(props)
+  let history = useHistory()
+
+  const handleClickOpen = () => {
+    setOpenDD(true);
+  };
+
+  const handleClose = () => {
+    setOpenDD(false);
+  };
+
+  const handleDelete = (ids) => {
+    ids.map((id) => {
+        dispatch(deleteHelp(id));
+    })
+
+    alert("Sucessfully Deleted");
+    history.push("/menu/helpdesk");
+  }
+
+  return (
+    <Toolbar>
+      <Tooltip title="Delete" onClick={handleClickOpen}>
+          <IconButton >
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+      <Dialog
+        open={openDD}
+        onClose={handleClose}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete Message(s)"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete the message(s)?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button style={{color: "red"}} onClick={handleDelete}>Yes</Button>
+          <Button onClick={handleClose} autoFocus>
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Toolbar>
+  );
+}
+
 const columns = [
-    { field: 'id', headerName: 'Service ID', width: 200 },
+    { field: 'id', headerName: 'Service ID', width: 130 },
     {
       field: 'service',
       headerName: 'Service',
-      width: 250,
+      headerAlign: 'center',
+      width: 230,
       editable: true,
     },
     {
       field: 'departure',
       headerName: 'Departure',
+      headerAlign: 'center',
       type: 'date',
-      width: 250,
+      width: 150,
       editable: true,
     },
     {
       field: 'time',
       headerName: 'Service Time',
+      headerAlign: 'center',
+      Alignment: 'center',
       type: 'time',
-      width: 150,
+      width: 200,
       editable: true,
     },
     {
       field: 'status',
       headerName: 'Status',
+      headerAlign: 'center',
       width: 120,
       editable: false,
       renderCell: (params) => {
@@ -80,8 +146,32 @@ const columns = [
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 150,
+      headerAlign: 'center',
+      width: 250,
       editable: false,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => {
+        console.log(params);
+        return (
+          <Container >
+            <Grid xs={12} display="flex">
+              <Grid xs={6} item>
+                <Toolbar>
+                <Tooltip title="Edit">
+                <IconButton href={`/menu/helpdesk/${params.row.id}`}>
+                  <EditIcon />
+                </IconButton>
+                </Tooltip>
+                </Toolbar>
+              </Grid>
+              <Grid xs={6} item>
+                <DialogDelete props={params}/>
+              </Grid>
+            </Grid>
+          </Container>
+        );
+     },
     }
   ];
 
@@ -171,23 +261,27 @@ function ServicesManagement() {
                         </Box>
                     </Grid>
                     <Grid xs={4} alignItems="flex-end" alignContent="flex-end" flexWrap="wrap" justifyContent="flex-end" container spacing={0.5}>
-                        <Grid xs={12} item display="flex" alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
-                            <Grid xs={4} item md={1} paddingRight={8}>                          
-                            <EditIcon style={{fontSize: 40}}/>         
-                            </Grid>
-                            <Grid xs={4} item md={1} paddingRight={8}>
-                            <DeleteIcon style={{fontSize: 40}}/>
-                            </Grid>
-                            <Grid xs={4} item md={1}>
-                            <AddCircleIcon style={{fontSize: 40}}/>
-                            </Grid>
-                        </Grid>            
+                    <Grid xs={12} item display="flex" alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
+                          <Grid xs={6} item md={1} paddingRight={8}>
+                          <Tooltip title="Delete">  
+                          <IconButton> 
+                          <DeleteIcon style={{fontSize: 40}}/>
+                          </IconButton>
+                          </Tooltip> 
+                          </Grid>
+                          <Grid xs={6} item md={1}>
+                          <Tooltip title="Message">  
+                          <IconButton> 
+                          <AddCircleIcon style={{fontSize: 40}}/>
+                          </IconButton>
+                          </Tooltip> 
+                          </Grid>
+                      </Grid>             
                     </Grid>
                 </Grid>
                 <Paper>
-                <Grid xs={12}>
-                    <Grid xs={12}>
-                    <div style={{ height: 450, width: '100%' }}>
+                <Grid xs={12} container>             
+                    <Grid style={{ height: 450, width: '100%' }}>
                         <DataGrid
                         rows={rowss}
                         columns={columns}
@@ -199,7 +293,6 @@ function ServicesManagement() {
                             Toolbar: CustomToolbar
                         }}
                         />
-                        </div>
                     </Grid>
                 </Grid>
                 </Paper>

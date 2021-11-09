@@ -179,7 +179,23 @@ export const updateVendor = (user, vendor, id) => async (dispatch, getState) => 
 
         console.log(userInfo.token)
 
+        console.log(userInfo)
+
         const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const config2 = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const config3 = {
             headers: {
                 'Content-type' : 'application/json',
                 Authorization: `Bearer ${userInfo.token}`
@@ -197,10 +213,38 @@ export const updateVendor = (user, vendor, id) => async (dispatch, getState) => 
             vendor,
             config
         )
+
+        var vendorD = await axios.get(
+            `http://127.0.0.1:8000/api/user/vendor/${id}/`,
+            config2
+        )
+
+        vendorD = vendorD.data;
+
+        var data3 = {
+            // ...userIn,
+            vendorInfo: vendorD
+        }
     
         dispatch({
             type: USER_VENDOR_UPDATE_SUCCESS,
         })
+
+
+        data = {
+            ...userInfo,
+            username: data.username,
+            email: data.email,
+        }
+
+        console.log(data);
+
+        dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: data,
+        })
+
+        localStorage.setItem('userInfo', JSON.stringify(data))
 
     }catch(error){
         dispatch({

@@ -22,6 +22,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Backdrop from '@mui/material/Backdrop';
+import etix from '../Helpdesk/etix.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,6 +92,7 @@ const HelpdeskDetail = ({props}) => {
     const [respondedUsername, setRespondedUsername] = useState("");
     const [open, setOpen] = useState(false);
     const [sendRes, setSendRes] = useState();
+    const [read, setRead] = useState(false);
 
     useEffect(() => {
         if(!userLogin){
@@ -108,8 +111,6 @@ const HelpdeskDetail = ({props}) => {
                 }
             }
             setStatus(helpD.helpdeskStatus)
-
-            
         }
 
         if(!senderD && helpD){
@@ -119,6 +120,12 @@ const HelpdeskDetail = ({props}) => {
             setSenderDetail(senderD)
         }
     }, [helpD, id, senderD])
+
+    useEffect(()=> {
+        if (senderD) {
+            setRead(senderD.userID === userInfo.userID? false:true)
+        }
+    }, [read])
 
     useEffect(() => {
         if(sendRes && !sendSuccess){
@@ -130,7 +137,7 @@ const HelpdeskDetail = ({props}) => {
             dispatch({type: HELP_SEND_RESPONSE_RESET});
             dispatch({type: USER_DETAIL_RESET});
             dispatch({type: HELP_DETAIL_RESET});
-            history.push(`/menu/helpdesk`)
+            history.push(`/menu/helpmanage`)
         }
 
     }, [sendRes, sendSuccess])
@@ -148,7 +155,7 @@ const HelpdeskDetail = ({props}) => {
         if(saveSuccess && !sendSuccess){
             alert("Saved successfully!");
             dispatch({type: HELP_SAVE_RESET});
-            history.push(`/help/${id}`)
+            history.push(`/menu/helpdesk/${id}`)
         }
         
     }, [saveSuccess])
@@ -243,13 +250,7 @@ const HelpdeskDetail = ({props}) => {
                     document.location.reload()
               }, 5000);
             }
-        } else {
-            return (
-                <Box sx={{ display: 'flex' }}>
-                  <CircularProgress />
-                </Box>
-            );
-        }
+        } 
     }, [deleteHelplist])
 
     const handleChangeStatus = (e) => {
@@ -295,9 +296,9 @@ const HelpdeskDetail = ({props}) => {
             {
                 !helpdesk?
                 (
-                    <Box sx={{ display: 'flex' }}>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
                         <CircularProgress />
-                    </Box>
+                    </Backdrop>
                 )
                 :
                 (
@@ -510,19 +511,20 @@ const HelpdeskDetail = ({props}) => {
                                                                     fullWidth
                                                                     size="small"
                                                                     InputProps={{
+                                                                        readOnly: {read},
                                                                         style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                                                     }} 
                                                                 />   
                                                             </Grid>
                                                             <Grid item xs={12}>
-                                                                <Button onClick={()=>handleSendRespond()} variant="text">Send Respond</Button>
+                                                                {senderDetail.userID === userInfo.userID? null:(<Button onClick={()=>handleSendRespond()} variant="text">Send Respond</Button>)}
                                                             </Grid>
                                                         </Grid>
                                                         
                                                     )
                                                     :
                                                     <Grid item xs={12}>
-                                                        <Button onClick={()=>setAddMessage(!addMessage)} variant="text">Add Respond Message</Button>
+                                                        <Button onClick={()=>setAddMessage(!addMessage)} variant="text">View Respond Message</Button>
                                                     </Grid>
                                                 }
                                             </Grid>

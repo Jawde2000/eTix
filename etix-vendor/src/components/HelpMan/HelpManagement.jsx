@@ -194,20 +194,19 @@ function HelpManagement() {
     let history = useHistory()
 
     const deleteHelplist = useSelector(state => state.deleteHelplist)
-    const {success: successDelete} = deleteHelplist
+    const {success: successDelete} = deleteHelplist;
+    const helpList = useSelector(state => state.helpList);
+    const {helps} = helpList;
 
-    const [search, setSearch] = useState();
+    const [search, setSearch] = useState("");
     const [select, setSelection] = useState([]);
+    const [row, setRow] = useState([]);
+    const [rows, setRows] = useState([]);
     // const serviceList = useSelector(state => state.serviceList)
     // const {services} = serviceList
 
     useEffect(() => {
         if(userInfo){
-          if (document.referrer !== document.location.href) {
-            setTimeout(function() {
-                document.location.reload(2)
-          }, 5000);
-          }
             dispatch(listHelp())
         }
         else{
@@ -220,41 +219,41 @@ function HelpManagement() {
     //     return (<CircularProgress disableShrink />)
     //   }
     // }, [loading])
-
-    
-
-    const rows = userInfo.sender?.map(help => {
-      // var s = help.HelpdeskStatus ==="OP"?"Active": help.HelpdeskStatus ==="CL"?"Closed":"Responded"
-      var s = help.helpdeskStatus
-      console.log(select)
-      return {
-        id: help.helpdeskID,
-        title: help.helpdeskTitle,
-        sender: help.username,
-        dateTime: help.helpdeskDateTime,
-        status: s
+    useEffect(() => {
+      if(helps) {
+        const helplist = helps?.map(help => {
+          var s = help.helpdeskStatus
+          console.log(select)
+          return {
+            id: help.helpdeskID,
+            title: help.helpdeskTitle,
+            sender: help.username,
+            dateTime: help.helpdeskDateTime,
+            status: s
+          }
+        })
+        setRow(helplist);
       }
-    })
-
-    const [rowss, setRows] = useState(rows);
+    }, [helps])
 
     const requestSearch = (searchValue) => {
       setSearch(searchValue)
       const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
-      const filteredRows = rows.filter((row) => {
-        return Object.keys(row).some((field) => {
-          return searchRegex.test(row[field].toString());
+      const filteredRows = row.filter((roww) => {
+        return Object.keys(roww).some((field) => {
+          return searchRegex.test(roww[field].toString());
         });
       });
       setRows(filteredRows);
     };
 
-    useEffect(() => {
-      setRows(rowss)
-    }, [rowss]);
+    useEffect(()=> {
+      if(row){
+        search  === ""? setRows(row):setRows(rows);
+      }
+    })
 
     return (
-        
       <Box className={defaultStyle.whole}>
           <Container>
           <Grid xs={12} direction="column" spacing={20}>
@@ -292,8 +291,8 @@ function HelpManagement() {
                           </Grid>
                           <Grid xs={6} item md={1}>
                           <Tooltip title="Message">  
-                          <IconButton> 
-                          <AddCommentIcon style={{fontSize: 40}}/>
+                          <IconButton href={`/menu/helpmanage/comment/${userInfo.userID}`}> 
+                          <AddCommentIcon style={{fontSize: 40, color: "#25D366"}}/>
                           </IconButton>
                           </Tooltip> 
                           </Grid>
@@ -301,11 +300,11 @@ function HelpManagement() {
                   </Grid>
               </Grid>
               <Paper>
-              <Grid xs={12}>
-                  <Grid xs={12}>
-                  <div style={{ height: 450, width: '100%' }}>
+              <Grid xs={12} container>
+                  <Grid xs={12} container style={{ height: 450, width: '100%' }} position="relative">
                       <DataGrid
-                      rows={rowss}
+                      container
+                      rows={rows}
                       columns={columns}
                       pageSize={5}
                       rowsPerPageOptions={[5]}
@@ -313,7 +312,7 @@ function HelpManagement() {
                       disableSelectionOnClick
                       onSelectionModelChange={(ids) => {
                         const selectedIDs = new Set(ids);
-                        const selectedRowData = rows.filter((row) =>
+                        const selectedRowData = row.filter((row) =>
                           selectedIDs.has(row.id.toString())
                         )
                         setSelection(selectedRowData)
@@ -322,7 +321,6 @@ function HelpManagement() {
                           Toolbar: CustomToolbar
                       }}
                       />
-                      </div>
                   </Grid>
               </Grid>
               </Paper>

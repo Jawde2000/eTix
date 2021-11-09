@@ -3,7 +3,7 @@ import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { userLoginReducer, userDetailReducer, userUpdateReducer, vendorUpdateReducer} from './reducers/userReducers'
 import { registerReducer } from './reducers/registerReducers'
-import { helpListReducer, helpDeleteReducer, helpDetailReducer, userHDetailReducer, helpSaveReducer, helpSendReducer} from './reducers/helpReducers'
+import { helpListReducer, helpDeleteReducer, helpDetailReducer, userHDetailReducer, helpSaveReducer, helpSendReducer, helpSendAddReducer} from './reducers/helpReducers'
 import { serviceReducer } from './reducers/servicesReducers'
 
 const reducer = combineReducers({
@@ -17,6 +17,7 @@ const reducer = combineReducers({
     helpUserDetail: userHDetailReducer,
     helpSave: helpSaveReducer,
     helpSend: helpSendReducer,
+    sendHelpAdmin: helpSendAddReducer,
     userUpdate: userUpdateReducer,
     vendorUpdate: vendorUpdateReducer,
 })

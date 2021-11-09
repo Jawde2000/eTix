@@ -121,26 +121,26 @@ const Profile = ({props}) => {
     }
 
     useEffect(() =>{
-        if(role==="Admin" && uptUser){
-            dispatch(updateUser(uptUser, userID));
-        }
-        else if(role === "Vendor" && uptVendor){
+        if(role === "Vendor" && uptVendor){
+            console.log("update")
             dispatch(updateVendor(uptUser, uptVendor, userID))
         }
-    }, [uptUser, uptVendor])
+    }, [uptVendor])
 
     useEffect(() => {
         if(successUser){
             alert("Successfully Updated User");
             dispatch({type: USER_UPDATE_RESET});
             setEditing(!editing);
-            window.setTimeout(function(){window.location.reload()},1000)
+            // window.setTimeout(function(){window.location.reload()},1000)
         }
         else if(successVendor){
             alert("Successfully Updated User");
             dispatch({type: USER_VENDOR_UPDATE_RESET});
+            window.setTimeout(function(){window.location.reload()},300)
+            // dispatch(getUser(userID));
             setEditing(!editing);
-            window.setTimeout(function(){window.location.reload()},1000)
+            // window.setTimeout(function(){window.location.reload()},1000)
         }
         else if(errorUsr || errorVen){
             alert("Fail to Update");
@@ -154,7 +154,7 @@ const Profile = ({props}) => {
             dispatch(getUser(userID))
         }else{
             setUser(userD)
-            setRole(userD.is_vendor? "Vendor" : userD.is_superuser? "Admin" : "");
+            setRole("Vendor");
             setUsername(userD.username);
             setEmail(userD.email);
             setIsActive(userD.is_active);

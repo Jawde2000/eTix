@@ -124,12 +124,13 @@ const Header = (props) => {
   const {userD} = userDetail
 
   const [name, setName] = useState(null);
-  const [id, setID] = useState();
+  const [id, setID] = useState(null);
 
   useEffect(() => {
     setName(userInfo? userInfo.username:null);
     setID(userInfo? userInfo.userID:null);
   }, [userInfo])
+
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">

@@ -28,6 +28,11 @@ import {
     HELP_SEND_RESPONSE_SUCCESS,
     HELP_SEND_RESPONSE_FAIL,
     HELP_SEND_RESPONSE_RESET,
+    
+    HELP_SEND_HELP_REQUEST,
+    HELP_SEND_HELP_SUCCESS,
+    HELP_SEND_HELP_FAIL,
+    HELP_SEND_HELP_RESET,
 
 } from '../../constants/helpConstants/helpConstants'
 
@@ -63,7 +68,16 @@ export const listHelp = () => async (dispatch, getState) => {
              config
         )
 
-        var userID = data?.map(help => {
+        var data2 = await axios.get(
+            'http://127.0.0.1:8000/api/user/vendorhelp/' + userInfo.userID + '/',
+            config
+        )
+
+        var dataMerged = [...data, ...data2.data];
+
+        console.log(dataMerged);
+
+        var userID = dataMerged?.map(help => {
             return help.user
         })
 
@@ -76,28 +90,18 @@ export const listHelp = () => async (dispatch, getState) => {
 
         var j = 0
 
-        for (let i of data) {
+        for (let i of dataMerged) {
             i.username = username[j]
             j = j + 1
         }
 
-        const Infotemp = userInfo
-
-        const user = {
-            ...Infotemp,
-            sender: data
-        }
-
-        console.log(user)
-
-        console.log(data)
+        console.log(dataMerged)
 
         dispatch({
             type: HELP_LIST_SUCCESS,
-            payload: data
+            payload: dataMerged
         })
 
-        localStorage.setItem('userInfo', JSON.stringify(user))
     }catch(error){
         dispatch({
             type: HELP_LIST_FAIL,
@@ -158,6 +162,8 @@ export const getHelp = (id) => async (dispatch, getState) => {
                 }
             }
         }
+
+        console.log(data);
 
         dispatch({
             type: HELP_DETAIL_SUCCESS,
@@ -380,6 +386,54 @@ export const sendResponse = (response, status, id) => async (dispatch, getState)
     }catch(error){
         dispatch({
             type: HELP_SEND_RESPONSE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+//SEND help
+export const sendHelp = (title, message) => async (dispatch, getState) => {
+    try{
+        console.log(title);
+        console.log(message);
+
+        dispatch({
+            type:HELP_SEND_HELP_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.post(
+            'http://127.0.0.1:8000/api/helpdesk/',
+            {
+                "helpdeskTitle": title,
+                "helpdeskMessage": message,
+                "user": userInfo.userID,
+                "to_vendor": 'False',
+                "to_admin": 'True',
+                "helpdeskStatus": 'OP',
+               
+            }, config
+        )
+        
+        dispatch({
+            type: HELP_SEND_HELP_SUCCESS,
+        })
+
+    }catch(error){
+        dispatch({
+            type: HELP_SEND_HELP_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

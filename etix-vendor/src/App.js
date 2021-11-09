@@ -19,6 +19,7 @@ import Profile from "./components/Profile/Profile";
 import {CookiesProvider} from 'react-cookie'
 import ServicesManagement from './components/ServiceManagement/ServicesManagement';
 import HelpManagement from './components/HelpMan/HelpManagement';
+import AddComment from './components/Helpdesk/AddComment';
 
 function Router() {
 
@@ -74,6 +75,7 @@ function App() {
                 <Route exact path="/menu/servicemanagement/:id" component={Service}/>
                 <Route exact path="/menu/helpmanage" component={HelpManagement}/>
                 <Route exact path="/menu/profile" component={Profile}/>
+                <Route exact path="/menu/helpmanage/comment/:id" component={AddComment}/>
               </Switch>
             <Footer />    
           </BrowserRouter>
