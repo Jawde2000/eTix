@@ -15,6 +15,7 @@ import {HELP_DELETE_RESET} from '../../constants/helpConstants/helpConstants'
 import PropTypes from 'prop-types';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 import { useHistory } from 'react-router';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -59,7 +60,7 @@ function HelpManagement() {
     let history = useHistory()
 
     const deleteHelplist = useSelector(state => state.deleteHelplist)
-    const {success: successDelete} = deleteHelplist;
+    const {success: successDelete, loading: loadDel} = deleteHelplist;
     const helpList = useSelector(state => state.helpList);
     const {helps} = helpList;
 
@@ -408,6 +409,14 @@ function HelpManagement() {
               </Grid>
               <Grid>
                 {openDel? <DialogDel />:null}
+              </Grid>
+              <Grid>
+                {
+                  loadDel? 
+                  <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                  <CircularProgress />
+                  </Backdrop>:null
+                }
               </Grid>
               </Paper>
           </Grid>
