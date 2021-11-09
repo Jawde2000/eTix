@@ -178,7 +178,7 @@ const Header = (props) => {
                 </DialogTitle>
                 <DialogContent>
                 <DialogContentText>
-                  Please Log In to use this actions
+                  Please log In to use this action
                 </DialogContentText>
                 </DialogContent>
                 <DialogActions>

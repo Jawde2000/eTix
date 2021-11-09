@@ -86,6 +86,7 @@ function LoginForm() {
   const userLogin = useSelector(state => state.userLogin)
   const {error,  userInfo, loading} = userLogin
   const [isLoading, setLoad] = useState(false);
+  const [seconds, setSeconds] = useState(5);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -99,6 +100,17 @@ function LoginForm() {
       setLoad(true);
     }
   }, [loading, isLoading])
+
+  useEffect(() => {
+    if(isLoading){
+      setLoad(true);
+      if (seconds > 0) {
+        setTimeout(() => setSeconds(seconds - 1), 1000);
+      } else {
+        setLoad(false);
+      }
+    }
+  });
 
   const [values, setValues] = useState({
     password: '',
@@ -132,7 +144,7 @@ function LoginForm() {
   return (
       <Container>
         <form onSubmit={loginBtn}>
-        {error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
+        {!isLoading? error && <Grid xs={12} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>:null}
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
           label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
@@ -175,7 +187,7 @@ function LoginForm() {
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black", textShadow: '1px 1px 2px white'}}/>}
            >
-          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black", textShadow: '1px 1px 2px white',}} >
+          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black", textShadow: '1px 1px 2px black',}} >
             Login
           </Typography>
           </Button>

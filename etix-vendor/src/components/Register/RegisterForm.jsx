@@ -14,6 +14,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { register } from '../../actions/registerActions/registerActions'
 import {useDispatch, useSelector} from 'react-redux'
 import {useHistory} from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -84,7 +86,7 @@ function RegisterForm() {
   const [bankBrand, setBank] = useState();
 
   const userRegister = useSelector(state => state.userRegister)
-  const {success} = userRegister
+  const {success, loading} = userRegister
   const dispatch = useDispatch()
   let history = useHistory()
 
@@ -273,6 +275,14 @@ function RegisterForm() {
           </Typography>
           </Button>
           </Grid>
+        </Grid>
+        <Grid>
+          {loading? 
+          <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress  style={{color: '#F5CB5C'}}/>
+          </Backdrop>
+          :null
+          }
         </Grid>
         </form>
       </Container>

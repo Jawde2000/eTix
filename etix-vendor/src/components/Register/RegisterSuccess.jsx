@@ -11,6 +11,7 @@ import moscow from '../globalAssets/moscow.jpg'
 
 const useStyles = makeStyles((theme) => ({
     whole: {
+        backgroundImage: `url(${moscow})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "lighten",
@@ -34,8 +35,13 @@ function Register() {
                   <Grid xs={12} direction="column">    
                       <Grid xs={12} container direction="column" style={{ minHeight: "100vh" }} justifyContent="center" alignItems="center" justify="center">
                           <Grid xs={12} justifyContent="center" alignItems="center" justify="center" container >
-                              <Typography style={{fontSize: 30, fontWeight: "bold",fontFamily: ['rubik', 'sans-serif'].join(','), color: 'black'}}>
-                                  Your registration is success! We will send an email to you when your status is being verified
+                              <Typography gutterBottom component="div" variant="h2" style={{fontSize: 35, fontWeight: "bold",fontFamily: ['rubik', 'sans-serif'].join(','), color: 'white', textShadow: '1px 1px 1px black'}}>
+                                Your registration is success! We will send an  
+                              </Typography>
+                          </Grid>
+                          <Grid xs={12} justifyContent="center" alignItems="center" justify="center" container >
+                              <Typography gutterBottom component="div" variant="h2" style={{fontSize: 35, fontWeight: "bold",fontFamily: ['rubik', 'sans-serif'].join(','), color: 'white', textShadow: '1px 1px 3px black'}}>
+                               email to you when your status is being verified
                               </Typography>
                           </Grid>
                           <Grid xs={12}>
