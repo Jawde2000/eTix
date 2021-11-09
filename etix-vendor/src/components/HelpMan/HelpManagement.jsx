@@ -279,9 +279,15 @@ function HelpManagement() {
       return (
         <Toolbar>
           <Tooltip onClick={handleClickOpen} title="delete">
-              <IconButton >
-              {select.length < 2? (<DeleteIcon style={{fontSize: 40, color: "black"}}/>):(<DeleteIcon style={{fontSize: 40, color: "red"}}/>)}
-            </IconButton>
+              {select.length <= 0?
+                <IconButton disabled={true}>
+                  <DeleteIcon style={{fontSize: 40}}/>
+                </IconButton>
+                :
+                <IconButton >
+                {select.length < 2? (<DeleteIcon style={{fontSize: 40, color: "black"}}/>):(<DeleteIcon style={{fontSize: 40, color: "red"}}/>)}
+                </IconButton>            
+              }
           </Tooltip>
           <Dialog
             open={open}

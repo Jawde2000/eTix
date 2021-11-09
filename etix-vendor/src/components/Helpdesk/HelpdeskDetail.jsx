@@ -281,7 +281,7 @@ const HelpdeskDetail = ({props}) => {
     const handleBack = () => {
         dispatch({type: USER_DETAIL_RESET});
         dispatch({type: HELP_DETAIL_RESET});
-        history.push('/menu/helpdesk/');
+        history.push('/menu/helpmanage/');
     }
 
     const handleSave = () => {
