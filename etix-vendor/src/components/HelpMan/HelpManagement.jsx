@@ -11,6 +11,7 @@ import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions'
 import { getUser } from '../../actions/userActions/userActions';
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
+import {HELP_DELETE_RESET} from '../../constants/helpConstants/helpConstants'
 import PropTypes from 'prop-types';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -48,64 +49,25 @@ function CustomToolbar() {
     );
 }
 
-function DialogDelete(props) {
-  const [open, setOpen] = useState(false);
-  const dispatch = useDispatch()
-  console.log(props)
-  let history = useHistory()
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleDelete = (ids) => {
-    ids.map((id) => {
-        dispatch(deleteHelp(id));
-    })
-
-    alert("Sucessfully Deleted");
-    HelpManagement.setSelection([]);
-    history.push("/menu/helpdesk");
-  }
-
-  return (
-    <Toolbar>
-      <Tooltip title="Delete" onClick={handleClickOpen}>
-          <IconButton >
-          <DeleteIcon />
-        </IconButton>
-      </Tooltip>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Delete Message(s)"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete the message(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button style={{color: "red"}} onClick={handleDelete}>Yes</Button>
-          <Button onClick={handleClose} autoFocus>
-            No
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Toolbar>
-  );
-}
-
 function HelpManagement() {
     const defaultStyle = useStyles();
+    const [id, getID] = useState();
+    const [button1, setButton1] = useState(false);
+    const dispatch = useDispatch()
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+    let history = useHistory()
+
+    const deleteHelplist = useSelector(state => state.deleteHelplist)
+    const {success: successDelete} = deleteHelplist;
+    const helpList = useSelector(state => state.helpList);
+    const {helps} = helpList;
+
+    const [search, setSearch] = useState("");
+    const [select, setSelection] = useState([]);
+    const [row, setRow] = useState([]);
+    const [rows, setRows] = useState([]);
+    const [openDel, setOpenDel] = useState(false);
 
     const columns = [
       { field: 'id', headerName: 'Help ID', headerAlign: 'center',width: 130 },
@@ -166,6 +128,7 @@ function HelpManagement() {
         disableColumnMenu: true,
         renderCell: (params) => {
           console.log(params);
+          getID(params.row.id);
           return (
             <Container >
               <Grid xs={12} display="flex">
@@ -179,7 +142,7 @@ function HelpManagement() {
                   </Toolbar>
                 </Grid>
                 <Grid xs={6} item>
-                  <DialogDelete props={params}/>
+                  {select.length > 1? null:<DialogDelete props={params.row.id}/>}
                 </Grid>
               </Grid>
             </Container>
@@ -187,23 +150,6 @@ function HelpManagement() {
        },
       },
     ];
-    
-    const dispatch = useDispatch()
-    const userLogin = useSelector(state => state.userLogin)
-    const {userInfo} = userLogin
-    let history = useHistory()
-
-    const deleteHelplist = useSelector(state => state.deleteHelplist)
-    const {success: successDelete} = deleteHelplist;
-    const helpList = useSelector(state => state.helpList);
-    const {helps} = helpList;
-
-    const [search, setSearch] = useState("");
-    const [select, setSelection] = useState([]);
-    const [row, setRow] = useState([]);
-    const [rows, setRows] = useState([]);
-    // const serviceList = useSelector(state => state.serviceList)
-    // const {services} = serviceList
 
     useEffect(() => {
         if(userInfo){
@@ -214,11 +160,12 @@ function HelpManagement() {
         }
     }, [dispatch, successDelete])
 
-    // useEffect(() => {
-    //   if (loading) {
-    //     return (<CircularProgress disableShrink />)
-    //   }
-    // }, [loading])
+    useEffect(() => {
+      if(successDelete){
+        setOpenDel(true);
+      }
+    }, [successDelete])
+
     useEffect(() => {
       if(helps) {
         const helplist = helps?.map(help => {
@@ -253,6 +200,145 @@ function HelpManagement() {
       }
     })
 
+    const DialogDelete = () => {
+      const [open, setOpen] = useState(false);
+    
+      const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+    
+      const handleDelete = () => {
+        if (select.length > 2) {
+          select.map((ids) => {
+            dispatch(deleteHelp(ids.id));
+          })
+        } else {
+          dispatch(deleteHelp(id));
+        }
+        setOpen(false);
+        setSelection([]);
+      }
+    
+      return (
+        <Toolbar>
+          <Tooltip title="Delete" onClick={handleClickOpen}>
+              <IconButton >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Delete Message(s)"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to delete the message(s)?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button style={{color: "red"}} onClick={handleDelete}>Yes</Button>
+              <Button onClick={handleClose} autoFocus>
+                No
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
+
+    const DialogDelete2 = () => {
+      const [open, setOpen] = useState(false);
+    
+      const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+    
+      const handleDelete = () => {
+        select.map((ids) => {
+          dispatch(deleteHelp(ids.id));
+        })
+        
+        setOpen(false);
+        setSelection([]);
+      }
+    
+      return (
+        <Toolbar>
+          <Tooltip onClick={handleClickOpen} title="delete">
+              <IconButton >
+              {select.length < 2? (<DeleteIcon style={{fontSize: 40, color: "black"}}/>):(<DeleteIcon style={{fontSize: 40, color: "red"}}/>)}
+            </IconButton>
+          </Tooltip>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Delete Message(s)"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to delete the message(s)?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button style={{color: "red"}} onClick={handleDelete}>Yes</Button>
+              <Button onClick={handleClose} autoFocus>
+                No
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
+
+
+    const DialogDel = () => {
+      const handleClose = () => {
+        dispatch({type: HELP_DELETE_RESET});
+        setOpenDel(false);
+        history.push(`/menu/helpmanage`);
+      };
+
+      return (
+        <Toolbar>
+          <Dialog
+            open={openDel}
+            onClose={handleClose}
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Notification"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                The message(s) is deleted
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} autoFocus>
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+  }
+
     return (
       <Box className={defaultStyle.whole}>
           <Container>
@@ -282,15 +368,11 @@ function HelpManagement() {
                   </Grid>
                   <Grid xs={4} alignItems="flex-end" alignContent="flex-end" flexWrap="wrap" justifyContent="flex-end" container spacing={0.5}>
                       <Grid xs={12} item display="flex" alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
-                          <Grid xs={6} item md={1} paddingRight={8}>
-                          <Tooltip title="Delete">  
-                          <IconButton> 
-                          <DeleteIcon style={{fontSize: 40}}/>
-                          </IconButton>
-                          </Tooltip> 
+                          <Grid xs={6} item md={1} paddingRight={15}>             
+                          <DialogDelete2 />
                           </Grid>
                           <Grid xs={6} item md={1}>
-                          <Tooltip title="Message">  
+                          <Tooltip title="Message Admin?">  
                           <IconButton href={`/menu/helpmanage/comment/${userInfo.userID}`}> 
                           <AddCommentIcon style={{fontSize: 40, color: "#25D366"}}/>
                           </IconButton>
@@ -315,13 +397,17 @@ function HelpManagement() {
                         const selectedRowData = row.filter((row) =>
                           selectedIDs.has(row.id.toString())
                         )
-                        setSelection(selectedRowData)
+                        console.log(selectedRowData);
+                        setSelection(selectedRowData);
                       }}
                       components={{
                           Toolbar: CustomToolbar
                       }}
                       />
                   </Grid>
+              </Grid>
+              <Grid>
+                {openDel? <DialogDel />:null}
               </Grid>
               </Paper>
           </Grid>
