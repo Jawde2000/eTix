@@ -8,7 +8,6 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions'
-import { getUser } from '../../actions/userActions/userActions';
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
 import {HELP_DELETE_RESET} from '../../constants/helpConstants/helpConstants'
@@ -52,8 +51,6 @@ function CustomToolbar() {
 
 function HelpManagement() {
     const defaultStyle = useStyles();
-    const [id, getID] = useState();
-    const [button1, setButton1] = useState(false);
     const dispatch = useDispatch()
     const userLogin = useSelector(state => state.userLogin)
     const {userInfo} = userLogin

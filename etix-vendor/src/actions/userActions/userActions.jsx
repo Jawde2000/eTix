@@ -16,7 +16,9 @@ import {
     USER_UPDATE_REQUEST,
     USER_UPDATE_SUCCESS,
     USER_UPDATE_FAIL,
-} from '../../constants/userConstants/userConstants'
+} from '../../constants/userConstants/userConstants';
+import {USER_SERVICE_RESET} from '../../constants/serviceConstants/serviceConstants';
+import {HELP_LIST_RESET} from '../../constants/helpConstants/helpConstants';
 import axios from 'axios'
 
 export const login = (email, password) => async (dispatch) => {
@@ -93,9 +95,11 @@ export const login = (email, password) => async (dispatch) => {
 }
 
 export const logout = () => (dispatch) => {
-    localStorage.removeItem('userInfo')
-    dispatch({type: USER_LOGOUT})
-    dispatch({type: USER_DETAIL_RESET})
+    localStorage.removeItem('userInfo');
+    dispatch({type: USER_LOGOUT});
+    dispatch({type: USER_DETAIL_RESET});
+    dispatch({type: USER_SERVICE_RESET});
+    dispatch({type: HELP_LIST_RESET});
 }
 
 //GET ONLY ONE USER 

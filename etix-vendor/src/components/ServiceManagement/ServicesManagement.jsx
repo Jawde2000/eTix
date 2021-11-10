@@ -7,8 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { servicelist } from '../../actions/serviceActions/serviceActions';
-import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions'
+import { servicelist, deleteService} from '../../actions/serviceActions/serviceActions';
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
 import PropTypes from 'prop-types';
@@ -22,6 +21,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useHistory } from 'react-router';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -64,7 +64,7 @@ function DialogDelete(props) {
 
   const handleDelete = (ids) => {
     ids.map((id) => {
-        dispatch(deleteHelp(id));
+        dispatch(deleteService(id));
     })
 
     alert("Sucessfully Deleted");
@@ -102,13 +102,13 @@ function DialogDelete(props) {
 }
 
 const columns = [
-    { field: 'id', headerName: 'Service ID', width: 130 },
+    { field: 'id', headerName: 'Service ID', width: 145 },
     {
       field: 'service',
       headerName: 'Service',
       headerAlign: 'center',
-      width: 230,
-      editable: true,
+      width: 350,
+      editable: false,
     },
     {
       field: 'departure',
@@ -116,7 +116,7 @@ const columns = [
       headerAlign: 'center',
       type: 'date',
       width: 150,
-      editable: true,
+      editable: false,
     },
     {
       field: 'time',
@@ -124,8 +124,8 @@ const columns = [
       headerAlign: 'center',
       Alignment: 'center',
       type: 'time',
-      width: 200,
-      editable: true,
+      width: 140,
+      editable: false,
     },
     {
       field: 'status',
@@ -177,60 +177,70 @@ const columns = [
 
 function ServicesManagement() {
     const defaultStyle = useStyles();
-    const userLogin = useSelector(state => state.userLogin)
-    const {error, userInfo} = userLogin
-    const dispatch = useDispatch()
-    const serviceList = useSelector(state => state.serviceList)
-    const {loading} = serviceList
+    const userLogin = useSelector(state => state.userLogin);
+    const {userInfo} = userLogin;
+    const dispatch = useDispatch();
+    let history = useHistory();
 
-    const [search, setSearch] = useState();
+    const serviceList = useSelector(state => state.serviceList);
+    const {loading: serviceLoad, services} = serviceList;
+    const serviceDelete = useSelector(state => state.serviceDelete);
+    const {loading: loadServiceDel, success: successDel} = serviceDelete;
+
+    const [search, setSearch] = useState('');
+    const [select, setSelection] = useState([]);
+    const [row, setRow] = useState([]);
+    const [rows, setRows] = useState([]);
+    const [openDel, setOpenDel] = useState(false);
     // const serviceList = useSelector(state => state.serviceList)
     // const {services} = serviceList
 
     useEffect(() => {
-      if(userInfo) {
-        dispatch(servicelist(userInfo.vendorInfo.vendorID, userInfo.token, userInfo))
+      if(userInfo) { 
+        dispatch(servicelist())
+      } else{
+        history.push('/')
       }
-    }, [userInfo])
+    }, [dispatch, successDel]);
 
     useEffect(() => {
-      if (loading) {
-        return (<CircularProgress disableShrink />)
+      if (services) {
+          const serviceL = services?.map(servicel => {
+          var s = servicel.serviceStatus === "O"? "Active":"Inactive"
+          var timeString = servicel.serviceTime // input string
+          var arr = timeString.split(":"); // splitting the string by colon
+          var suffix = arr[0] >= 12 ? " PM":" AM"
+          var t = arr[0] + ":" + arr[1] + suffix
+    
+          return {
+            id: servicel.serviceID,
+            service: servicel.serviceName,
+            departure: servicel.serviceEndDate,
+            time: t,
+            status: s
+          }
+        })
+        // console.log(serviceLoad)
+        setRow(serviceL);
       }
-    }, [loading])
+    }, [services])
 
-    const rows = userInfo.services?.map(service => {
-      var s = service.serviceStatus === "O"? "Active":"Inactive"
-      var timeString = service.serviceTime // input string
-      var arr = timeString.split(":"); // splitting the string by colon
-      var suffix = arr[0] >= 12 ? " PM":" AM"
-      var t = arr[0] + ":" + arr[1] + suffix
-
-      return {
-        id: service.serviceID,
-        service: service.serviceName,
-        departure: service.serviceEndDate,
-        time: t,
-        status: s
+    useEffect(()=> {
+      if(row){
+        search  === ""? setRows(row):setRows(rows);
       }
     })
-
-    const [rowss, setRows] = useState(rows);
 
     const requestSearch = (searchValue) => {
       setSearch(searchValue)
       const searchRegex = new RegExp(escapeRegExp(searchValue), 'i');
-      const filteredRows = rows.filter((row) => {
-        return Object.keys(row).some((field) => {
-          return searchRegex.test(row[field].toString());
+      const filteredRows = rows.filter((roww) => {
+        return Object.keys(roww).some((field) => {
+          return searchRegex.test(roww[field].toString());
         });
       });
       setRows(filteredRows);
     };
-
-    useEffect(() => {
-      setRows(rowss)
-    }, [rowss]);
 
     return (
         
@@ -238,24 +248,24 @@ function ServicesManagement() {
             <Container>
             <Grid xs={12} direction="column" spacing={20}>
                 <Grid xs={12} padding={5} display="flex" container>
-                    <Grid xs={4} item  justify="center"  alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
-                    <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 230 }}>
-                      <InputBase 
-                      placeholder="Search..." value={search} onChange={(e) => requestSearch(e.target.value)}
-                      inputProps={{ 'aria-label': 'search users',}}
-                      />               
-                      <IconButton
-                      title="Clear"
-                      aria-label="Clear"
-                      size="small"
-                      style={{ visibility: search ? 'visible' : 'hidden' }}
-                      onClick={e => requestSearch('')}
-                      >
-                      <ClearIcon fontSize="small" />
-                      </IconButton>
-                      <SearchIcon fontSize="small" />
-                    </Paper>
-                    </Grid>
+                <Grid xs={4} item  justify="center"  alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
+                  <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 230 }}>
+                    <InputBase 
+                    placeholder="Search..." value={search} onChange={(e) => requestSearch(e.target.value)}
+                    inputProps={{ 'aria-label': 'search users',}}
+                    />               
+                    <IconButton
+                    title="Clear"
+                    aria-label="Clear"
+                    size="small"
+                    style={{ visibility: search ? 'visible' : 'hidden' }}
+                    onClick={e => requestSearch('')}
+                    >
+                    <ClearIcon fontSize="small" />
+                    </IconButton>
+                    <SearchIcon fontSize="small" />
+                  </Paper>
+                  </Grid>
                     <Grid xs={4} item display="flex" justify="center"  alignItems="center" alignContent="center" flexWrap="wrap" justifyContent="center">
                         <Box >
                         </Box>
@@ -270,7 +280,7 @@ function ServicesManagement() {
                           </Tooltip> 
                           </Grid>
                           <Grid xs={6} item md={1}>
-                          <Tooltip title="Message">  
+                          <Tooltip title="Add new service">  
                           <IconButton> 
                           <AddCircleIcon style={{fontSize: 40}}/>
                           </IconButton>
@@ -283,7 +293,7 @@ function ServicesManagement() {
                 <Grid xs={12} container>             
                     <Grid style={{ height: 450, width: '100%' }}>
                         <DataGrid
-                        rows={rowss}
+                        rows={rows}
                         columns={columns}
                         pageSize={5}
                         rowsPerPageOptions={[5]}
@@ -296,6 +306,13 @@ function ServicesManagement() {
                     </Grid>
                 </Grid>
                 </Paper>
+            </Grid>
+            <Grid>
+              {serviceLoad?
+              <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+              <CircularProgress  style={{color: '#F5CB5C'}}/>
+              </Backdrop>:null
+              }
             </Grid>
             </Container>
         </Box>

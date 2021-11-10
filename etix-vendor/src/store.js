@@ -4,7 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { userLoginReducer, userDetailReducer, userUpdateReducer, vendorUpdateReducer} from './reducers/userReducers'
 import { registerReducer } from './reducers/registerReducers'
 import { helpListReducer, helpDeleteReducer, helpDetailReducer, userHDetailReducer, helpSaveReducer, helpSendReducer, helpSendAddReducer} from './reducers/helpReducers'
-import { serviceReducer } from './reducers/servicesReducers'
+import { serviceReducer, serviceDeleteReducer, serviceSaveReducer } from './reducers/servicesReducers'
 
 const reducer = combineReducers({
     userLogin: userLoginReducer,
@@ -14,7 +14,8 @@ const reducer = combineReducers({
     helpDetail: helpDetailReducer,
     userDetail : userDetailReducer,
     serviceList: serviceReducer,
-    helpUserDetail: userHDetailReducer,
+    serviceDelete: serviceDeleteReducer,
+    serviceSave: serviceSaveReducer,
     helpSave: helpSaveReducer,
     helpSend: helpSendReducer,
     sendHelpAdmin: helpSendAddReducer,
