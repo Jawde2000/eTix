@@ -225,7 +225,7 @@ const AddComment = ({props}) => {
                                     {/* user information */}
                                     <Grid container xs={12} direction="row">
                                     <Grid item xs={10} style={{marginTop: 20, fontWeight: 'bold'}}>
-                                        User Information
+                                        Company Information
                                     
                                     <Grid item xs={10} container style={{marginTop: 10}}>
                                         <Grid item>

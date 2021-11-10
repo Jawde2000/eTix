@@ -1,6 +1,6 @@
 import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper, TextField, Tooltip, Toolbar} from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React, {useEffect, props, useState} from 'react';
+import React, {useEffect, props, useState, useRef} from 'react';
 import moscow from '../globalAssets/moscow.jpg'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
 import {HELP_DELETE_RESET} from '../../constants/helpConstants/helpConstants'
 import PropTypes from 'prop-types';
-import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
+import { DataGrid,GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import { useHistory } from 'react-router';
@@ -100,7 +100,6 @@ function HelpManagement() {
         width: 120,
         editable: false,
         renderCell: (params) => {
-          console.log(params.row.status);
           return (
             //style={{display:'flex';justifyContent:'center';alignItems:'center'}}  
               <Toolbar>
@@ -128,8 +127,7 @@ function HelpManagement() {
         sortable: false,
         disableColumnMenu: true,
         renderCell: (params) => {
-          console.log(params);
-          getID(params.row.id);
+          console.log(params.row.id);
           return (
             <Container >
               <Grid xs={12} display="flex">
@@ -143,7 +141,8 @@ function HelpManagement() {
                   </Toolbar>
                 </Grid>
                 <Grid xs={6} item>
-                  {select.length > 1? null:<DialogDelete props={params.row.id}/>}
+                  {/* {console.log(params.row.id)} */}
+                  {select.length >= 2? null:<DialogDelete ids={params.row.id}/>}
                 </Grid>
               </Grid>
             </Container>
@@ -171,7 +170,7 @@ function HelpManagement() {
       if(helps) {
         const helplist = helps?.map(help => {
           var s = help.helpdeskStatus
-          console.log(select)
+          // console.log(select)
           return {
             id: help.helpdeskID,
             title: help.helpdeskTitle,
@@ -201,26 +200,22 @@ function HelpManagement() {
       }
     })
 
-    const DialogDelete = () => {
+    const DialogDelete = (ids) => {
       const [open, setOpen] = useState(false);
+      console.log(ids.ids);
     
       const handleClickOpen = () => {
         setOpen(true);
       };
     
       const handleClose = () => {
+        ids = null;
         setOpen(false);
       };
     
       const handleDelete = () => {
-        if (select.length > 2) {
-          select.map((ids) => {
-            dispatch(deleteHelp(ids.id));
-          })
-        } else {
-          dispatch(deleteHelp(id));
-        }
-        setOpen(false);
+        dispatch(deleteHelp(ids.ids));
+        ids = null;
         setSelection([]);
       }
     
@@ -233,7 +228,7 @@ function HelpManagement() {
           </Tooltip>
           <Dialog
             open={open}
-            onClose={handleClose}
+            // onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
@@ -404,7 +399,7 @@ function HelpManagement() {
                         const selectedRowData = row.filter((row) =>
                           selectedIDs.has(row.id.toString())
                         )
-                        console.log(selectedRowData);
+                        // console.log(selectedRowData);
                         setSelection(selectedRowData);
                       }}
                       components={{

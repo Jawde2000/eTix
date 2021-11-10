@@ -121,12 +121,6 @@ const HelpdeskDetail = ({props}) => {
         }
     }, [helpD, id, senderD])
 
-    useEffect(()=> {
-        if (senderD) {
-            setRead(senderD.userID === userInfo.userID? false:true)
-        }
-    }, [read])
-
     useEffect(() => {
         if(sendRes && !sendSuccess){
             dispatch(sendResponse(sendRes, status, id))
@@ -266,7 +260,15 @@ const HelpdeskDetail = ({props}) => {
     };
 
     const changeRespondMessage = (event) => {
-        setRespondMessage(event.target.value);
+        if(senderD){
+            if(senderD.userID === userInfo.userID){
+                setRespondMessage('');
+            } else {
+                setRespondMessage(event.target.value);
+            }
+            
+        }
+        
     }
 
     const handleSendRespond = () => {
@@ -470,7 +472,7 @@ const HelpdeskDetail = ({props}) => {
                                                                     fullWidth
                                                                     size="small"
                                                                     InputProps={{
-                                                                        readOnly: true,
+                                                                        readOnly: {read},
                                                                         style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                                                     }} 
                                                                 />   
@@ -511,7 +513,6 @@ const HelpdeskDetail = ({props}) => {
                                                                     fullWidth
                                                                     size="small"
                                                                     InputProps={{
-                                                                        readOnly: {read},
                                                                         style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                                                     }} 
                                                                 />   

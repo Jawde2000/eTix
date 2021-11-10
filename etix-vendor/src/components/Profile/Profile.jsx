@@ -138,9 +138,10 @@ const Profile = ({props}) => {
         else if(successVendor){
             alert("Successfully Updated User");
             dispatch({type: USER_VENDOR_UPDATE_RESET});
-            window.setTimeout(function(){window.location.reload()},300)
-            // dispatch(getUser(userID));
+            // window.setTimeout(function(){window.location.reload()},300)
             setEditing(!editing);
+            history.go(0);
+            // dispatch(getUser(userID));
             // window.setTimeout(function(){window.location.reload()},1000)
         }
         else if(errorUsr || errorVen){
