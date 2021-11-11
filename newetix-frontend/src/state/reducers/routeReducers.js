@@ -5,10 +5,12 @@ export const routeLookupReducer = (state = {route: []}, action) => {
         case constants.ROUTE_REQUEST:
             return {loading: true, route:[]}
         case constants.ROUTE_SUCCESS:
-            return {loading: false, route: action.payload}
+            return {loading: false, route: action.payload, success: true}
         case constants.ROUTE_FAIL:
             console.log("No routes found!")
             return {loading: false, error: action.payload}
+        case constants.ROUTE_RESET:
+            return {route: []}
         default:
             return state
     }
@@ -52,6 +54,37 @@ export const seatListReducer = (state = {seat: []}, action) => {
         case constants.SEAT_LIST_FAIL:
             console.log("Failure to find seating/pricing information")
             return {loading: false, error: action.payload}
+        default:
+            return state
+    }
+}
+
+export const routeFilterReducer = (state = {route: []}, action) => {
+    switch (action.type) {
+        case constants.FILTER_ROUTE_REQUEST:
+            return {loading: true, route:[]}
+        case constants.FILTER_ROUTE_SUCCESS:
+            return {loading: false, route: action.payload}
+        case constants.FILTER_ROUTE_FAIL:
+            console.log("Failure to filter route")
+            return {loading: false, error: action.payload}
+        case constants.FILTER_ROUTE_RESET:
+            return {route: []}
+        default:
+            return state
+    }
+}
+
+export const locationSearchReducer = (state = {}, action) => {
+    switch (action.type) {
+        case constants.SEARCH_LOCATION_REQUEST:
+            return {loading: true}
+        case constants.SEARCH_LOCATION_SUCCESS:
+            return {loading: false, data: action.payload}
+        case constants.SEARCH_LOCATION_FAIL:
+            return {loading:false, error: action.payload}
+        case constants.SEARCH_LOCATION_RESET:
+            return {}
         default:
             return state
     }

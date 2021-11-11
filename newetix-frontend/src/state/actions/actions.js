@@ -1,9 +1,11 @@
 import * as actions from './actionConstants';
 import axios from 'axios'
 
-export const routeLookup = (locationFrom, locationTo, departureDate) => async(dispatch) => {
+export const findRoute = (locationFrom, locationTo, departureDate) => async(dispatch) => {
     try {
         dispatch({type: actions.ROUTE_REQUEST})
+
+        
 
         console.log(locationFrom)
         var { data } = await axios.post('http://127.0.0.1:8000/api/service/routes', { 
@@ -69,9 +71,22 @@ export const routeLookup = (locationFrom, locationTo, departureDate) => async(di
             vendorD: vendorD[index],
         }))
 
+        dispatch({type: actions.SEARCH_LOCATION_REQUEST})
+
+        const location = {
+            locationTo: locationTo,
+            locationFrom: locationFrom,
+            departureDate: departureDate,
+        }
+
         dispatch({
             type: actions.ROUTE_SUCCESS,
             payload: data
+        })
+
+        dispatch({
+            type: actions.SEARCH_LOCATION_SUCCESS,
+            payload: location,
         })
 
     } catch(error) {
@@ -561,6 +576,61 @@ export const addToCart = (service, seatType, seatPrice) => async(dispatch, getSt
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
+        })
+    }
+}
+
+export const filterRoute = (serviceList, priceArrg=null, minPrice=null, maxPrice=null, terminalFilter=null) => async(dispatch) => {
+    try {
+        dispatch({type: actions.FILTER_ROUTE_REQUEST})
+        console.log(priceArrg)
+        if(priceArrg){
+            if(priceArrg==="asc"){
+                serviceList.sort((a,b) => (a.seatD.economyPrice > b.seatD.economyPrice) ? 1 : ((b.seatD.economyPrice > a.seatD.economyPrice) ? -1 : 0));
+            }
+            else if(priceArrg==="dsc"){
+                serviceList.sort((a,b) => (a.seatD.economyPrice < b.seatD.economyPrice) ? 1 : ((b.seatD.economyPrice < a.seatD.economyPrice) ? -1 : 0));
+            }
+        }
+
+        if(minPrice){
+            serviceList = serviceList.filter((item) => {
+                if(parseFloat(item.seatD.firstPrice) >= minPrice || parseFloat(item.seatD.businessPrice) >= minPrice || parseFloat(item.seatD.economyPrice) >= minPrice){
+                    return item
+                }
+            })
+        }
+
+        if(maxPrice){
+            serviceList = serviceList.filter((item) => {
+                if(parseFloat(item.seatD.firstPrice) <= maxPrice || parseFloat(item.seatD.businessPrice) <= maxPrice || parseFloat(item.seatD.economyPrice) <= maxPrice){
+                    return item
+                }
+            })
+        }
+
+        if(terminalFilter){
+            let arr = terminalFilter.split("-");
+            let deprt = arr[0];
+            let arrvl = arr[1];
+
+            serviceList = serviceList.filter((item) => {
+                if(deprt.trim() === item.servicedepartureTerminal && arrvl.trim() === item.servicearrivalTerminal){
+                    return item;
+                }
+            })
+        }
+
+        const data = serviceList
+
+        dispatch({
+            type: actions.FILTER_ROUTE_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.FILTER_ROUTE_FAIL
         })
     }
 }
