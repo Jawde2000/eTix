@@ -271,6 +271,14 @@ def createHelpDesk(request, pk):
 
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getItemsbyCart(request, pk):
+    cartitems = CartItems.objects.filter(cart=pk)
+    serializer = CartItemsSerializer(cartitems, many=True)
+
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

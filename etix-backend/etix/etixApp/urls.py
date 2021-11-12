@@ -30,6 +30,9 @@ urlpatterns = [
     path('api/users/login/', views.MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
 
+    # api path for getting cart items by cartID
+    path('api/cart/retrieve/<str:pk>/', views.getItemsbyCart, name='cart-items-by-id'),
+
     # api path for register new user, method post
     path('api/users/register/', views.registerUser, name='register'),
 
