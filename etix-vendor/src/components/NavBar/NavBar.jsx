@@ -5,6 +5,7 @@ import etixLogo from '../globalAssets/eTixLogo.png'
 import Clock from 'react-live-clock'
 import Moment from 'react-moment';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom'
 
 
@@ -44,6 +45,8 @@ function NavBar() {
   const defaultStyle = useStyles();
   const [value, setValue] = useState("/");
   var dateAndTime= moment().format("DD/MM/YYYY");
+  const userLogin = useSelector(state => state.userLogin)
+  const {userInfo} = userLogin
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -52,7 +55,7 @@ function NavBar() {
            
               <Grid xs={12} container justify="center" direction="row" alignItems="center">
               <Grid item>
-              <Link href='http://localhost:3000/'         
+              <Link href={userInfo? 'http://localhost:3500/menu':'http://localhost:3500/'}         
                 style={{ textDecorationLine: 'none', display: "flex",}}>        
                   <img src={etixLogo} className={defaultStyle.resizePic}/>
                   <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>

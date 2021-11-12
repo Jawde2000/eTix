@@ -380,8 +380,8 @@ function ServicesManagement() {
                     </Grid>
                 </Grid>
                 <Paper>
-                <Grid xs={12} container>             
-                    <Grid style={{ height: 450, width: '100%' }}>
+                <Grid xs={12}>             
+                    <Grid style={{ height: 450, width: '100%' }} >
                         <DataGrid
                         rows={rows}
                         columns={columns}

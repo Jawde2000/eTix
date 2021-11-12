@@ -13,6 +13,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getServiceDetail, deleteService, saveService } from '../../actions/serviceActions/serviceActions';
 import { SERVICE_DELETE_RESET, SERVICE_DETAIL_RESET , SERVICE_SAVE_RESET} from '../../constants/serviceConstants/serviceConstants';
 import { useHistory } from 'react-router';
+import CircularProgress from '@mui/material/CircularProgress';
+import S3 from 'react-aws-s3';
+import Avatar from '@mui/material/Avatar';
 import moscow from '../globalAssets/moscow.jpg';
 import SaveIcon from '@mui/icons-material/Save';
 import Dialog from '@mui/material/Dialog';
@@ -64,6 +67,65 @@ const Service = ({props}) => {
 
     const {id} = useParams();
 
+    const file = id + '.jpg'
+
+    const [found, setFound] = useState(true);
+    const [picloading, setPloading] = useState(false);
+
+    const config = {
+        bucketName: 'etixbucket',
+        dirName: 'services', 
+        region: 'ap-southeast-1',
+        accessKeyId: 'AKIA4TYMPNP6EQNIB7HV',
+        secretAccessKey: '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'
+    }
+    
+    const AWS = require('aws-sdk')
+
+    AWS.config.update({
+        accessKeyId: "AKIA4TYMPNP6EQNIB7HV",
+        secretAccessKey: "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",
+        region: "ap-southeast-1",
+    });
+    
+    const ReactS3Client = new S3(config);
+
+    async function PicExist() {
+        const url = "https://etixbucket.s3.amazonaws.com/services/" + file
+        await fetch(url).then((res) => {
+            if (res.status == 404) {
+                setFound(false)
+                console.log("found")
+            } 
+            else {
+                console.log("found")
+                setFound(true)
+            }
+        }).catch((err) => {
+            setFound(false)
+        });
+    }
+        
+    useEffect(async () => {
+        PicExist()
+    })
+
+    const upload = (e) => {
+        const image = URL.createObjectURL(e.target.files[0]);
+        setPloading(true);
+        setImgSrc(image);
+        ReactS3Client.uploadFile(e.target.files[0], file)
+        .then(data =>{
+            setPloading(false);
+            // window.setTimeout(function(){window.location.reload()},3000)
+            console.log(data);
+        })
+        .catch(err => {
+            console.error(err)
+            setPloading(false);
+        })
+    }
+
     const dispatch = useDispatch();
 
     const [open, setOpen] = useState(false);
@@ -82,6 +144,7 @@ const Service = ({props}) => {
     const serviceDelete = useSelector(state => state.serviceDelete)
     const {success: successDelete} = serviceDelete
 
+    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/services/" + file));
     const [serviceName, setServiceName] = useState("")
     const [serviceDesc, setServiceDesc] = useState("")
     const [status, setStatus] = useState("")
@@ -353,14 +416,30 @@ const Service = ({props}) => {
                     <Grid item xs={12} container>
                         <Grid item xs={12} sm={5} container textAlign="center">
                             <Grid item xs={12} >
-                                Vender Logo
+                                Service Profile
                             </Grid>
-                            <Grid item xs={12}>
-                                <img 
-                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png"
-                                    alt="logo"
-                                    style={{marginTop: 10,minHeight: 150, maxWidth:150}}
+                            <Grid item xs={12} spacing={5} style={{display:'flex', justifyContent:'center', alignItems:'center', paddingBottom:10}} direction="column">
+                            <Grid>
+                            <Avatar
+                                style={{ height: '150px', width: '150px' }}
+                                src={imgSrc}
+                                alt={serviceD? serviceD.servicedepartureTerminal:'No Picture Found'}        
+                            />
+                            </Grid>
+                            <Grid>
+                            {!editing? "":(
+                                <div>
+                                <label htmlFor="contained-button-file">
+                                <input type="file"  accept="image/*" id="contained-button-file" onChange={upload}
+                                style={{justifyContent:'center', alignItems:'center', display: 'none'}}
                                 />
+                                {picloading? (<Box sx={{ display: 'flex' }}
+                                style={{justifyContent:'center', alignItems:'center'}}
+                                ><CircularProgress /></Box>):(<Button variant="contained" component="span" >Upload</Button>)}
+                                </label>                            
+                                </div>
+                            )}
+                            </Grid>
                             </Grid>
                             <Grid item xs={12} style={{marginTop: 10}}>
                                 Status
