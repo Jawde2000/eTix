@@ -182,6 +182,10 @@ export const logout = () => (dispatch) => {
     dispatch({type: actions.USER_LIST_RESET})
     dispatch({type: actions.USER_DETAIL_RESET})
     dispatch({type: actions.HELP_LIST_RESET})
+    dispatch({type: actions.HELP_RESPONSE_RESET})
+    dispatch({type: actions.CART_VIEW_RESET})
+    dispatch({type: actions.CART_ADD_RESET})
+    dispatch({type: actions.CUSTOMER_DETAILS_RESET})
 }
 
 export const register = (email, password, username, phonenumber) => async(dispatch) => {
@@ -262,14 +266,14 @@ export const customerDetails = () => async(dispatch, getState) => {
             }
         }
 
-        const {customerInfo} = await axios.get(
-            `http://127.0.0.1:8000/api/user/customer/${userInfo.userID}`,
+        const {data} = await axios.get(
+            `http://127.0.0.1:8000/api/user/customer/${userInfo.userID}/`,
             config
         )
 
         dispatch({
             type: actions.CUSTOMER_DETAILS_SUCCESS,
-            payload: customerInfo
+            payload: data
         })
     } catch (error) {
         dispatch({
@@ -284,7 +288,7 @@ export const customerDetails = () => async(dispatch, getState) => {
 export const customerEdit = (firstname, lastname, phonenumber, address, birthday, gender) => async(dispatch, getState) => {
     try {
         dispatch({
-            type: actions.CUSTOMER_DETAILS_REQUEST
+            type: actions.CUSTOMER_EDIT_REQUEST
         })
 
         const {
@@ -298,8 +302,8 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
             }
         }
 
-        const {customerInfo} = await axios.put(
-            `http://localhost:8000/api/user/customer/update/${userInfo.userID}`,
+        const {data} = await axios.put(
+            `http://localhost:8000/api/user/customer/update/${userInfo.userID}/`,
             {
                 'customerFirstName': firstname,
                 'customerLastName': lastname,
@@ -312,13 +316,13 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
         )
         
         dispatch({
-            type: actions.CUSTOMER_DETAILS_SUCCESS,
-            payload: customerInfo
+            type: actions.CUSTOMER_EDIT_SUCCESS,
+            payload: data
         })
 
     } catch (error) {
         dispatch({
-            type: actions.CUSTOMER_DETAILS_FAILURE,
+            type: actions.CUSTOMER_EDIT_FAILURE,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
@@ -545,7 +549,8 @@ export const addToCart = (service, seatType, seatPrice) => async(dispatch, getSt
                         seat_price: seatPrice,
                         cart: rst.data.cartID,
                         service: service.serviceID
-                    }
+                    }, 
+                    config
                 )
             }   
             
@@ -558,6 +563,195 @@ export const addToCart = (service, seatType, seatPrice) => async(dispatch, getSt
     } catch (error) {
         dispatch({
             type: actions.CART_ADD_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const viewCartData = () => async(dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.CART_VIEW_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo}
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `http://localhost:8000/api/cart/`,
+            config
+        )
+
+        let cart = ""
+
+        for(let i of data){
+            if(i.user === userInfo.userID){
+                cart = i.cartID
+            }
+        }
+
+        //if cart exist, just create item. If it does not exist create a new cart and create item 
+        if( cart ){
+            let {data} = await axios.get(
+                `http://localhost:8000/api/cart/retrieve/${cart}/`,
+                config
+            )
+
+            dispatch({
+                type: actions.CART_VIEW_SUCCESS,
+                payload: data
+            })
+        }
+
+    } catch (error) {
+        dispatch({
+            type: actions.CART_VIEW_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const updateUser = (user, id) => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type: actions.USER_UPDATE_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        console.log(userInfo.token)
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        
+        var { data } = await axios.put(
+            `http://127.0.0.1:8000/api/user/update/${id}/`,
+            user,
+            config
+        )
+
+        dispatch({
+            type: actions.USER_UPDATE_SUCCESS,
+        })
+
+        dispatch({
+            type: actions.USER_LOGIN_SUCCESS,
+            payload: data,
+        })
+
+
+    }catch(error){
+        dispatch({
+            type: actions.USER_UPDATE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const getAllRoutes = () => async (dispatch, getState) => {
+    try{
+        dispatch({
+            type: actions.ROUTE_ALL_REQUEST
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        let { data } = await axios.get(
+            `http://localhost:8000/api/service/`,
+            config
+        )
+
+        let seatD = []
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/seat/detail/${i.seat}/`, config)
+            seatD.push(rst.data);
+        }
+
+        let vendorD = []
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/vendorD/${i.vendor}/`, config)
+            vendorD.push(rst.data)
+        }
+
+        let userD = []
+
+        for(let x of vendorD){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/user/${x.created_by}/`)
+            userD.push(rst.data)
+        }
+
+        vendorD.map((item, i) => ({
+            ...item,
+            userD: userD[i]
+        }))
+
+        data = data.map((item, index) => ({
+            ...item,
+            seatD: seatD[index],
+            vendorD: vendorD[index],
+        }))
+
+        dispatch({
+            type: actions.ROUTE_ALL_SUCCESS,
+            payload: data,
+        })
+
+    }catch(error){
+        dispatch({
+            type: actions.ROUTE_ALL_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const paymentInfo = (total, tax, etix) => async (dispatch, getState) => {
+    try {
+        const data = {
+            taxTotal: tax,
+            etixTotal: etix,
+            total: total
+        }
+
+        dispatch({
+            type: actions.ACCESS_PRICING_INFO,
+            payload: data
+        })
+    }catch(error){
+        dispatch({
+            type: actions.FAILURE_PRICING_INFO,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

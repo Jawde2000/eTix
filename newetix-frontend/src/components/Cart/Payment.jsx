@@ -1,12 +1,13 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button } from '@mui/material'
-import HelpIcon from '@mui/icons-material/Help';
-import ComposeForm from './ComposeForm'
-import images from '../globalAssets/scripts/bgchange';
+import { Grid, Box, Typography, TextField, Button, Container } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { vendorList } from '../../state/actions/actions'
+import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
+import images from '../globalAssets/scripts/bgchange';
+import Summary from './Summary'
+import PaymentIcon from '@mui/icons-material/Payment';
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -34,22 +35,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Landing() {
+function Payment() {
     const classes = useStyles();
+    let history = useHistory();
+    const dispatch = useDispatch();
+    // const vendorList = useSelector(state => state.vendorList)
 
-    const userLogin = useSelector(state => state.userLogin)
-    const {error,  userInfo} = userLogin
 
-    const dispatch = useDispatch()
-    
-    let history = useHistory()
-
-    useEffect(() => {
-        if(userInfo == null) {
-            history.push('/')
-        }
-        dispatch(vendorList)
-    },[userInfo])
 
     return (
         <Box className={classes.whole}>
@@ -59,10 +51,10 @@ function Landing() {
                         <Grid item>
                             <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                                 <Grid item>
-                                    <HelpIcon fontSize='large' sx={{fontSize: '75px'}}></HelpIcon>
-                                </Grid>
+                                    <PaymentIcon fontSize='large' sx={{fontSize: '75px'}}/>
+                                </Grid> 
                                 <Grid item>
-                                    <Typography variant="h4">Help Center</Typography>
+                                    <Typography variant="h4">Payment Summary</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -91,11 +83,11 @@ function Landing() {
                     </Grid>
                 </Grid>
                 <Grid item xs={8}>
-                    <ComposeForm />
+                    <Summary />
                 </Grid>
             </Grid>
         </Box>
     );
 }
 
-export default Landing
+export default Payment

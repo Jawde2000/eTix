@@ -52,8 +52,10 @@ function Messaging() {
     const dispatch = useDispatch();
     const hlist = useSelector(state => state.helpdeskList)
     const vlist = useSelector(state => state.vendorList)
+    const uinfo = useSelector(state => state.userLogin)
     const {helpList} = hlist
     const {vendorInfo} = vlist
+    const {userInfo} = uinfo
 
     const [rows, setRows] = useState([]);
     const ids = []
@@ -70,6 +72,10 @@ function Messaging() {
     useEffect(() => {
         if (helpList) {
             setRows(helpList)
+        }
+
+        if (!userInfo) {
+            history.push('/')
         }
     });
 

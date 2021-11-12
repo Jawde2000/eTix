@@ -67,8 +67,7 @@ function LoginForm() {
     useEffect(() => {
       if(userInfo) {
           history.push('/')
-          alert('You need to login to do that!')
-      }
+      } 
     },[userInfo])
   
     const handleChange = (prop) => (event) => {

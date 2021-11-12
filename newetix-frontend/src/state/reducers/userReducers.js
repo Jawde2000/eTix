@@ -25,10 +25,13 @@ export const customerDetailsReducer = (state = { }, action) => {
             return {loading: true}
         
         case actions.CUSTOMER_DETAILS_SUCCESS:
-           return {loading: false, userInfo: action.payload}
+           return {loading: false, customerInfo: action.payload}
         
         case actions.CUSTOMER_DETAILS_FAILURE:
            return {loading: false, error: action.payload}
+
+        case actions.CUSTOMER_DETAILS_RESET:
+            return {}
 
         default:
             return state

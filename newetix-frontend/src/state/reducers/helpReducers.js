@@ -30,6 +30,9 @@ export const helpdeskReducer = (state = { }, action) => {
         case action.HELP_LIST_FAIL:
             return {loading: false, error: action.payload}
 
+        case action.HELP_LIST_RESET:
+            return state
+
         default:
             return state
     }
@@ -45,6 +48,9 @@ export const helpResponseReducer = (state = { }, action) => {
 
         case action.HELP_RESPONSE_FAIL:
             return {loading: false, error: action.payload}
+
+        case action.HELP_RESPONSE_RESET:
+            return state
 
         default:
             return state

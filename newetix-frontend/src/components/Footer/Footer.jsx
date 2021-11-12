@@ -10,7 +10,7 @@ function Footer() {
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1} >Customer Service</Box>
                             <Box style={{paddingTop: 10, paddingBottom: 5}}>
-                                <Link href="/helpcentre" color="inherit" underline={'none'}>
+                                <Link href="/help" color="inherit" underline={'none'}>
                                     Help Center
                                 </Link>
                             </Box>

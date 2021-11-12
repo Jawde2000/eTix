@@ -199,7 +199,7 @@ const Messaging = ({props}) => {
                                     </Grid>  
                                 </Grid>
                                 {response ? <Grid item>
-                                    <Grid container direction="row" spacing={2} sx={{fontSize: '20px'}}>
+                                    <Grid container direction="row" spacing={2} sx={{fontSize: '20px' , backgroundColor: 'white', paddingBottom: '25px', marginTop: '5px', marginRight: '10px', borderRadius: '25px'}}>
                                         <Grid item>
                                             Response:
                                         </Grid>

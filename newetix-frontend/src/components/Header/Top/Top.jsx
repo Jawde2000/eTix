@@ -1,13 +1,13 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useHistory } from 'react-router-dom';
-import { AppBar, Grid, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
+import { AppBar, Grid, Link, Typography, Button, Menu, MenuItem, Fade, Avatar} from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {useDispatch, useSelector} from 'react-redux'
-import { logout } from '../../../state/actions/actions';
+import { customerDetails, getAllRoutes, logout, viewCartData } from '../../../state/actions/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -92,14 +92,14 @@ function Top() {
         setAnchorElN(null);
     };
 
-    const handleClickA = (event) => {
-        setAnchorElA(event.currentTarget);
-    };
-
     const handleClickLogout = (event) => {
         dispatch(logout())
         setAnchorElA(null);
     };
+
+    const handleClickVP = (event) => {
+        history.push('/profile')
+    }
 
     const handleCloseA = () => {
       setAnchorElA(null);
@@ -109,6 +109,27 @@ function Top() {
 
     const userLogin = useSelector(state => state.userLogin)
     const {userInfo} = userLogin
+
+    const [imgSrc, setImgSrc] = useState();
+    let found = false
+    let i = 0
+
+    useEffect(() => {
+        if (userInfo){
+            setImgSrc("https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".png")
+            dispatch(customerDetails())
+            dispatch(getAllRoutes())
+            dispatch(viewCartData())
+        }
+    }, [userInfo])
+    
+    const handleClickA = (event) => {
+        if (!userInfo) {
+            history.push('/passport')
+        } else {
+            setAnchorElA(event.currentTarget);
+        }
+    };
 
     return (
     <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -132,13 +153,13 @@ function Top() {
                         <Grid item className={defaultStyle.rightItem}>
                             <div>
                                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex" aria-expanded={openA ? 'true' : undefined} onClick={handleClickA}>
-                                    <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
+                                    {userInfo? <Avatar sx={{ bgcolor: "#F5CB5C" }} alt={userInfo.username} src={imgSrc} sx={{ width: 32, height: 32 }}/> : <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/> }
                                     <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}>
                                         {userInfo? userInfo.username : null} 
                                     </Typography>
                                 </Button>
                                 <Menu id="account" MenuListProps={{'aria-labelledby': 'account',}} anchorEl={anchorElA} open={openA} onClose={handleCloseA} TransitionComponent={Fade}>
-                                    <MenuItem onClick={handleCloseA}>View Profile</MenuItem>
+                                    <MenuItem onClick={handleClickVP}>View Profile</MenuItem>
                                     <MenuItem onClick={handleCloseA}>Activities</MenuItem>
                                     <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
                                 </Menu>

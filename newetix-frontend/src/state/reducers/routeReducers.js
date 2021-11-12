@@ -56,3 +56,16 @@ export const seatListReducer = (state = {seat: []}, action) => {
             return state
     }
 }
+
+export const allRoutesReducer = (state = {route: []}, action) => {
+    switch (action.type) {
+        case constants.ROUTE_ALL_REQUEST:
+            return {loading: true, route:[]}
+        case constants.ROUTE_ALL_SUCCESS:
+            return {loading: false, route: action.payload}
+        case constants.ROUTE_ALL_FAIL:
+            return {loading: false, error: action.payload}
+        default:
+            return state
+    }
+};

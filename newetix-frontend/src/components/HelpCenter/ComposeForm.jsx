@@ -60,6 +60,12 @@ function Compose() {
         setSubject(event.target.value)
     }
 
+    useEffect(() => {
+        if(!userInfo) {
+            history.push('/')
+            alert("Please sign in to view Help Center")
+        }
+    })
 
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
@@ -71,7 +77,7 @@ function Compose() {
             <Grid item>
                 <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={4}>
                     <Grid item>
-                        <Typography variant="h5">Reciever:</Typography>
+                        <Typography variant="h5">Receiver:</Typography>
                     </Grid>
                     <Grid item>
                         <Autocomplete
