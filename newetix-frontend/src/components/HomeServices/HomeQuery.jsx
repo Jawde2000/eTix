@@ -11,7 +11,8 @@ import SearchIcon from '@mui/icons-material/Search';
 // import Locations from './../globalAssets/scripts/strings';
 import images from '../globalAssets/scripts/bgchange';
 import { useDispatch, useSelector } from 'react-redux';
-import { routeLookup, getLocations, viewCartData } from '../../state/actions/actions';
+import { getLocations, findRoute, dateData, getLocations } from '../../state/actions/actions';
+
 
 const homeStyles = makeStyles((theme) => ({
   whole: {
@@ -56,7 +57,7 @@ function HomeQuery() {
   var history = useHistory();
 
   async function process(from, to){
-      dispatch(routeLookup(from, to, departureDate))
+      dispatch(findRoute(from, to, departureDate))
   }
 
   function handleSubmit(e) {
@@ -66,7 +67,7 @@ function HomeQuery() {
       return;
     }
     process(from, to)
-    history.push('/routes')
+    history.push(`/routes/${from}/${to}`);
   }
 
   const handleFromInputChange = (event, value) =>  {

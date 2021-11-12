@@ -56,7 +56,7 @@ function Router() {
                 <Route path="/passport" exact>
                     <Passport />
                 </Route>
-                <Route path="/routes" exact>
+                <Route path="/routes/:fromm/:too" exact>
                     <RouteQuery />
                 </Route>
                 <Route path="/help" exact>
