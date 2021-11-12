@@ -4,7 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { userLoginReducer, userDetailReducer, userUpdateReducer, vendorUpdateReducer} from './reducers/userReducers'
 import { registerReducer } from './reducers/registerReducers'
 import { helpListReducer, helpDeleteReducer, helpDetailReducer, userHDetailReducer, helpSaveReducer, helpSendReducer, helpSendAddReducer} from './reducers/helpReducers'
-import { serviceReducer, serviceDeleteReducer, serviceSaveReducer } from './reducers/servicesReducers'
+import { serviceReducer, serviceDetailReducer, serviceDeleteReducer, serviceSaveReducer, locationDetailReducer, serviceAddReducer } from './reducers/servicesReducers'
 
 const reducer = combineReducers({
     userLogin: userLoginReducer,
@@ -16,11 +16,14 @@ const reducer = combineReducers({
     serviceList: serviceReducer,
     serviceDelete: serviceDeleteReducer,
     serviceSave: serviceSaveReducer,
+    serviceAdd : serviceAddReducer,
+    serviceDetail: serviceDetailReducer,
     helpSave: helpSaveReducer,
     helpSend: helpSendReducer,
     sendHelpAdmin: helpSendAddReducer,
     userUpdate: userUpdateReducer,
     vendorUpdate: vendorUpdateReducer,
+    locationDetail: locationDetailReducer,
 })
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?JSON.parse(localStorage.getItem('userInfo')) : null

@@ -14,7 +14,20 @@ import {
     SERVICE_SAVE_FAIL,
     SERVICE_SAVE_RESET,
     
+    SERVICE_ADD_REQUEST, 
+    SERVICE_ADD_SUCCESS,
+    SERVICE_ADD_FAIL,
+    SERVICE_ADD_RESET,
 
+    SERVICE_DETAIL_REQUEST, 
+    SERVICE_DETAIL_SUCCESS,
+    SERVICE_DETAIL_FAIL,
+    SERVICE_DETAIL_RESET,
+
+    LOCATION_DETAIL_REQUEST, 
+    LOCATION_DETAIL_SUCCESS,
+    LOCATION_DETAIL_FAIL,
+    LOCATION_DETAIL_RESET,
 } from '../constants/serviceConstants/serviceConstants';
 
 export const serviceReducer = (state = { }, action) => {
@@ -68,6 +81,63 @@ export const serviceSaveReducer = (state = { }, action) => {
 
         case SERVICE_SAVE_RESET:
            return {}
+
+        default:
+            return state
+    }
+}
+
+export const serviceDetailReducer = (state = {  }, action) => {
+    switch(action.type){
+        case SERVICE_DETAIL_REQUEST:
+            return {loading: true}
+        
+        case SERVICE_DETAIL_SUCCESS:
+           return {loading: false, serviceD: action.payload}
+        
+        case SERVICE_DETAIL_FAIL:
+           return {loading: false, error: action.payload}
+
+        case SERVICE_DETAIL_RESET:
+           return { }
+
+        default:
+            return state
+    }
+}
+
+export const locationDetailReducer = (state = {  }, action) => {
+    switch(action.type){
+        case LOCATION_DETAIL_REQUEST:
+            return {loading: true}
+        
+        case LOCATION_DETAIL_SUCCESS:
+           return {loading: false, locationD: action.payload}
+        
+        case LOCATION_DETAIL_FAIL:
+           return {loading: false, error: action.payload}
+
+        case LOCATION_DETAIL_RESET:
+           return { }
+
+        default:
+            return state
+    }
+}
+
+export const serviceAddReducer = (state = {  }, action) => {
+    switch(action.type){
+        case SERVICE_ADD_REQUEST:
+            return {loading: true}
+        
+        case SERVICE_ADD_SUCCESS:
+           return {loading: false, serviceD: action.payload, success: true}
+        
+        case SERVICE_ADD_FAIL:
+           return {loading: false, error: action.payload}
+
+        case SERVICE_ADD_RESET:
+           return { }
 
         default:
             return state
