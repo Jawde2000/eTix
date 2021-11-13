@@ -152,6 +152,36 @@ def getVendorName(request):
         message = {'detail': 'No vendors exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def paymentProcess(request, pk):
+    data = request.data
+    try:
+        cart = Cart.objects.get(cartID=data['cartID'])
+        cartobj = CartItems.objects.filter(cart=cart)
+        user = User.objects.get(userID=pk)
+        for obj in cartobj:
+            ticket = Ticket.objects.create(
+                service=obj.service,
+                ownBy=user
+            )
+
+            ticket.save()
+
+
+        payment = Payment.objects.create(
+            cart=cart,
+            paymentStatus='CP'
+        )
+        payment.save()
+
+        serializer = PaymentSerializer(payment, many=False)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'Unsuccessful'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
 # update user profile
 
 

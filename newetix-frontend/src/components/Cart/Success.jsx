@@ -4,63 +4,58 @@ import { Grid, Box, Typography, TextField, Button, Autocomplete } from '@mui/mat
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
-import { borderRadius } from '@mui/system';
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
         backgroundColor: 'rgba(245, 203, 92, 0.75)',
         color: 'black',
         padding: '5px',
-        borderRadius: '25px'
-    },
-    tf: {
-        width: '550px'
+        borderRadius: '25px',
+        paddingTop: '100px',
+        paddingBottom: '100px',
     }
 }));
 
-function Compose() {
+function Success() {
 
-    const paypal = useRef()
     const classes = useStyles();
     let history = useHistory();
     const dispatch = useDispatch();
-    const paymentInfo = useSelector(state => state.paymentInfo)
-    const {priceInfo} = paymentInfo
-    const [total, setTotal] = useState(0)
+    const cD = useSelector(state => state.customerDetails)
+    const {customerInfo} = cD
+    const [fn, setFN] = useState('name')
 
     useEffect(() => {
-        if (priceInfo) {
-            setTotal(priceInfo.total)
+        if (cD) {
+            setFN(customerInfo.customerFirstName)
         }
-    }, [priceInfo])
 
-    const initOptions = {
-        "client-id": "AdiCENp3VtTCDILgIkgrDQ-5dhKF410aCM5wYpaadmVSRP8rSJL3-W26PiRBulh2Nq4PiWx2YE3O1LBH",
-        currency: "MYR",
-        intent: "capture",
-        total: total
-    };
-    
+        if (!cD) {
+            history.push('/')
+        }
+    })
 
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
             <Grid item>
-                <Typography variant="h3">Payment</Typography>
+                <Typography variant="h3">Payment Success!</Typography>
             </Grid>
             <Grid item>
             </Grid>
             <Grid item>
                 <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={4}>
-                <PayPalScriptProvider options={initOptions}>
-                    <PayPalButtons style={{ layout: "horizontal" }} />
-                </PayPalScriptProvider>
+                    <Grid item>
+                        <CheckCircleOutlineIcon sx={{fontSize: '250px'}} />
+                    </Grid>
                 </Grid>
             </Grid>
-            
+            <Grid item>
+                <Typography variant="h3">Thank you {fn}!</Typography>
+                <Typography variant="h5">The ticket will be credited to your account shortly, please check your Activities page</Typography>
+            </Grid>
         </Grid>
     );
 }
 
-export default Compose
+export default Success

@@ -36,6 +36,9 @@ urlpatterns = [
     # api path for register new user, method post
     path('api/users/register/', views.registerUser, name='register'),
 
+    # payment processing api
+    path('api/payment/success/<str:pk>/', views.paymentProcess, name='payment-process'),
+
     # api path for get all users, method get (only admin can access)
     path('api/users/', views.getUsers, name="users-profile"),
     # api path to get user profile (must be logged in first)

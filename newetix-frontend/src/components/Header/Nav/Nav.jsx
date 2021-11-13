@@ -90,9 +90,7 @@ function Nav() {
                     </Grid>
                 </Grid>
                 <Grid item className={defaultStyle.auxContainer}>
-                <Badge badgeContent={cartData? cartItemPax : 0} color="secondary">
                     <IconButton><ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick}></ShoppingCartIcon></IconButton>
-                </Badge>
                 </Grid>
             </Grid>
         </AppBar>

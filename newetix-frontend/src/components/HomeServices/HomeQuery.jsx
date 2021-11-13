@@ -11,7 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 // import Locations from './../globalAssets/scripts/strings';
 import images from '../globalAssets/scripts/bgchange';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocations, findRoute, dateData, getLocations } from '../../state/actions/actions';
+import { getLocations, findRoute, dateData } from '../../state/actions/actions';
 
 
 const homeStyles = makeStyles((theme) => ({

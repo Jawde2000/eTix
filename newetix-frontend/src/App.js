@@ -22,7 +22,7 @@ import HelpDetail from './components/HelpCenter/Detail'
 import Profile from './components/Profile/Profile'
 // Cart
 import Cart from './components/Cart/CartLanding'
-import Payment from './components/Cart/Payment'
+import Success from './components/Cart/Success'
 // Debugging
 
 
@@ -77,8 +77,8 @@ function Router() {
                 <Route path="/cart" exact>
                     <Cart />
                 </Route>
-                <Route path="/cart/payment" exact>
-                    <Payment />
+                <Route path="/cart/payment/success" exact>
+                    <Success />
                 </Route>
             </Switch>
             <Footer />

@@ -4,7 +4,7 @@ import { Grid, Box, Typography, TextField, Button, Alert, CircularProgress, Tool
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { vendorList, paymentInfo } from '../../state/actions/actions'
+import { paymentSuccess } from '../../state/actions/actions'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { routeLookupReducer } from '../../state/reducers/routeReducers';
@@ -67,6 +67,8 @@ function CartLanding() {
     const [tax, setTax] = useState(0)
     const [eTix, seteTix] = useState(0)
     const [payment, setPayment] = useState(0)
+    const [cartID, setCartID] = useState('')
+    const [ready, setReady] = useState(false)
     
     useEffect(async () => {
         let totaltemp = 0
@@ -83,6 +85,8 @@ function CartLanding() {
             setTax(parseFloat(taxtemp))
             seteTix(parseFloat(etixtemp))
             setTotal((parseFloat(totaltemp) + parseFloat(taxtemp) + parseFloat(etixtemp)).toFixed(2))
+            setCartID(cartData[0].cart)
+            setReady(true)
 
             if (route) {
                 for (let i in cartData){
@@ -113,11 +117,43 @@ function CartLanding() {
         setPayment(event.target.value)
     }
 
-    const handleProceed = () => {
-        dispatch(paymentInfo(total, tax, eTix))
-        history.push('/cart/payment')
+    const handleSuccess = () => {
+        dispatch(paymentSuccess(cartID,total))
+        history.push('/cart/payment/success')
     }
 
+    const handleFailure = (err) => {
+        alert("Payment failure, this is most likely to be a problem with your banking details, please check with PayPal")
+        console.log(err)
+    }
+
+    useEffect(() => {
+        if (ready){
+            window.paypal.Buttons({
+                createOrder: (data, actions) => {
+                  return actions.order.create({
+                    intent: "CAPTURE",
+                    purchase_units: [
+                      {
+                        description: "Your description",
+                        amount: {
+                          currency_code: "MYR",
+                          value: (total),
+                        },
+                      },
+                    ],
+                  });
+                },
+                onApprove: async (data, actions) => {
+                    handleSuccess()
+                },
+                onError: (err) => {
+                    handleFailure(err)
+                },
+              })
+              .render(paypal.current);
+        }
+    });
 
 
     return (
@@ -168,11 +204,11 @@ function CartLanding() {
                                     <Grid container direction='column' justifyContent="center" alignItems="center" spacing={4}>
                                         <Grid item>
                                             <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>Tax (6%)</Typography>
-                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>RM {tax}</Typography>
+                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>RM {tax.toFixed(2)}</Typography>
                                         </Grid>
                                         <Grid item>
                                             <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>Service (1%)</Typography>
-                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>RM {eTix}</Typography>
+                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>RM {eTix.toFixed(2)}</Typography>
                                         </Grid>
                                         <Grid item>
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>Total</Typography>
@@ -192,18 +228,7 @@ function CartLanding() {
                                     </Grid>
                                 </Grid>
                                 <Grid item>
-                                    <FormControl component="fieldset">
-                                        <FormLabel component="legend">Payment Method</FormLabel>
-                                        <RadioGroup row aria-label="gender" onChange={handleChange} name="payment radio">
-                                            <FormControlLabel value="paypal" control={<Radio />} label="Paypal" />
-                                            <FormControlLabel value="crypto" control={<Radio />} label="Crypto" />
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item>
-                                    <Tooltip title="Proceed to payment">
-                                        <PaymentIcon onClick={handleProceed} sx={{fontSize: '75px'}} />
-                                    </Tooltip>
+                                    <div ref={paypal}/>
                                 </Grid>
                             </Grid>
                         </Grid>

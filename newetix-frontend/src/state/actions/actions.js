@@ -504,7 +504,7 @@ export const helpResponseList = (helpID) => async(dispatch, getState) => {
     }
 }
 
-export const addToCart = (service, seatType, seatPrice) => async(dispatch, getState) => {
+export const addToCart = (service, seatType, seatPrice, chk) => async(dispatch, getState) => {
     try {
         dispatch({
             type: actions.CART_ADD_REQUEST
@@ -534,7 +534,18 @@ export const addToCart = (service, seatType, seatPrice) => async(dispatch, getSt
             }
         }
 
-        //if cart exist, just create item. If it does not exist create a new cart and create item 
+        let payment = await axios.get(
+            `http://localhost:8000/api/payment/`,
+            config
+        )
+
+        for (let i of payment.data) {
+            if(i.cart == cart){
+                cart = null
+            }
+        }
+
+        //if cart exist, just create item. If it does not exist create a new cart and create item  && (cart != payment)
         if(cart){
             let rst = await axios.post(
                 `http://127.0.0.1:8000/api/cartitems/`,
@@ -752,27 +763,6 @@ export const getAllRoutes = () => async (dispatch, getState) => {
     }
 }
 
-export const paymentInfo = (total, tax, etix) => async (dispatch, getState) => {
-    try {
-        const data = {
-            taxTotal: tax,
-            etixTotal: etix,
-            total: total
-        }
-
-        dispatch({
-            type: actions.ACCESS_PRICING_INFO,
-            payload: data
-        })
-    }catch(error){
-        dispatch({
-            type: actions.FAILURE_PRICING_INFO,
-            payload: error.response && error.response.data.detail
-                ? error.response.data.detail
-                : error.message,
-            })
-    }
-}
 export const filterRoute = (serviceList, priceArrg=null, minPrice=null, maxPrice=null, terminalFilter=null) => async(dispatch) => {
     try {
         dispatch({type: actions.FILTER_ROUTE_REQUEST})
@@ -826,4 +816,45 @@ export const filterRoute = (serviceList, priceArrg=null, minPrice=null, maxPrice
             type: actions.FILTER_ROUTE_FAIL
         })
     }
+}
+
+export const paymentSuccess = (cartID, total) =>  async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.PROCESSING_PAYMENT_APPROVAL
+        })
+    
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+        
+        const { data } = await axios.put(
+            `http://localhost:8000/api/payment/success/${userInfo.userID}/`,
+            {
+                'cartID': cartID
+            },
+            config
+        )
+
+        dispatch({type: actions.CART_VIEW_RESET})
+        dispatch({type: actions.CART_ADD_RESET})
+
+        dispatch({
+            type: actions.PROCESSED_PAYMENT_APPROVAL,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.FILTER_ROUTE_FAIL
+        })
+    }
+
 }

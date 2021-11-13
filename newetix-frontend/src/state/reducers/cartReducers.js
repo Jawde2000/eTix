@@ -8,6 +8,8 @@ export const cartAddReducer = (state = {}, action) => {
             return {loading: false, success: true}
         case constants.CART_ADD_FAIL:
             return {loading: false, error: action.payload}
+        case constants.CART_CHECK_SUCCESS:
+            return {loading: false}
         case constants.CART_ADD_RESET:
             return {}
         default:
@@ -30,12 +32,14 @@ export const cartViewReducer = (state = {}, action) => {
     }
 };
 
-export const priceReducer = (state = {}, action) => {
+export const paymentReducer = (state = {}, action) => {
     switch (action.type) {
-        case constants.ACCESS_PRICING_INFO:
-            return {priceInfo: action.payload}
-        case constants.FAILURE_PRICING_INFO:
-            return {error: action.payload}
+        case constants.PROCESSING_PAYMENT_APPROVAL:
+            return {loading: true}
+        case constants.PROCESSED_PAYMENT_APPROVAL:
+            return {loading: false, approvalDetails: action.payload}
+        case constants.FAILURE_PAYMENT_APPROVAL:
+            return {loading: false, error: action.payload}
         default:
             return state
     }
