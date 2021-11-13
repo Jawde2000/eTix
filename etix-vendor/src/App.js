@@ -10,7 +10,8 @@ import Header from './components/Header/header';
 import Register from './components/Register/Register';
 import RegistrationSuccess from './components/Register/RegisterSuccess';
 import VendorMenu from './components/VendorMenu/VendorMenu';
-import DataGeneration from './components/DataGeneration/DataGeneration';
+import DataGenerationService from './components/DataGeneration/DataGenerationService';
+import Sales from './components/Sales/Sales';
 import Service from "./components/ServiceManagement/Service";
 import HelpdeskDetail from "./components/Helpdesk/HelpdeskDetail";
 import Help from './components/HelpMan/Help';
@@ -21,38 +22,6 @@ import ServicesManagement from './components/ServiceManagement/ServicesManagemen
 import HelpManagement from './components/HelpMan/HelpManagement';
 import AddComment from './components/Helpdesk/AddComment';
 import AddService from './components/ServiceManagement/AddService';
-
-function Router() {
-
-  return (
-    <BrowserRouter>
-    <Header />
-    <NavBar />
-    <Route path="/" exact>
-      <Login />
-    </Route>
-    <Route path="/register" exact>
-      <Register />
-    </Route>
-    <Route path="/registrationsuccess" exact>
-      <RegistrationSuccess />
-    </Route>
-    <Route path="/menu" exact>
-      <VendorMenu />
-    </Route>
-    <Route path="/datageneration" exact>
-      <DataGeneration />
-    </Route>
-    <Route path='/profile' exact>
-      <Profile />
-    </Route>
-    <Route path='/profile' exact>
-      <Profile />
-    </Route>
-    <Footer />
-    </BrowserRouter>
-  )
-}
 
 function App() {
 
@@ -71,13 +40,15 @@ function App() {
                 <Route exact path="/forgotpassword" component={ForgotPassword}/>
                 <Route exact path="/menu/servicemanagement" component={ServicesManagement}/>
                 <Route exact path="/menu/helpdesk" component={Help}/>
-                <Route exact path="/menu/helpdesk/:id" component={HelpdeskDetail}/>
+                <Route exact path="/menu/helpmanage/:id" component={HelpdeskDetail}/>
                 <Route exact path="/helpcentre" component={Landing}/>
                 <Route exact path="/menu/helpmanage" component={HelpManagement}/>
                 <Route exact path="/menu/profile" component={Profile}/>
                 <Route exact path="/menu/helpmanage/comment/:id" component={AddComment}/>
                 <Route exact path="/menu/servicemanagement/add" component={AddService}/>
                 <Route exact path="/menu/servicemanagement/:id" component={Service} />
+                <Route exact path="/menu/sales" component={Sales} />
+                <Route exact path="/menu/sales/datageneration" component={DataGenerationService} />
               </Switch>
             <Footer />    
           </BrowserRouter>

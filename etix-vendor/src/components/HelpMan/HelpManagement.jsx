@@ -131,7 +131,7 @@ function HelpManagement() {
                 <Grid xs={6} item>
                   <Toolbar>
                   <Tooltip title="Edit">
-                  <IconButton href={`/menu/helpdesk/${params.row.id}`}>
+                  <IconButton href={`/menu/helpmanage/${params.row.id}`}>
                     <EditIcon />
                   </IconButton>
                   </Tooltip>
