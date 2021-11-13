@@ -11,7 +11,7 @@ import {
     SERVICE_LIST_DATAGENERATION_FAIL,
     SERVICE_LIST_DATAGENERATION_RESET,
 
-} from '../constants/salesConstants'
+} from '../../constants/salesConstants/salesConstants'
 
 
 //GET payment list
@@ -48,17 +48,33 @@ export const listPayment = () => async (dispatch, getState) => {
         for(let i of data){
             let r = await axios.get(`http://127.0.0.1:8000/api/cart/${i.cart}/`, config);
             result.push(r)
-        }
+        } 
         
         data = data.map((item, index) => (
         {
             ...item,
             cartDetails: result[index].data
         }))
+        
+        console.log(result);
+
+        let Items = []
+        for(let i of data){
+            var I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.cartDetails.cartID}/`, config);
+            Items.push(I)
+        }
+
+        data = data.map((item, index) => (
+        {
+            ...item, 
+            cartItems: Items[index].data
+        }))
+
+        console.log(data);
 
         let result2 = []
         for(let i of data){
-            let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartDetails.service}/`, config);
+            let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartItems[0].service}/`, config);
             result2.push(l);
         }
 
@@ -67,7 +83,8 @@ export const listPayment = () => async (dispatch, getState) => {
             serviceDetails: result2[index].data
         }))
 
-        
+        console.log(data)
+
         
         dispatch({
             type: PAYMENT_LIST_SUCCESS,
