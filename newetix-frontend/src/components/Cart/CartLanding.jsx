@@ -4,7 +4,7 @@ import { Grid, Box, Typography, TextField, Button, Alert, CircularProgress, Tool
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { paymentSuccess } from '../../state/actions/actions'
+import { paymentSuccess, removeItem } from '../../state/actions/actions'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { routeLookupReducer } from '../../state/reducers/routeReducers';
@@ -103,8 +103,8 @@ function CartLanding() {
         if (customerInfo) {
             setAddress(customerInfo.customerAddress)
         }
-
-        if (!customerInfo) {
+        
+        if (!cuslist.loading && !(customerInfo)) {
             history.push('/')
         }
 
@@ -113,8 +113,10 @@ function CartLanding() {
         }
     }, [cartData, route, customerInfo])
 
-    const handleChange = (event) => {
-        setPayment(event.target.value)
+    const handleRemove = (itemID) => {
+        dispatch(removeItem(itemID))
+        alert("Item deleted from cart!")
+        history.go(0)
     }
 
     const handleSuccess = () => {
@@ -155,7 +157,6 @@ function CartLanding() {
         }
     });
 
-
     return (
         <Box className={classes.whole}>
             <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" className={classes.inside}>
@@ -188,7 +189,7 @@ function CartLanding() {
                                                         </Grid>
                                                         <Grid item>
                                                             <Tooltip title="Remove">
-                                                                <HighlightOffIcon />
+                                                                <HighlightOffIcon onClick={() => {handleRemove(item.cartItemsID)}} />
                                                             </Tooltip>
                                                         </Grid>
                                                     </Grid>
@@ -227,9 +228,14 @@ function CartLanding() {
                                         }
                                     </Grid>
                                 </Grid>
-                                <Grid item>
-                                    <div ref={paypal}/>
-                                </Grid>
+                                {address?
+                                    <Grid item>
+                                        <div ref={paypal}/>
+                                    </Grid>
+                                :
+                                    ''
+                                }
+                                
                             </Grid>
                         </Grid>
                     </Grid>

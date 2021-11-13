@@ -44,3 +44,16 @@ export const paymentReducer = (state = {}, action) => {
             return state
     }
 }
+
+export const deleteReducer = (state = {}, action) => {
+    switch (action.type) {
+        case constants.DELETING_CART_ITEM:
+            return {loading: true}
+        case constants.DELETED_CART_ITEM:
+            return {loading: false}
+        case constants.UNSUCCESSFUL_DELETE_CART_ITEM:
+            return {loading: false, error: action.payload}
+        default:
+            return state
+    }
+}

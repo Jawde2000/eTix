@@ -4,7 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { routeLookupReducer, dateReducer, locationListReducer, allRoutesReducer, routeFilterReducer, locationSearchReducer } from './reducers/routeReducers';
 import { userLoginReducer, customerDetailsReducer } from './reducers/userReducers';
 import { vendorListReducer, helpdeskReducer, helpResponseReducer } from './reducers/helpReducers';
-import { cartAddReducer, cartViewReducer, paymentReducer  } from './reducers/cartReducers';
+import { cartAddReducer, cartViewReducer, deleteReducer, paymentReducer  } from './reducers/cartReducers';
 
 const reducer = combineReducers({
     routeLookup: routeLookupReducer,
@@ -23,7 +23,8 @@ const reducer = combineReducers({
     getAllRoutes: allRoutesReducer,
     routeFilter: routeFilterReducer,
     locationSearch: locationSearchReducer,
-    payment: paymentReducer
+    payment: paymentReducer,
+    removeItem: deleteReducer
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

@@ -853,8 +853,48 @@ export const paymentSuccess = (cartID, total) =>  async (dispatch, getState) => 
 
     } catch(error) {
         dispatch({
-            type: actions.FILTER_ROUTE_FAIL
+            type: actions.FAILURE_PAYMENT_APPROVAL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
         })
     }
 
+}
+
+export const removeItem = (cartItemID) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.DELETING_CART_ITEM
+        })
+    
+        const {
+            userLogin: {userInfo},
+        } = getState()
+    
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+    
+        const { data } = await axios.get(
+            `http://localhost:8000/api/cart/item/delete/${cartItemID}/`,
+            config
+        )
+
+        dispatch({
+            type: actions.DELETED_CART_ITEM
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.UNSUCCESSFUL_DELETE_CART_ITEM,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+    
 }

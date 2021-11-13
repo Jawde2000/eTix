@@ -181,6 +181,18 @@ def paymentProcess(request, pk):
         message = {'detail': 'Unsuccessful'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def removeCartItem(request, pk):
+    try:
+        cartItem = CartItems.objects.get(cartItemsID=pk).delete()
+
+        message = {'detail': 'Successful'}
+        return Response(message)
+    except:
+        message = {'detail': 'Unsuccessful'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 
 # update user profile
 

@@ -33,6 +33,9 @@ urlpatterns = [
     # api path for getting cart items by cartID
     path('api/cart/retrieve/<str:pk>/', views.getItemsbyCart, name='cart-items-by-id'),
 
+     # api path for deleting cartitems
+    path('api/cart/item/delete/<str:pk>/', views.removeCartItem, name='cart-items-remove'),
+
     # api path for register new user, method post
     path('api/users/register/', views.registerUser, name='register'),
 
