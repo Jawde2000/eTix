@@ -1,0 +1,14 @@
+node_modules
+etix-backend/etix/etix/__pycache__/__init__.cpython-38.pyc
+etix-backend/etix/etix/__pycache__/settings.cpython-38.pyc
+etix-backend/etix/etix/__pycache__/urls.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/__init__.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/admin.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/apps.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/forms.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/models.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/serializers.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/urls.cpython-38.pyc
+etix-backend/etix/etixApp/__pycache__/views.cpython-38.pyc
+etix-backend/etix/etixApp/migrations/__pycache__/__init__.cpython-38.pyc
+etix-backend/etix/etixApp/migrations/__pycache__/0001_initial.cpython-38.pyc

@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button} from '@mui/material';
+import React, {useState, useEffect, useReducer, useCallback} from 'react'
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input, Alert} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -8,7 +8,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { getUser } from '../../actions/userActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -16,22 +15,27 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
-import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
-import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../actions/userActions';
-
-
-//koee
+import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_DETAIL_RESET } from '../../state/actions/actionConstants';
+import { updateUser, customerEdit } from '../../state/actions/actions';
+import images from '../globalAssets/scripts/bgchange';
+import S3 from 'react-aws-s3';
+import Avatar from '@mui/material/Avatar';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        backgroundImage: `url(${images()})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundColor: "rgba(255,255,255,0.5)",
+        backgroundBlendMode: "lighten",
         minHeight: 500,
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        padding: 20
     },
     box: {
         backgroundColor: "#CFDBD5",
         marginBottom: 20,
-        borderRadius: 5,
+        borderRadius: '25px',
         minHeight: 450,
         marginTop: 15,
         margin: 'auto',
@@ -46,213 +50,93 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const UserDetail = ({props}) => {
+function UserDetail() {
     const classes = useStyles();
-    const { id } = useParams();
-
-    const dispatch = useDispatch();
+    const dispatch = useDispatch();    
+    const history = useHistory()
+    const ulist = useSelector(state => state.userLogin)
+    const clist = useSelector(state => state.customerDetails)
+    const {userInfo} = ulist
+    const {customerInfo} = clist
     
-    const userLogin = useSelector(state => state.userLogin)
-    const {userInfo} = userLogin
-    
-    let history = useHistory()
-    
-    const userDetail = useSelector(state => state.userDetail)
-    const {loading, userD} = userDetail
-
-    const usr = useSelector(state => state.userUpdate)
-    const {success: successUser, error: errorUsr} = usr
-
-    const cus = useSelector(state => state.customerUpdate)
-    const {success: successCustomer, error: errorCus} = cus
-
-    const ven = useSelector(state => state.vendorUpdate)
-    const {success: successVendor, error: errorVen} = ven
-    
-    const [user, setUser] = useState();
-    const [uptUser, setUptUser] = useState();
-    const [uptVendor, setUptVendor] = useState();
-    const [uptCustomer, setUptCustomer] = useState();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [isActive, setIsActive] = useState();
-    const [role , setRole] = useState("");
     const [contact, setContact] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
-    const [passStatus, setPassStatus] = useState(false);
-    // vendor
-    const [status, setStatus] = useState(false);
-    const [businessName, setBusinessName] = useState("");
-    const [registrationNo, setRegistrationNo] = useState("");
-    const [bankName, setBankName] = useState("");
-    const [bankAcc, setBankAcc] = useState("");
-    
     //customer
     const [birthdate, setBirthDate] = useState("");
     const [address, setAddress] = useState("");
     const [gender, setGender] = useState('');
+    const [fname, setFname] = useState('');
+    const [lname, setLname] = useState('');
     // const [user, setUser]
-    const [customer, setCustomer]= useState();
-    const [vendor, setVendor] = useState();
-    const [submit, setSubmit] = useState(false);
     const [editing,setEditing] = useState(false);
+    const [found, setFound] = useState(true);
+    const [picloading, setPloading] = useState(false);
+    const [file, setFile] = useState('')
+    
+    const config = {
+        bucketName: 'etixbucket',
+        dirName: 'etix', 
+        region: 'ap-southeast-1',
+        accessKeyId: 'AKIA4TYMPNP6EQNIB7HV',
+        secretAccessKey: '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'
+    }
+    
+    const AWS = require('aws-sdk')
+    AWS.config.update({
+        accessKeyId: "AKIA4TYMPNP6EQNIB7HV",
+        secretAccessKey: "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",
+        region: "ap-southeast-1",
+    });
 
-    const handleSubmit = () =>{
-        setUptUser(
-            {
-                username: username,
-                email: email,
-                password: password,
-                is_active: isActive,
+    const ReactS3Client = new S3(config);
+    
+    var s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: 'AKIA4TYMPNP6EQNIB7HV', secretAccessKey: 'Vd8K2yLQrKZermLm4VxV1XJp9k73UPLLwQjfR', region: "ap-southeast-1"});
+    
+    useEffect(async () => {
+        PicExist()
+
+        if (!userInfo){
+            history.push('/')
+        }
+    })
+
+    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file + ".png"));
+
+    async function PicExist() {
+        let url = "https://etixbucket.s3.amazonaws.com/etix/" + file + '.png'
+        await fetch(url).then((res) => {
+            if (res.status == 404) {
+                setFound(false)
+            } 
+            else {
+                setImgSrc(url)
+                setFound(true)
             }
-        )
-
-        if(vendor){
-            setUptVendor({
-                vendorContact_Number: contact,
-                vendorStatus: status,
-                vendorName: businessName,
-                vendorBankName: bankName,
-                vendorBankAcc: bankAcc,
-                vendorRegistrationNo: registrationNo,
-            })
-        }
-
-        if(customer){
-            setUptCustomer({
-                customerGender: gender,
-                customerContact_Number: contact,
-                customerAddress: address,
-                customerBirthday: birthdate,
-            })
-        }
+        }).catch((err) => {
+            setFound(false)
+        });
     }
 
-    useEffect(() =>{
-        if(role==="Admin" && uptUser){
-            dispatch(updateUser(uptUser, id));
-        }
-        else if(role === "Customer" && uptCustomer){
-            dispatch(updateCustomer(uptUser, uptCustomer, id))
-        }
-        else if(role === "Vendor" && uptVendor){
-            dispatch(updateVendor(uptUser, uptVendor, id))
-        }
-    }, [uptUser, uptCustomer, uptVendor])
-
-    useEffect(() => {
-        if(successUser){
-            alert("Successfully Updated User");
-            dispatch({type: USER_UPDATE_RESET});
-            setEditing(!editing);
-            return;
-        }
-        else if(successCustomer){
-            alert("Successfully Updated User");
-            dispatch({type: USER_CUSTOMER_UPDATE_RESET});
-            setEditing(!editing);
-            return;
-        }
-        else if(successVendor){
-            alert("Successfully Updated User");
-            dispatch({type: USER_VENDOR_UPDATE_RESET});
-            setEditing(!editing);
-            return;
-        }
-        else if(errorUsr || errorCus || errorVen){
-            alert("Fail to Update");
-            dispatch({type: USER_VENDOR_UPDATE_RESET});
-            dispatch({type: USER_CUSTOMER_UPDATE_RESET});
-            dispatch({type: USER_UPDATE_RESET});
-        }
-    }, [successUser, successCustomer, successVendor, errorUsr, errorCus, errorVen])
-
-
-    useEffect(() => {
-        if(!userD || userD.userID !== id){
-            dispatch(getUser(id))
-        }else{
-            setUser(userD)
-            setRole(userD.is_customer? "Customer" : userD.is_vendor? "Vendor" : userD.is_superuser? "Admin" : "");
-            setUsername(userD.username);
-            setEmail(userD.email);
-            setIsActive(userD.is_active);
-            if(userD.is_customer && userD.customerInfo){
-                setCustomer(
-                    userD.customerInfo.data
-                )
-
-            }
-            else if(userD.is_vendor && userD.vendorInfo){
-                setVendor(
-                    userD.vendorInfo.data
-                )
-            }
-        }
-    }, [userD, id])
-
-    useEffect(() => {
-        if(customer){
-            setContact(customer.customerContact_Number)
-            setAddress(customer.customerAddress)
-            setBirthDate(customer.customerBirthday)
-            setGender(customer.customerGender)
-        }
-        else if(vendor){
-            setContact(vendor.vendorContact_Number)
-            setStatus(vendor.vendorStatus)
-            setBusinessName(vendor.vendorName)
-            setBankName(vendor.vendorBankName)
-            setBankAcc(vendor.vendorBankAcc)
-            setRegistrationNo(vendor.vendorRegistrationNo)
-        }
-    }, [customer, vendor])
     
-    
-
-    
-    //Remember to update database also.
-    const changeStatus = () => {
-        if(role==="Vendor"){
-            if(isActive && status){
-                setIsActive(!isActive)
-                return;
-            }
-            else if(!isActive && status){
-                setIsActive(!isActive)
-                return;
-            }
-            alert("Vendor should be verified first only they can be set active.");
-            
-        }
-        else{
-            if(isActive){
-                setIsActive(!isActive)
-                return;
-            }
-            else if(!isActive){
-                setIsActive(!isActive)
-            }
-        }
-        
-        
-    };
-
-    const handleDelete = () => {
-
-        if(id === userInfo.userID){
-            alert("You can't delete The account that you are currently logged in!");
-            return;
-        }
-        else{
-            dispatch(deleteUsers(id));
-        }
-
-        alert("Sucessfully Deleted");
-        history.push("/menu/users");
+    const upload = (e) => {
+        const image = URL.createObjectURL(e.target.files[0]);
+        setPloading(true);
+        setImgSrc(image);
+        ReactS3Client.uploadFile(e.target.files[0], file)
+        .then(data =>{
+            setPloading(false);
+            // window.setTimeout(function(){window.location.reload()},3000)
+            console.log(data);
+        })
+        .catch(err => {
+            console.error(err)
+            setPloading(false);
+        })
     }
-
+    
     const handleChangeUserName = (event) => {
         setUsername(event.target.value);
     }
@@ -265,36 +149,12 @@ const UserDetail = ({props}) => {
         setContact(event.target.value);
     }
 
-    const handleChangeBusinessName = (event) => {
-        setBusinessName(event.target.value);
-    }
-
-    const handleChangeRegNo = (event) => {
-        setRegistrationNo(event.target.value);
-    }
-
-    const handleChangebankName = (event) => {
-        setBankName(event.target.value);
-    }
-
-    const handleChangebankAcc = (event) => {
-        setBankAcc(event.target.value);
-    }
-
     const hadleChangePassword = (event) => {
         setPassword(event.target.value);
     }
     
     const handleChangeConfirmPassword = (event) => {
         setConfirmPass(event.target.value);
-    }
-
-    const handleVarified = () => {
-        if(status && isActive){
-            alert("You can't unverify user when it is active.")
-            return
-        }
-        setStatus(!status)
     }
 
     const handleChangeBirthDate = (event) => {
@@ -309,14 +169,55 @@ const UserDetail = ({props}) => {
         setGender(event.target.value);
     }
 
-    const handleBack = () => {
-        dispatch({type: USER_DETAIL_RESET});
-        history.push('/menu/users/');
+    const handleChangefname = (event) => {
+        setFname(event.target.value);
+    }
+
+    const handleChangelname = (event) => {
+        setLname(event.target.value);
+    }
+
+    const handleSubmit = () => {
+        if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
+            dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
+            history.go(0)        
+        } else {
+            alert("Please fill in all of the fields!")
+            console.log(fname, lname, contact, address, birthdate, gender)
+        }
+
+        if (userInfo.username != username){
+            dispatch(updateUser(username, userInfo.userID))
+        }
+    }
+
+    let iiMissing = false
+
+    useEffect(() => {
+        if(userInfo) {
+            setFile(userInfo.userID)
+            setUsername(userInfo.username)
+            setEmail(userInfo.email)
+        } 
+
+        if(customerInfo) {
+            setFname(customerInfo.customerFirstName)
+            setLname(customerInfo.customerLastName)
+            setGender(customerInfo.customerGender)
+            setContact(customerInfo.customerContact_Number)
+            setAddress(customerInfo.customerAddress)
+            setBirthDate(customerInfo.customerBirthday)
+        }
+    }, [userInfo, customerInfo])
+
+    if (fname == '' && lname == '' && address == ''){
+        iiMissing = true
     }
 
     return (
         <Container className={classes.root} maxWidth="Fixed">
-            {!user? 
+        <Container >
+            {!userInfo? 
                 <Box sx={{ display: 'flex' }}>
                     <CircularProgress />
                 </Box>
@@ -324,27 +225,19 @@ const UserDetail = ({props}) => {
                 <>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
                         <Grid item xs={12} className={classes.action} container>
-                            <Grid item xs={4}>
-                                <Tooltip title="Back">
-                                    <IconButton onClick={handleBack}>
-                                        <ArrowBackIcon fontSize="large" />
-                                    </IconButton>
-                                </Tooltip>
-                            </Grid>
                             <Grid item xs={4} textAlign="center" style={{fontSize:20}}>
-                                User ID: {user.userID}
+                                User ID: {userInfo.userID}
                             </Grid>
-                            <Grid item xs={4} textAlign="right">
+                            {iiMissing? 
+                            <Grid item xs={4} textAlign="center" style={{fontSize:12}}>
+                                <Alert severity="warning">Important info is missing</Alert>
+                            </Grid>
+                            : ''
+                            }
+                            <Grid item xs={iiMissing? 3 : 7} textAlign="right">
                                 <Tooltip title="Edit User">
-                                    {/* Set onclick edit here  with props*/}
                                     <IconButton onClick={() => setEditing(!editing)}>
                                         <EditIcon className={classes.functionicon} fontSize="large" />
-                                    </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Delete User">
-                                    {/* Set onclick delete here, *create a delete function* */}
-                                    <IconButton>
-                                        <DeleteIcon onClick={handleDelete} className={classes.functionicon} fontSize="large" style={{color: 'red'}}/>
                                     </IconButton>
                                 </Tooltip>
                             </Grid>
@@ -359,69 +252,37 @@ const UserDetail = ({props}) => {
                                     <Grid item xs={12} >
                                         Profile Picture
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <img 
-                                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png"
-                                            alt="logo"
-                                            style={{marginTop: 10,minHeight: 150, maxWidth:150}}
+                                    <Grid item xs={12} column > 
+                                        <Grid style={{display:'flex', justifyContent:'center', alignItems:'center', paddingBottom:10}}>  
+                                        <Avatar
+                                        style={{ height: '150px', width: '150px' }}
+                                            src={imgSrc}
+                                            alt={username}        
                                         />
-                                    </Grid>
-                                    <Grid item xs={12} style={{marginTop:10}}>
-                                        Status
-                                    </Grid>
-                                    {!editing ?
-                                        (<Grid item xs={12} style={!isActive? ({color: "red"}) : ({color: "green"})}>
-                                            {isActive? "Active" : "Inactive"}
-                                        </Grid>) 
-                                        : 
-                                        (<Grid item xs={12} style={!isActive? ({color: "red"}) : ({color: "green"})}>                                    
-                                            <Tooltip title="Change status">
-                                                <IconButton onClick={()=>changeStatus()}>
-                                                    <ChangeCircleIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            {isActive? "Active" : "Inactive"}
-                                        </Grid>)
-                                    }
-                                    <Grid item xs={12} style={{marginTop: 20}} container>
-                                        <Grid item xs={5} style={{textAlign:'right', fontWeight: 'bold'}}>
-                                            Role:    
-                                        </Grid>
-                                        <Grid item xs={1}/>
-                                        <Grid item xs={6} style={{textAlign:'left'}}>
-                                            {role}
-                                        </Grid>
-                                        
-                                    </Grid>
-                                    {vendor?
+                                        </Grid>                             
+                                        {!editing? "":
                                         (
-                                            <Grid item xs={12} style={{marginTop: 20}} container>
-                                                <Grid item xs={5} style={{textAlign:'right', fontWeight: 'bold'}}>
-                                                    Verify Status:    
-                                                </Grid>
-                                                <Grid item xs={5} style={{textAlign:'right'}}>
-                                                    {status? "Verified" : "Not Verified"}
-                                                </Grid>
-                                                {editing?
-                                                    (
-                                                        <Grid item xs={2}>
-                                                            <Tooltip title="Verify Account">
-                                                                <IconButton onClick={()=>handleVarified()} style={!status? ({color: "red"}) : ({color: "green"})}>
-                                                                    <ChangeCircleIcon />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                        </Grid>
-                                                    )
-                                                    :
-                                                    (null)
-                                                }
-
-                                                
-                                            </Grid>
-                                        )
-                                        :
-                                        (null)
-                                    }
+                                        <div>
+                                        <label htmlFor="contained-button-file">
+                                        <input type="file"  accept="image/png" id="contained-button-file" onChange={upload}
+                                        style={{justifyContent:'center', alignItems:'center', display: 'none'}}
+                                        />
+                                        {picloading? (<Box sx={{ display: 'flex' }}
+                                        style={{justifyContent:'center', alignItems:'center'}}
+                                        ><CircularProgress /></Box>):(<Button variant="contained" component="span" >Upload</Button>)}
+                                        </label>                            
+                                        </div>
+                                        )}
+                                    </Grid>
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
+                                    <Grid xs={12} item />
                                     <Grid xs={12} item />
                                     <Grid xs={12} item />
                                     <Grid xs={12} item />
@@ -483,6 +344,7 @@ const UserDetail = ({props}) => {
                                                             defaultValue={email}
                                                             margin="dense"
                                                             fullWidth
+                                                            disabled
                                                             size="small"
                                                             InputProps={{
                                                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
@@ -493,85 +355,20 @@ const UserDetail = ({props}) => {
                                             }
                                             
                                         </Grid>
-                                        {role==="Admin"?
-                                            (null)
-                                            :
-                                            (
-                                                <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                        Phone Number: 
-                                                    </Grid>
-                                                    {!editing ?
-                                                        (
-                                                            <Grid item xs={9} textAlign="left">
-                                                                {contact}
-                                                            </Grid>
-                                                        )
-                                                        :
-                                                        (
-                                                            <Grid item xs={9} textAlign="left">
-                                                                <TextField 
-                                                                    id="user_phone" 
-                                                                    variant="outlined"
-                                                                    onChange={handleChangeUserPhone}
-                                                                    defaultValue={contact}
-                                                                    margin="dense"
-                                                                    fullWidth
-                                                                    size="small"
-                                                                    InputProps={{
-                                                                        style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
-                                                                    }} 
-                                                                />
-                                                            </Grid>   
-                                                        )
-                                                    }
-                                                    
-                                                </Grid>
-                                            )
-                                        }
-                                        {vendor?
+                                        {customerInfo?
                                             (
                                                 <>
                                                     <Grid item xs={12} style={{fontWeight:'bold', marginTop: 20}}>
-                                                        Business Information
+                                                        Personal Information
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
                                                         <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                            Business Name: 
+                                                            First Name : 
                                                         </Grid>
                                                         {!editing ?
                                                             (
                                                                 <Grid item xs={9} textAlign="left">
-                                                                    {businessName}
-                                                                </Grid>
-                                                            )
-                                                            :
-                                                            (
-                                                                <Grid item xs={9} textAlign="left">
-                                                                    <TextField 
-                                                                        id="businessName" 
-                                                                        variant="outlined"
-                                                                        onChange={handleChangeBusinessName}
-                                                                        defaultValue={businessName}
-                                                                        margin="dense"
-                                                                        fullWidth
-                                                                        size="small"
-                                                                        InputProps={{
-                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
-                                                                        }} 
-                                                                    />
-                                                                </Grid>   
-                                                            )
-                                                        }  
-                                                    </Grid>
-                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                            Registration No.: 
-                                                        </Grid>
-                                                        {!editing ?
-                                                            (
-                                                                <Grid item xs={9} textAlign="left">
-                                                                    {registrationNo}
+                                                                    {fname}
                                                                 </Grid>
                                                             )
                                                             :
@@ -580,8 +377,8 @@ const UserDetail = ({props}) => {
                                                                     <TextField 
                                                                         id="regNo" 
                                                                         variant="outlined"
-                                                                        onChange={handleChangeRegNo}
-                                                                        defaultValue={registrationNo}
+                                                                        onChange={handleChangefname}
+                                                                        defaultValue={fname}
                                                                         margin="dense"
                                                                         fullWidth
                                                                         size="small"
@@ -595,22 +392,22 @@ const UserDetail = ({props}) => {
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
                                                         <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                            Bank Name: 
+                                                            Last Name : 
                                                         </Grid>
                                                         {!editing ?
                                                             (
                                                                 <Grid item xs={9} textAlign="left">
-                                                                    {bankName}
+                                                                    {lname}
                                                                 </Grid>
                                                             )
                                                             :
                                                             (
                                                                 <Grid item xs={9} textAlign="left">
                                                                     <TextField 
-                                                                        id="bankName" 
+                                                                        id="regNo" 
                                                                         variant="outlined"
-                                                                        onChange={handleChangebankName}
-                                                                        defaultValue={bankName}
+                                                                        onChange={handleChangelname}
+                                                                        defaultValue={lname}
                                                                         margin="dense"
                                                                         fullWidth
                                                                         size="small"
@@ -622,24 +419,24 @@ const UserDetail = ({props}) => {
                                                             )
                                                         }  
                                                     </Grid>
-                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10, marginBottom: 20}}>
+                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
                                                         <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                            Bank Account: 
+                                                            Phone Number : 
                                                         </Grid>
                                                         {!editing ?
                                                             (
                                                                 <Grid item xs={9} textAlign="left">
-                                                                    {bankAcc}
+                                                                    {contact}
                                                                 </Grid>
                                                             )
                                                             :
                                                             (
                                                                 <Grid item xs={9} textAlign="left">
                                                                     <TextField 
-                                                                        id="bankAcc" 
+                                                                        id="regNo" 
                                                                         variant="outlined"
-                                                                        onChange={handleChangebankAcc}
-                                                                        defaultValue={bankAcc}
+                                                                        onChange={handleChangeUserPhone}
+                                                                        defaultValue={contact}
                                                                         margin="dense"
                                                                         fullWidth
                                                                         size="small"
@@ -650,19 +447,6 @@ const UserDetail = ({props}) => {
                                                                 </Grid>   
                                                             )
                                                         }  
-                                                    </Grid>
-                                                </>
-                                            )
-                                            :
-                                            (
-                                               null
-                                            )
-                                        }
-                                        {customer?
-                                            (
-                                                <>
-                                                    <Grid item xs={12} style={{fontWeight:'bold', marginTop: 20}}>
-                                                        Personal Information
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30 , marginTop:10}}>
                                                         <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
@@ -854,6 +638,7 @@ const UserDetail = ({props}) => {
                     </Box>
                 </>
             }
+        </Container>
         </Container>
             
     )

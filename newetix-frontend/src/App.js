@@ -10,8 +10,21 @@ import HomeQuery from './components/HomeServices/HomeQuery';
 import HomeOperators from './components/HomeServices/Operators';
 // Popular Attractions
 import Attractions from './components/Static/Attractions';
+// Passport & Retrieval
+import Passport from './components/Passport/Passport';
+// Routes
+import RouteQuery from './components/RouteQuery/RouteQuery';
+// Help Center
+import HelpLanding from './components/HelpCenter/Landing'
+import HelpMessaging from './components/HelpCenter/Messaging'
+import HelpDetail from './components/HelpCenter/Detail'
+// Profile
+import Profile from './components/Profile/Profile'
+// Cart
+import Cart from './components/Cart/CartLanding'
+import Success from './components/Cart/Success'
 // Debugging
-import Test from './components/Test';
+
 
 const theme = createTheme({
     palette: {
@@ -40,8 +53,32 @@ function Router() {
                 <Route path="/attractions" exact>
                     <Attractions />
                 </Route>
-                <Route path="/testing" exact>
-                    <Test />
+                <Route path="/passport" exact>
+                    <Passport />
+                </Route>
+                <Route path="/routes/:fromm/:too" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/help" exact>
+                    <HelpLanding />
+                </Route>
+                <Route path="/help/inbox" exact>
+                    <HelpMessaging />
+                </Route>
+                <Route path="/help/message/:id" exact>
+                    <HelpDetail />
+                </Route>
+                <Route path="/help/articles/:id" exact>
+                    <RouteQuery />
+                </Route>
+                <Route path="/profile" exact>
+                    <Profile />
+                </Route>
+                <Route path="/cart" exact>
+                    <Cart />
+                </Route>
+                <Route path="/cart/payment/success" exact>
+                    <Success />
                 </Route>
             </Switch>
             <Footer />

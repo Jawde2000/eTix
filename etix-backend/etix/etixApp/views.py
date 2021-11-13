@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
-from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly
+from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location, CartItems
+from .serializers import UserSerializer, UserSerializerWithToken, CustomerSerializer, VendorSerializer, AdminSerializer, CartItemsSerializer, TicketSerializer, HelpDeskSerializer, HelpResponseSerializer, CartSerializer, PaymentSerializer, ServicesSerializer, SeatSerializer, LocationSerializer, LocationSerializerIDonly, VendorSerializerStripped
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -49,7 +49,7 @@ def getUserProfile(request):
 # only admin user can get the lists of users
 
 
-@api_view(['GET']) 
+@api_view(['GET'])
 @permission_classes([IsAdminUser])
 def getUsers(request):
     users = User.objects.all()
@@ -58,7 +58,6 @@ def getUsers(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def getUserById(request, pk):
     user = User.objects.get(userID=pk)
     serializer = UserSerializer(user, many=False)
@@ -85,6 +84,14 @@ def registerUser(request):
 
         user.save()
 
+        if data['is_customer'] == "True":
+            customer = Customer.objects.create(
+                created_by=user,
+                customerContact_Number=data['phonenumber']
+            )
+
+            customer.save()
+
         return Response(serializer.data)
     except:
         message = {'detail': 'User with this email already exist'}
@@ -93,27 +100,49 @@ def registerUser(request):
 
 @api_view(['POST'])
 def getRoutes(request):
-    data = request.data 
+    data = request.data
 
     try:
-        locationone = Location.objects.get(locationName = data['locationFrom'])
+        locationone = Location.objects.get(locationName=data['locationFrom'])
         serializerone = LocationSerializerIDonly(locationone, many=False)
 
-        locationtwo = Location.objects.get(locationName = data['locationTo'])
+        locationtwo = Location.objects.get(locationName=data['locationTo'])
         serializertwo = LocationSerializerIDonly(locationtwo, many=False)
 
-        services = Services.objects.all().filter(locationFrom = serializerone.data['locationID']).filter(locationTo = serializertwo.data['locationID'])
+        services = Services.objects.all().filter(locationFrom=serializerone.data['locationID']).filter(
+            locationTo=serializertwo.data['locationID'])
         serializer = ServicesSerializer(services, many=True)
-        
+
         return Response(serializer.data)
     except:
         message = {'detail': 'No routes exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
+@api_view(['POST'])
+def getLocationByID(request):
+    data = request.data
+
+    try:
+        loc = Location.objects.all().filter(locationID=data['locationID'])
+        serializer = LocationSerializer(loc, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'ID not found'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def getAllVendors(reqeust):
+    vendors = Vendor.objects.all()
+    serializer = VendorSerializerStripped(vendors, many=True)
+    return Response(serializer.data)
+
+
 @api_view(['POST'])
 def getVendorName(request):
-    data = request.data 
-    
+    data = request.data
+
     try:
         vendor = Vendor.objects.get(vendorID=data['vendorID'])
         serializer = VendorSerializer(vendor, many=False)
@@ -122,6 +151,48 @@ def getVendorName(request):
     except:
         message = {'detail': 'No vendors exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def paymentProcess(request, pk):
+    data = request.data
+    try:
+        cart = Cart.objects.get(cartID=data['cartID'])
+        cartobj = CartItems.objects.filter(cart=cart)
+        user = User.objects.get(userID=pk)
+        for obj in cartobj:
+            ticket = Ticket.objects.create(
+                service=obj.service,
+                ownBy=user
+            )
+
+            ticket.save()
+
+
+        payment = Payment.objects.create(
+            cart=cart,
+            paymentStatus='CP'
+        )
+        payment.save()
+
+        serializer = PaymentSerializer(payment, many=False)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'Unsuccessful'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def removeCartItem(request, pk):
+    try:
+        cartItem = CartItems.objects.get(cartItemsID=pk).delete()
+
+        message = {'detail': 'Successful'}
+        return Response(message)
+    except:
+        message = {'detail': 'Unsuccessful'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 
 # update user profile
 
@@ -174,17 +245,18 @@ def updateCustomer(request, pk):
     customer = Customer.objects.get(created_by=pk)
 
     data = request.data
+    customer.customerFirstName = data['customerFirstName']
+    customer.customerLastName = data['customerLastName']
     customer.customerContact_Number = data['customerContact_Number']
     customer.customerAddress = data['customerAddress']
     customer.customerBirthday = data['customerBirthday']
-    customer.gender = data['customerGender']
+    customer.customerGender = data['customerGender']
 
     customer.save()
 
     serializer = CustomerSerializer(customer, many=False)
 
     return Response(serializer.data)
-
 # update vendor by userid
 
 
@@ -204,6 +276,58 @@ def updateVendor(request, pk):
     vendor.save()
 
     serializer = VendorSerializer(vendor, many=False)
+
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def createHelpDesk(request, pk):
+
+    data = request.data
+
+    userreq = User.objects.get(userID=data['userID'])
+
+    if (pk == 'admin'):
+        helpreq = HelpDesk.objects.create(
+            helpdeskTitle=data['title'],
+            helpdeskMessage=data['message'],
+            user=userreq,
+            to_admin=True,
+            helpdeskStatus='OP'
+        )
+    else:
+        vendor = Vendor.objects.get(vendorID=pk)
+
+        helpreq = HelpDesk.objects.create(
+            helpdeskTitle=data['title'],
+            helpdeskMessage=data['message'],
+            user=userreq,
+            receiver=vendor,
+            to_vendor=True,
+            helpdeskStatus='OP'
+        )
+
+    helpreq.save()
+
+    serializer = HelpDeskSerializer(helpreq, many=False)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getItemsbyCart(request, pk):
+    cartitems = CartItems.objects.filter(cart=pk)
+    serializer = CartItemsSerializer(cartitems, many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listHelpDeskbyUser(request, pk):
+    helpreq = HelpDesk.objects.filter(user=pk)
+    serializer = HelpDeskSerializer(helpreq, many=True)
 
     return Response(serializer.data)
 
@@ -229,11 +353,13 @@ class CustomerViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
     # authentication_classes = (TokenAuthentication, )
 
+
 @api_view(['GET'])
 def getVendorByUserID(reqeust, pk):
     vendor = Vendor.objects.get(created_by=pk)
     serializer = VendorSerializer(vendor, many=False)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def getServiceByVendorID(request, pk):
@@ -245,6 +371,7 @@ def getServiceByVendorID(request, pk):
         message = {'detail': 'service not exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def getVendorHelpByID(request, pk):
     try:
@@ -255,15 +382,17 @@ def getVendorHelpByID(request, pk):
         message = {'detail': 'vendor helplist is empty'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
-def getReceiverHelpByID(request, pk):
+def getVendorDByVID(request, pk):
     try:
-        helps = HelpDesk.objects.all().filter(receiver=pk)
-        serializer = HelpDeskSerializer(helps, many=True)
+        vendor = Vendor.objects.get(vendorID=pk)
+        serializer = VendorSerializer(vendor, many=False)
         return Response(serializer.data)
     except:
-        message = {'detail': 'receiver helplist is empty'}
+        message = {'detail': 'vendor not found'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
@@ -315,6 +444,13 @@ class CartViewSet(viewsets.ModelViewSet):
     # authentication_classes = (TokenAuthentication, )
 
 
+class CartItemsViewSet(viewsets.ModelViewSet):
+    queryset = CartItems.objects.all()
+    serializer_class = CartItemsSerializer
+    permission_classes = [IsAuthenticated]
+    # authentication_classes = (TokenAuthentication, )
+
+
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
@@ -329,6 +465,13 @@ class ServicesViewSet(viewsets.ModelViewSet):
     # authentication_classes = (TokenAuthentication, )
 
 
+@api_view(['GET'])
+def getSeatByID(reqeust, pk):
+    seat = Seat.objects.get(seatID=pk)
+    serializer = SeatSerializer(seat, many=False)
+    return Response(serializer.data)
+
+
 class SeatViewSet(viewsets.ModelViewSet):
     queryset = Seat.objects.all()
     serializer_class = SeatSerializer
@@ -339,4 +482,3 @@ class SeatViewSet(viewsets.ModelViewSet):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = [IsAuthenticated]
