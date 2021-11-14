@@ -96,7 +96,7 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
     }
 }
 
-export const vendorList = async(dispatch) => {
+export const vendorList = () => async(dispatch) => {
     try {
         dispatch({type: actions.VENDOR_LIST_REQUEST})
 
@@ -107,9 +107,12 @@ export const vendorList = async(dispatch) => {
             payload: data
         })
 
-    } catch (e) {
+    } catch (error) {
         dispatch({
-            type: actions.VENDOR_LIST_FAIL
+            type: actions.VENDOR_LIST_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
         })
     }
 }
@@ -897,4 +900,58 @@ export const removeItem = (cartItemID) => async (dispatch, getState) => {
         })
     }
     
+}
+
+export const getTickets = () => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.TICKET_LIST_REQUEST
+        })
+    
+        const {
+            userLogin: {userInfo},
+            locationList: {locations},
+            vendorList: {vendorInfo},
+            getAllRoutes: {route}
+        } = getState()
+
+        let tickets = []
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+    
+        let { data } = await axios.get(
+            `http://localhost:8000/api/ticket/`,
+            config
+        )
+
+        for (var i in data){
+            if (data[i].ownBy == userInfo.userID) {
+                tickets.push(data[i])
+            }
+        }
+
+        let releventdata = {tickets, locations, vendorInfo, route}
+        
+        data = releventdata
+
+        console.log(data)
+
+        dispatch({
+            type: actions.TICKET_LIST_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.TICKET_LIST_FAILURE,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
 }

@@ -101,6 +101,10 @@ function Top() {
         history.push('/profile')
     }
 
+    const handleClickAC = (event) => {
+        history.push('/activities')
+    }
+
     const handleCloseA = () => {
       setAnchorElA(null);
     };
@@ -160,7 +164,7 @@ function Top() {
                                 </Button>
                                 <Menu id="account" MenuListProps={{'aria-labelledby': 'account',}} anchorEl={anchorElA} open={openA} onClose={handleCloseA} TransitionComponent={Fade}>
                                     <MenuItem onClick={handleClickVP}>View Profile</MenuItem>
-                                    <MenuItem onClick={handleCloseA}>Activities</MenuItem>
+                                    <MenuItem onClick={handleClickAC}>Activities</MenuItem>
                                     <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
                                 </Menu>
                             </div>
