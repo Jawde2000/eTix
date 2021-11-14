@@ -150,9 +150,10 @@ export const listServicesData = () => async (dispatch, getState) => {
         }
 
         let Items = []
-        for(let i of result){
-            let I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.data.cartID}/`, config);
-            Items.push(I)
+
+        for(let x of result){
+            let r2 = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${x.data.cartID}/`, config);
+            Items.push(r2);
         }
 
         console.log(Items);
@@ -161,12 +162,12 @@ export const listServicesData = () => async (dispatch, getState) => {
 
         for(let i of data){
             let total = 0.00;
-            for(let j of Items){ 
-                if(j.data[0].service === i.serviceID){
-                    for(let x of result){              
-                        total +=  parseFloat(x.data.cartTotal)
+            for(let x of Items){
+                x.data.map((d) => { 
+                   if(d.service === i.serviceID){
+                       total +=  parseFloat(d.seat_price); 
                     }
-                }
+                })             
             }
             payment.push(total)
         }
@@ -183,6 +184,9 @@ export const listServicesData = () => async (dispatch, getState) => {
 
         console.log(data)
 
+        data = data.filter((item) => {
+            return item.vendor === userInfo.vendorInfo.vendorID;
+        })
 
         dispatch({
             type: SERVICE_LIST_DATAGENERATION_SUCCESS,

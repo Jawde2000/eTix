@@ -87,13 +87,7 @@ const headCells = [
         id: 'VendorNett',
         numeric: true,
         disablePadding: true,
-        label: 'Net income (Vendor) (MYR)',
-    },
-    {
-        id: 'eTixNett',
-        numeric: true,
-        disablePadding: true,
-        label: 'Net Income (eTix) (MYR)',
+        label: 'Net income (MYR)',
     },
     {
         id: 'tax',
@@ -403,7 +397,6 @@ const DataGenerationService = () =>{
                                         <TableCell align="center">{row.route}</TableCell>
                                         <TableCell align="cemter">{row.serviceStartDate}</TableCell>
                                         <TableCell align="center">{row.VendorNett}</TableCell>
-                                        <TableCell align="center">{row.eTixNett}</TableCell>
                                         <TableCell align="center">{row.tax}</TableCell>
                                         </TableRow>
                                     );

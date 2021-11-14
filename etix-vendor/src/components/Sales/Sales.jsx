@@ -78,7 +78,9 @@ function Sales() {
     useEffect(() => {
         if(updatePayment){
             for(let i of updatePayment){
-                totalAmount += parseFloat(i.cartDetails.cartTotal);
+                i.cartItems.map((d) => {
+                    totalAmount += parseFloat(d.seat_price)
+                });
             }
             setTotal(totalAmount.toFixed(2));
         }
@@ -170,21 +172,7 @@ function Sales() {
                     </Grid>
                 </Grid>
                 <Grid item>
-                    <Grid container direction="row" justifyContent="center" alignItems="center" spacing={4}>
-                        <Grid item><AccountBalanceIcon sx={{width: '75px', height: '75px'}}></AccountBalanceIcon></Grid>
-                        <Grid item><Grid container direction="column" justifyContent="center" alignItems="flex-start">
-                            <Grid item>
-                                <Typography variant="h5">Net income</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="h3">RM {nettIncome}</Typography>
-                            </Grid>
-                        </Grid></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
+                    <Grid container direction="row" justifyContent="center" alignItems="center" spacing={4}>                    
                         <Grid item>
                             <Grid container direction="column" justifyContent="center" alignItems="center" className={classes.dgen}>
                                 <Grid item>
@@ -199,8 +187,6 @@ function Sales() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item></Grid>
-                <Grid item></Grid>
             </Grid>
             </Container>
         </Box>
