@@ -43,6 +43,8 @@ export const listPayment = () => async (dispatch, getState) => {
             return item.paymentStatus === "CP"
         })
 
+        console.log(data);
+
         let result = []
 
         for(let i of data){
@@ -83,7 +85,6 @@ export const listPayment = () => async (dispatch, getState) => {
 
         console.log(data)
 
-        
         dispatch({
             type: PAYMENT_LIST_SUCCESS,
             payload: data
@@ -144,27 +145,28 @@ export const listServicesData = () => async (dispatch, getState) => {
             result.push(r)
         }
 
-        let Items = []
-        for(let i of result){
-            let I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.data.cartID}/`, config);
-            Items.push(I)
+        let result2 = []
+
+        for(let x of result){
+            let r2 = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${x.data.cartID}/`, config);
+            result2.push(r2);
         }
 
-        console.log(Items);
-        console.log(data);
-        console.log(result);
+        console.log(result2);
 
         for(let i of data){
             let total = 0.00;
-            for(let x of result){
-                for(let j of Items){
-                    if(j.data[0].service === i.serviceID){
-                        total +=  parseFloat(x.data.cartTotal)
+            for(let x of result2){
+                x.data.map((d) => { 
+                   if(d.service === i.serviceID){
+                       total +=  parseFloat(d.seat_price); 
                     }
-                }
+                })             
             }
             payment.push(total)
         }
+
+        console.log(payment);
 
         data = data.map((item, index)=> ({
             ...item,
