@@ -48,17 +48,33 @@ export const listPayment = () => async (dispatch, getState) => {
         for(let i of data){
             let r = await axios.get(`http://127.0.0.1:8000/api/cart/${i.cart}/`, config);
             result.push(r)
-        }
+        } 
         
         data = data.map((item, index) => (
         {
             ...item,
             cartDetails: result[index].data
         }))
+        
+        console.log(result);
+
+        let Items = []
+        for(let i of data){
+            var I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.cartDetails.cartID}/`, config);
+            Items.push(I)
+        }
+
+        data = data.map((item, index) => (
+        {
+            ...item, 
+            cartItems: Items[index].data
+        }))
+
+        console.log(data);
 
         let result2 = []
         for(let i of data){
-            let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartDetails.service}/`, config);
+            let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartItems[0].service}/`, config);
             result2.push(l);
         }
 
@@ -67,11 +83,11 @@ export const listPayment = () => async (dispatch, getState) => {
             serviceDetails: result2[index].data
         }))
 
-        data = data.filter((item) => {
-            return item.serviceDetails.vendor === userInfo.vendorInfo.vendorID
-        })
-
         console.log(data);
+
+        data = data.filter((item) => {
+            return item.serviceDetails.vendor === userInfo.vendorInfo.vendorID;
+        })
         
         dispatch({
             type: PAYMENT_LIST_SUCCESS,
@@ -133,15 +149,29 @@ export const listServicesData = () => async (dispatch, getState) => {
             result.push(r)
         }
 
+        let Items = []
+        for(let i of result){
+            let I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.data.cartID}/`, config);
+            Items.push(I)
+        }
+
+        console.log(Items);
+        console.log(data);
+        console.log(result);
+
         for(let i of data){
             let total = 0.00;
-            for(let x of result){
-                if(x.data.service === i.serviceID){
-                    total +=  parseFloat(x.data.cartTotal)
+            for(let j of Items){ 
+                if(j.data[0].service === i.serviceID){
+                    for(let x of result){              
+                        total +=  parseFloat(x.data.cartTotal)
+                    }
                 }
             }
             payment.push(total)
         }
+
+        console.log(payment);
 
         data = data.map((item, index)=> ({
             ...item,
@@ -150,6 +180,8 @@ export const listServicesData = () => async (dispatch, getState) => {
             eTixNett: payment[index] * 1 / 100,
             tax : payment[index] * 6/100,
         }))
+
+        console.log(data)
 
 
         dispatch({
