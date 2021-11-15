@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useHistory, useParams} from 'react-router-dom';
+import {useSelector} from 'react-redux'
 import { Grid, Box, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles';
 import etixLogo from '../globalAssets/eTixLogo.png'
 import QRCode from "react-qr-code";
 import Pdf from "react-to-pdf"
 import images from '../globalAssets/scripts/bgchange';
+import { set } from 'date-fns/esm';
 
 const ref = React.createRef();
 
@@ -38,6 +40,14 @@ const useStyles = makeStyles((theme) => ({
 export const Ticket = ({props}) => {
     const classes = useStyles();
     const { id } = useParams();
+    let history = useHistory();
+
+    const userLogin = useSelector(state => state.userLogin)
+    const ticketList = useSelector(state => state.getTickets)
+    const customerDetails = useSelector(state => state.customerDetails)
+    const {userInfo} = userLogin
+    const {ticketData} = ticketList
+    const {customerInfo} = customerDetails
 
     const [serviceName, setServiceName] = useState("Teyvat Express");
     const [fromLocation, setFromLocation] = useState("Mondstadt");
@@ -49,6 +59,45 @@ export const Ticket = ({props}) => {
     const [time, setTime] = useState("0600");
     const [token, setToken] = useState("omg");
 
+    useEffect(() => {
+        if(!userLogin) {
+            history.push('/')
+        }
+
+        if (ticketData) {
+            for (var i in ticketData.tickets) {
+                if (id == ticketData.tickets[i].ticketID) {
+                    setToken(ticketData.tickets[i].Token)
+                    for (var j in ticketData.route) {
+                        if (ticketData.route[j].serviceID == ticketData.tickets[i].service) {
+                            setServiceName(ticketData.route[j].serviceName)
+                            setDate(ticketData.route[j].serviceStartDate)
+                            setTime(ticketData.route[j].serviceTime)
+
+                            for (var k in ticketData.vendorInfo) {
+                                if (ticketData.vendorInfo[k].vendorID == ticketData.route[j].vendor) {
+                                    setvendorName(ticketData.vendorInfo[k].vendorName)
+                                }
+                            }
+
+                            for (var l in ticketData.locations) {
+                                if (ticketData.locations[l].locationID == ticketData.route[j].locationTo) {
+                                    setToLocation(ticketData.locations[l].locationName)
+                                } else if (ticketData.locations[l].locationID == ticketData.route[j].locationFrom) {
+                                    setFromLocation(ticketData.locations[l].locationName)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (customerInfo) {
+            setfName(customerInfo.customerFirstName)
+            setlName(customerInfo.customerLastName)
+        }
+    }, [ticketData, userLogin])
 
     return (
         <Grid container direction="column" alignItems="center" className={classes.bgg} sx={{paddingTop: '15px'}}>

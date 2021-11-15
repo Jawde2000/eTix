@@ -4,7 +4,7 @@ import { Grid, Box, Typography, TextField, Button, Paper, Stack, Pagination } fr
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
-
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -50,7 +50,8 @@ function TicketActivities() {
     const handleRender = (item) => {
         console.log(item)
         console.log(ticketData)
-        for (var i in ticketData.routes){
+
+        for (var i in ticketData.route){
             if (ticketData.route[i].serviceID == item.service) {
                 routeIndex = i
             }
@@ -62,7 +63,7 @@ function TicketActivities() {
             }
         } 
 
-        for (var k in ticketData.location) {
+        for (var k in ticketData.locations) {
             if (ticketData.locations[k].locationID == ticketData.route[routeIndex].locationFrom){
                 fromIndex = k
                 console.log(`${ticketData.locations[k].locationID} - ${ticketData.route[routeIndex].locationFrom}`)
@@ -76,8 +77,7 @@ function TicketActivities() {
     }
 
     return (
-        <Stack spacing={2}>
-            <Grid container direction="column" justifyContent="center" alignItems="center">
+            <Grid container direction="column" justifyContent="center" alignItems="center" >
                 {ticketData?
                     (listofTickets.map((item, index) => {
                         hasTickets = false
@@ -90,7 +90,7 @@ function TicketActivities() {
                         }
                         return (<>
                                 {hasTickets?
-                                    <Grid item className={classes.whole}>
+                                    <Grid item className={classes.whole} sx={{marginBottom: '24px'}}>
                                         {handleRender(item)}
                                         <Grid container direction="row">
                                             <Grid item xs={3}>
@@ -113,10 +113,7 @@ function TicketActivities() {
                                                 </Grid>
                                                 <Grid item xs={12} container>
                                                     <Grid item xs={12} style={{textAlign: 'right'}} >
-                                                        Service ID
-                                                        <Typography style={{fontSize: 30}} >
-                                                            {`${item.service}`}
-                                                        </Typography>
+                                                        <QrCode2Icon fontSize='large' sx={{fontSize: '75px'}} onClick={(() => history.push(`/ticket/${item.ticketID}`))} />
                                                     </Grid>
                                                     <Grid item xs={12} style={{textAlign: 'right'}} >
                                                         Ticket ID
@@ -129,14 +126,13 @@ function TicketActivities() {
                                                     <Grid item xs={12}>
                                                         <Grid item xs={8}>
                                                             <Typography style={{fontSize: 20}}>
-                                                                {` Departure Date: ${ticketData.route[routeIndex].serviceStartDate}  Departure Time: ${ticketData.route[routeIndex].serviceTime}`}
+                                                                {`To Board: ${ticketData.route[routeIndex].serviceStartDate} / ${ticketData.route[routeIndex].serviceTime}`} 
                                                             </Typography>
                                                         </Grid> 
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                        
                                         {hasTickets = false}
                                     </Grid>
                                     :
@@ -153,9 +149,7 @@ function TicketActivities() {
                     <Grid item><Typography variant="h4">Buy a ticket now!</Typography></Grid>
                 }
             </Grid>
-            
-        </Stack>
-    );
+        );
 }
 
 export default TicketActivities
