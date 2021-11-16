@@ -31,16 +31,19 @@ urlpatterns = [
          name='token_obtain_pair'),
 
     # api path for getting cart items by cartID
-    path('api/cart/retrieve/<str:pk>/', views.getItemsbyCart, name='cart-items-by-id'),
+    path('api/cart/retrieve/<str:pk>/',
+         views.getItemsbyCart, name='cart-items-by-id'),
 
-     # api path for deleting cartitems
-    path('api/cart/item/delete/<str:pk>/', views.removeCartItem, name='cart-items-remove'),
+    # api path for deleting cartitems
+    path('api/cart/item/delete/<str:pk>/',
+         views.removeCartItem, name='cart-items-remove'),
 
     # api path for register new user, method post
     path('api/users/register/', views.registerUser, name='register'),
 
     # payment processing api
-    path('api/payment/success/<str:pk>/', views.paymentProcess, name='payment-process'),
+    path('api/payment/success/<str:pk>/',
+         views.paymentProcess, name='payment-process'),
 
     # api path for get all users, method get (only admin can access)
     path('api/users/', views.getUsers, name="users-profile"),
@@ -98,6 +101,10 @@ urlpatterns = [
     # get helpdesk response by help id
     path('api/help/response/<str:pk>/',
          views.getHelpResponseByHelpID, name="help-detail"),
+
+    # get vendor as receiver by vendorID
+    path('api/user/vendorreceiver/<str:pk>/',
+         views.getReceiverHelpByID, name='receive-vendorid'),
 
     # create helpdesk request
     path('api/help/request/create/<str:pk>/',

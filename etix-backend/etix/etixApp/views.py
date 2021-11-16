@@ -331,6 +331,15 @@ def listHelpDeskbyUser(request, pk):
 
     return Response(serializer.data)
 
+@api_view(['GET'])
+def getReceiverHelpByID(request, pk):
+    try:
+        helps = HelpDesk.objects.all().filter(receiver=pk)
+        serializer = HelpDeskSerializer(helps, many=True)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'receiver helplist is empty'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
