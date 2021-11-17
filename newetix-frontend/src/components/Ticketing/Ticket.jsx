@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
         background: 'linear-gradient(to right, rgb(15, 12, 41), rgb(48, 43, 99), rgb(36, 36, 62))',
         color: 'white',
         padding: '5px',
-        width: '750px',
+        width: '1000px',
         paddingBottom: '15px'
 
     },
@@ -73,12 +73,7 @@ export const Ticket = ({props}) => {
                             setServiceName(ticketData.route[j].serviceName)
                             setDate(ticketData.route[j].serviceStartDate)
                             setTime(ticketData.route[j].serviceTime)
-
-                            for (var k in ticketData.vendorInfo) {
-                                if (ticketData.vendorInfo[k].vendorID == ticketData.route[j].vendor) {
-                                    setvendorName(ticketData.vendorInfo[k].vendorName)
-                                }
-                            }
+                            setvendorName(ticketData.route[j].vendorD.vendorName)
 
                             for (var l in ticketData.locations) {
                                 if (ticketData.locations[l].locationID == ticketData.route[j].locationTo) {
@@ -115,7 +110,7 @@ export const Ticket = ({props}) => {
                                 <Grid item>
                                     <Typography variant="h3">eTix</Typography>
                                 </Grid>
-                                <Grid item>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</Grid>
+                                <Grid item>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</Grid>
                                 <Grid item>
                                     <Typography variant="p" sx={{padding: '7.5%', backgroundColor: 'white', color: 'red', fontWeight: 'bold', borderRadius: '15px'}}>{id}</Typography>
                                 </Grid>
@@ -139,7 +134,7 @@ export const Ticket = ({props}) => {
                 </Box>
             </Grid>
             <Grid item sx={{paddingTop: '15px', paddingBottom: '15px'}}>
-                <Pdf targetRef={ref} options={{orientation: 'landscape', unit: 'in', format: [7.75,3.75]}} filename="ticket.pdf">
+                <Pdf targetRef={ref} options={{orientation: 'landscape', unit: 'in', format: [10.5,3.75]}} filename="ticket.pdf">
                     {({ toPdf }) => <Button variant="contained" onClick={toPdf}>Download PDF</Button>}
                 </Pdf>
             </Grid>

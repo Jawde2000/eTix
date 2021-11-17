@@ -911,7 +911,6 @@ export const getTickets = () => async (dispatch, getState) => {
         const {
             userLogin: {userInfo},
             locationList: {locations},
-            vendorList: {vendorInfo},
             getAllRoutes: {route}
         } = getState()
 
@@ -935,7 +934,7 @@ export const getTickets = () => async (dispatch, getState) => {
             }
         }
 
-        let releventdata = {tickets, locations, vendorInfo, route}
+        let releventdata = {tickets, locations, route}
         
         data = releventdata
 

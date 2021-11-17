@@ -84,7 +84,7 @@ function HomeQuery() {
         <Box className={classes.whole}>
           <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2} className={classes.inside}>
             <Grid item className={classes.title}>
-              <Typography variant="h4">lowest prices, high experiences</Typography>
+              <Typography variant="h4">lowest prices, best experiences</Typography>
             </Grid>
             <Grid item>
               <Grid container direction="row" className={classes.queryFunc}>

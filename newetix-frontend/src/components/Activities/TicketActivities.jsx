@@ -42,7 +42,6 @@ function TicketActivities() {
 
     }, [ticketData, userLogin])
 
-    let vendorIndex = 0
     let routeIndex = 0
     let fromIndex = 0
     let toIndex = 0
@@ -57,28 +56,20 @@ function TicketActivities() {
             }
         }
 
-        for (var j in ticketData.vendorInfo) {
-            if (ticketData.vendorInfo[j].vendorID == ticketData.route[routeIndex].vendor) {
-                vendorIndex = j
-            }
-        } 
-
         for (var k in ticketData.locations) {
             if (ticketData.locations[k].locationID == ticketData.route[routeIndex].locationFrom){
                 fromIndex = k
-                console.log(`${ticketData.locations[k].locationID} - ${ticketData.route[routeIndex].locationFrom}`)
             } 
             
             if (ticketData.locations[k].locationID == ticketData.route[routeIndex].locationTo) {
                 toIndex = k
-                console.log(`${ticketData.locations[k].locationID} - ${ticketData.route[routeIndex].locationTo}`)
             }
         }
     }
 
     return (
             <Grid container direction="column" justifyContent="center" alignItems="center" >
-                {ticketData?
+                {ticketList?
                     (listofTickets.map((item, index) => {
                         hasTickets = false
 
@@ -94,16 +85,26 @@ function TicketActivities() {
                                         {handleRender(item)}
                                         <Grid container direction="row">
                                             <Grid item xs={3}>
-                                                <img 
-                                                    src={`https://etixbucket.s3.amazonaws.com/etix/${ticketData.vendorInfo[vendorIndex].vendorID}.png`}
-                                                    alt={`serviceLogo - ${ticketData.vendorInfo[vendorIndex].vendorName}`}
-                                                    style={{margin: 10, height: '90%', width:'90%',}}
-                                                />
+                                                <Grid container direction="column" justifyContent="flex-start" alignItems="center">
+                                                    <Grid item >
+                                                        <img 
+                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${ticketData.route[routeIndex].vendorD.created_by}.png`}
+                                                            alt={`serviceLogo - ${ticketData.route[routeIndex].vendorD.vendorName}`}
+                                                            style={{margin: 10, height: '90%', width:'90%',}}
+                                                        /> 
+                                                    </Grid>
+                                                    <Grid item>
+                                                        <Typography style={{fontSize: 15, color: 'white'}}>
+                                                            {ticketData.route[routeIndex].vendorD.vendorName}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                                
                                             </Grid>
                                             <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
                                                 <Grid item xs={12} >
                                                     <Typography style={{fontSize: 30}}>
-                                                        {ticketData.vendorInfo[vendorIndex].vendorName}
+                                                        {ticketData.route[routeIndex].serviceName}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={12} >
@@ -115,18 +116,12 @@ function TicketActivities() {
                                                     <Grid item xs={12} style={{textAlign: 'right'}} >
                                                         <QrCode2Icon fontSize='large' sx={{fontSize: '75px'}} onClick={(() => history.push(`/ticket/${item.ticketID}`))} />
                                                     </Grid>
-                                                    <Grid item xs={12} style={{textAlign: 'right'}} >
-                                                        Ticket ID
-                                                        <Typography style={{fontSize: 30}} >
-                                                            {`${item.ticketID}`}
-                                                        </Typography>
-                                                    </Grid>
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <Grid item xs={12}>
                                                         <Grid item xs={8}>
                                                             <Typography style={{fontSize: 20}}>
-                                                                {`To Board: ${ticketData.route[routeIndex].serviceStartDate} / ${ticketData.route[routeIndex].serviceTime}`} 
+                                                                {`To Board: ${ticketData.route[routeIndex].serviceStartDate} / ${ticketData.route[routeIndex].serviceTime}`}
                                                             </Typography>
                                                         </Grid> 
                                                     </Grid>

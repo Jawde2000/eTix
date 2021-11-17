@@ -7,7 +7,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {useDispatch, useSelector} from 'react-redux'
-import { customerDetails, getAllRoutes, logout, viewCartData } from '../../../state/actions/actions';
+import { customerDetails, logout, viewCartData } from '../../../state/actions/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -122,7 +122,6 @@ function Top() {
         if (userInfo){
             setImgSrc("https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".png")
             dispatch(customerDetails())
-            dispatch(getAllRoutes())
             dispatch(viewCartData())
         }
     }, [userInfo])

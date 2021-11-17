@@ -419,7 +419,7 @@ export default function RouteQuery() {
                                                 <Grid item xs={12} container style={{background: 'linear-gradient(to right, rgb(15, 12, 41), rgb(48, 43, 99), rgb(36, 36, 62))', margin: 10}}>
                                                     <Grid item xs={3}>
                                                         <img 
-                                                            src="https://i.pinimg.com/originals/16/53/70/1653702ba566a449348ef2c3010259ce.jpg"
+                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendorD.created_by}.png`}
                                                             alt={`serviceLogo${item.vendor}`}
                                                             style={{margin: 10, maxHeight: 170, maxWidth:250,}}
                                                         />

@@ -48,7 +48,7 @@ function Landing() {
         if(userInfo == null) {
             history.push('/')
         }
-        dispatch(vendorList)
+        dispatch(vendorList())
     },[userInfo])
 
     return (
