@@ -7,7 +7,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {useDispatch, useSelector} from 'react-redux'
-import { customerDetails, getAllRoutes, logout, viewCartData } from '../../../state/actions/actions';
+import { customerDetails, logout, viewCartData } from '../../../state/actions/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -101,6 +101,10 @@ function Top() {
         history.push('/profile')
     }
 
+    const handleClickAC = (event) => {
+        history.push('/activities')
+    }
+
     const handleCloseA = () => {
       setAnchorElA(null);
     };
@@ -118,7 +122,6 @@ function Top() {
         if (userInfo){
             setImgSrc("https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".png")
             dispatch(customerDetails())
-            dispatch(getAllRoutes())
             dispatch(viewCartData())
         }
     }, [userInfo])
@@ -160,7 +163,7 @@ function Top() {
                                 </Button>
                                 <Menu id="account" MenuListProps={{'aria-labelledby': 'account',}} anchorEl={anchorElA} open={openA} onClose={handleCloseA} TransitionComponent={Fade}>
                                     <MenuItem onClick={handleClickVP}>View Profile</MenuItem>
-                                    <MenuItem onClick={handleCloseA}>Activities</MenuItem>
+                                    <MenuItem onClick={handleClickAC}>Activities</MenuItem>
                                     <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
                                 </Menu>
                             </div>

@@ -64,8 +64,6 @@ function CartLanding() {
     const [address, setAddress] = useState(null)
     const [serviceList, setServiceList] = useState(null)
     const [total, setTotal] = useState(0)
-    const [tax, setTax] = useState(0)
-    const [eTix, seteTix] = useState(0)
     const [payment, setPayment] = useState(0)
     const [cartID, setCartID] = useState('')
     const [ready, setReady] = useState(false)
@@ -79,12 +77,8 @@ function CartLanding() {
             setcartItems(cartData)
             for (let i in cartData){
                 totaltemp = parseFloat(cartData[i].seat_price) + parseFloat(totaltemp)
-                taxtemp = (parseFloat(cartData[i].seat_price) * 0.06) + parseFloat(taxtemp)
-                etixtemp = (parseFloat(cartData[i].seat_price) * 0.01) + parseFloat(etixtemp)
             }
-            setTax(parseFloat(taxtemp))
-            seteTix(parseFloat(etixtemp))
-            setTotal((parseFloat(totaltemp) + parseFloat(taxtemp) + parseFloat(etixtemp)).toFixed(2))
+            setTotal((parseFloat(totaltemp)).toFixed(2))
             setCartID(cartData[0].cart)
             setReady(true)
 
@@ -137,7 +131,7 @@ function CartLanding() {
                     intent: "CAPTURE",
                     purchase_units: [
                       {
-                        description: "Your description",
+                        description: "eTix Ticket",
                         amount: {
                           currency_code: "MYR",
                           value: (total),
@@ -155,7 +149,7 @@ function CartLanding() {
               })
               .render(paypal.current);
         }
-    });
+    }, [ready]);
 
     return (
         <Box className={classes.whole}>
@@ -204,16 +198,9 @@ function CartLanding() {
                                 <Grid item>
                                     <Grid container direction='column' justifyContent="center" alignItems="center" spacing={4}>
                                         <Grid item>
-                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>Tax (6%)</Typography>
-                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>RM {tax.toFixed(2)}</Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>Service (1%)</Typography>
-                                            <Typography variant="h6" sx={{color: 'rgb(245, 203, 92)'}}>RM {eTix.toFixed(2)}</Typography>
-                                        </Grid>
-                                        <Grid item>
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>Total</Typography>
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>RM {total}</Typography>
+                                            <Typography variant="h8" sx={{color: 'rgb(245, 203, 92)'}}>Total includes 6% SST <br /> and 1% eTix Charge</Typography>
                                         </Grid>
                                     
                                 
@@ -230,7 +217,7 @@ function CartLanding() {
                                 </Grid>
                                 {address?
                                     <Grid item>
-                                        <div ref={paypal}/>
+                                        <div ref={paypal} sx={{width: '90%'}}/>
                                     </Grid>
                                 :
                                     ''
@@ -249,7 +236,7 @@ function CartLanding() {
                                     <Grid item xs={12} container style={{background: 'linear-gradient(to right, rgb(15, 12, 41), rgb(48, 43, 99), rgb(36, 36, 62))', margin: 10}}>
                                         <Grid item xs={3}>
                                             <img 
-                                                src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendorD.vendorID}.png`}
+                                                src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendorD.created_by}.png`}
                                                 alt={`serviceLogo${item.vendor}`}
                                                 style={{margin: 10, height: 170, width:300,}}
                                             />

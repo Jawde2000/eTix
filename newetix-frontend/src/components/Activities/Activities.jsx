@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
 import { Grid, Box, Typography, TextField, Button } from '@mui/material'
-import HelpIcon from '@mui/icons-material/Help';
-import ComposeForm from './ComposeForm'
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { vendorList } from '../../state/actions/actions'
+import { getTickets, vendorList, getAllRoutes } from '../../state/actions/actions'
+import TicketActivities from './TicketActivities'
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Landing() {
+function Activities() {
     const classes = useStyles();
 
     const userLogin = useSelector(state => state.userLogin)
@@ -45,10 +45,10 @@ function Landing() {
     let history = useHistory()
 
     useEffect(() => {
-        if(userInfo == null) {
+        if(!userInfo) {
             history.push('/')
         }
-        dispatch(vendorList())
+        dispatch(getTickets())
     },[userInfo])
 
     return (
@@ -59,43 +59,37 @@ function Landing() {
                         <Grid item>
                             <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                                 <Grid item>
-                                    <HelpIcon fontSize='large' sx={{fontSize: '75px'}}></HelpIcon>
+                                    <LocalActivityIcon fontSize='large' sx={{fontSize: '75px'}}></LocalActivityIcon>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="h4">Activities</Typography>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item className={`${classes.sect} ${classes.articles}`}>
+                            <Grid container direction="column" justifyContent="flex-start" alignItems="center" sx={{paddingTop:"25px"}} spacing={4}>
+                                <Grid item>
+                                    <Typography variant="h5">All</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="h5">To Board</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="h5">Completed<br /><br /><br /><br /><br /><br /><br /><br /></Typography>
                                 </Grid>
                                 <Grid item>
                                     <Typography variant="h4">Help Center</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item className={`${classes.sect} ${classes.articles}`}>
-                            <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
-                                <Grid item>
-                                    <Typography variant="h4">Articles</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">How to purchase?</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">How to use eTix?</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">Card payments</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">Crypto payments</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">Digital tickets</Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={8}>
-                    <ComposeForm />
+                <Grid item xs={8} sx={{marginTop: '25px'}}>
+                    <TicketActivities />
                 </Grid>
             </Grid>
         </Box>
     );
 }
 
-export default Landing
+export default Activities
