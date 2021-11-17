@@ -1,14 +1,18 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@material-ui/styles';
-import { Grid, Box, Typography, TextField, Button, Paper } from '@material-ui/core';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Grid, Box, Typography, TextField, Container} from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import DateRangePicker from '@mui/lab/DateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { listPayment } from '../../actions/salesActions/salesActions';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -18,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
         fontFamily: ['rubik', 'sans-serif'].join(','),
+        minHeight: 600,
+        padding: 50,
+        margin: 'auto'
     },
     icons: {
         width: '120px',
@@ -37,15 +44,95 @@ function Sales() {
     const classes = useStyles();
     const [value, setValue] = React.useState([null, null]);
 
+    const dispatch = useDispatch();
+    
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+    
+    const paymentList = useSelector(state => state.paymentList)
+    const {payments, loading: loadpayment} = paymentList
+
+    let history = useHistory()
+
+    var totalAmount = 0.00;
+    const [total, setTotal] = useState();
+    const [vendorTotal, setVendorTotal] = useState();
+    const [nettIncome, setNettIncome] = useState();
+    const [serviceTax, setServiceTax] = useState();
+    const [updatePayment, setUpdatePayment] = useState();
+    const [filterData, setFilterData] = useState();
+
+    useEffect(() => {
+        if(userInfo){
+            dispatch(listPayment());
+        }
+        else{
+            history.push('/');
+        }
+    }, [userInfo])
+
+    useEffect(() => {
+        if(payments){
+            setUpdatePayment(payments)
+        }
+    }, [payments])
+
+    useEffect(() => {
+        if(updatePayment){
+            for(let i of updatePayment){
+                i.cartItems.map((d) => {
+                    totalAmount += parseFloat(d.seat_price)
+                });
+            }
+            setTotal(totalAmount.toFixed(2));
+        }
+    }, [updatePayment])
+
+    useEffect(() => {
+        if(total){
+            console.log(total);
+            let vendorInc = total - (total*6/100) - (total*1/100);
+            let tax = total * 6 / 100;
+            let income = total * 1 / 100;
+            console.log(vendorInc)
+            setVendorTotal(vendorInc.toFixed(2))
+            setServiceTax(tax.toFixed(2))
+            setNettIncome(income.toFixed(2))
+        }
+    }, [total])
+
+    useEffect(() => {
+        if(value){
+            if(updatePayment){
+                const filteredData = updatePayment.filter(data => new Date(data.paymentDateTime) >= new Date(value[0]) && new Date(data.paymentDateTime) <= new Date(value[1]))
+                setFilterData(filteredData);
+                console.log(filteredData);
+            }
+        }
+    }, [value])
+
+    useEffect(() => {
+        if(filterData){
+            let totalAM = 0.00;
+            for(let i of filterData){
+                totalAM +=parseFloat(i.cartDetails.cartTotal);
+            }
+            setTotal(totalAM.toFixed(2));
+        }
+    }, [filterData])
+
+
+
     return (
         <Box className={classes.whole}>
+            <Container style={{margin:"auto"}}>
             <Grid container direction="column" justifyContent="center" alignItems="center" spacing={4}>
                 <Grid item>
                     <Typography variant="p">Configure billing cycle</Typography>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DateRangePicker
                             startText="Starting"
-                            endText="Ending"
+                            endText="Ending Before"
                             value={value}
                             onChange={(newValue) => {
                             setValue(newValue);
@@ -67,10 +154,10 @@ function Sales() {
                         <Grid item><MonetizationOnIcon sx={{width: '75px', height: '75px'}}></MonetizationOnIcon></Grid>
                         <Grid item><Grid container direction="column" justifyContent="center" alignItems="flex-start">
                             <Grid item>
-                                <Typography variant="h5">Revenue from Vendors</Typography>
+                                <Typography variant="h5">Total Revenue</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="h3">RM 10000.00</Typography>
+                                <Typography variant="h3">RM {vendorTotal}</Typography>
                             </Grid>
                         </Grid></Grid>
                         <Grid item></Grid>
@@ -81,43 +168,37 @@ function Sales() {
                                 <Typography variant="h5">Service Taxation (SST 6%)</Typography>
                             </Grid>
                             <Grid item>
-                                <Typography variant="h3">RM 4000.00</Typography>
+                                <Typography variant="h3">RM {serviceTax}</Typography>
                             </Grid>
                         </Grid></Grid>
                     </Grid>
                 </Grid>
                 <Grid item>
-                    <Grid container direction="row" justifyContent="center" alignItems="center" spacing={4}>
-                        <Grid item><AccountBalanceIcon sx={{width: '75px', height: '75px'}}></AccountBalanceIcon></Grid>
-                        <Grid item><Grid container direction="column" justifyContent="center" alignItems="flex-start">
-                            <Grid item>
-                                <Typography variant="h5">Net income</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="h3">RM 7900.00</Typography>
-                            </Grid>
-                        </Grid></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
-                        <Grid item></Grid>
+                    <Grid container direction="row" justifyContent="center" alignItems="center" spacing={4}>                    
                         <Grid item>
                             <Grid container direction="column" justifyContent="center" alignItems="center" className={classes.dgen}>
                                 <Grid item>
                                     <Typography variant="h5">Data Generation</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h6">by Service</Typography>
-                                    <Typography variant="h6">by Customer</Typography>
+                                    <Link to="/menu/sales/datageneration" style={{color: '#66FCF1', textDecoration: "none"}}>
+                                        <Typography variant="h6">View Data</Typography>
+                                    </Link>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item></Grid>
-                <Grid item></Grid>
             </Grid>
+            <Grid>
+                {
+                  loadpayment? 
+                  <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                  <CircularProgress  style={{color: '#F5CB5C'}}/>
+                  </Backdrop>:null
+                }
+               </Grid>
+            </Container>
         </Box>
     );
 }

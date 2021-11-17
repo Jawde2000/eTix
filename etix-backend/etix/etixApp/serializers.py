@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location, CartItems
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.views import Token
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -50,10 +50,11 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
                   'vendorName', 'vendorBankName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
 
-class VendorSerializerNameOnly(serializers.ModelSerializer):
+
+class VendorSerializerStripped(serializers.ModelSerializer):
     class Meta:
         model = Vendor
-        fields = ['vendorName']
+        fields = ['vendorID', 'vendorName']
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -65,7 +66,6 @@ class AdminSerializer(serializers.ModelSerializer):
         admin = Admin.objects.create_user(**validated_data)
         Token.objects.create(admin=admin)
         return admin
-
 
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
@@ -91,6 +91,12 @@ class CartSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CartItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItems
+        fields = '__all__'
+
+
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
@@ -108,10 +114,12 @@ class ServicesSerializer(serializers.ModelSerializer):
         model = Services
         fields = '__all__'
 
+
 class LocationSerializerIDonly(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = ['locationID']
+
 
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:

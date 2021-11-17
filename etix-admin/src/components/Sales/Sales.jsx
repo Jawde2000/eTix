@@ -78,7 +78,9 @@ function Sales() {
     useEffect(() => {
         if(updatePayment){
             for(let i of updatePayment){
-                totalAmount += parseFloat(i.cartDetails.cartTotal);
+                i.cartItems.map((d) => {
+                    totalAmount += parseFloat(d.seat_price)
+                });
             }
             setTotal(totalAmount.toFixed(2));
         }
@@ -86,6 +88,7 @@ function Sales() {
 
     useEffect(() => {
         if(total){
+            console.log(total);
             let vendorInc = total- (total*6/100) - (total*1/100);
             let tax = total * 6 / 100;
             let income = total * 1 / 100;

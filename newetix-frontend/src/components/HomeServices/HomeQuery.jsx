@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { Grid, Typography, TextField, Box, Button, Autocomplete } from '@mui/material';
 import DateRangePicker from '@mui/lab/DateRangePicker';
@@ -7,8 +8,11 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { makeStyles } from '@mui/styles';
 
 import SearchIcon from '@mui/icons-material/Search';
-import Locations from './../globalAssets/scripts/strings';
+// import Locations from './../globalAssets/scripts/strings';
 import images from '../globalAssets/scripts/bgchange';
+import { useDispatch, useSelector } from 'react-redux';
+import { getLocations, findRoute, dateData } from '../../state/actions/actions';
+
 
 const homeStyles = makeStyles((theme) => ({
   whole: {
@@ -25,7 +29,7 @@ const homeStyles = makeStyles((theme) => ({
   },
   title: {
     paddingTop: '5%',
-    paddingBottom: '2.5%'
+    paddingBottom: '2.5%',
   },
   queryFunc: {
     backgroundColor: 'rgba(247, 213, 124, 0.9)',
@@ -36,12 +40,42 @@ const homeStyles = makeStyles((theme) => ({
 
 function HomeQuery() {
   const classes = homeStyles();
+  const dispatch = useDispatch()
 
-  const [value, setValue] = React.useState([null, null]);
+  const locationList = useSelector(state => state.locationList)
+  const {locations} = locationList
+
+  const [to, setTo] = useState("");
+  const [from, setFrom] = useState("");
+  const [departureDate, setDepartureDate] = useState(null)
+
+  useEffect(() => {
+      dispatch(getLocations())
+  }, [])
+
+
+  var history = useHistory();
+
+  async function process(from, to){
+      dispatch(findRoute(from, to, departureDate))
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log('You clicked submit.');
+    if(departureDate === null){
+      alert("Please pick a date of departure");
+      return;
+    }
+    process(from, to)
+    history.push(`/routes/${from}/${to}`);
+  }
+
+  const handleFromInputChange = (event, value) =>  {
+    setFrom(value);
+  }
+
+  const handleToInputChange = (event, value) => {
+    setTo(value)
   }
   
   return (
@@ -56,22 +90,28 @@ function HomeQuery() {
                   <Grid container direction="column" justifyContent="flex-start" alignItems="baseline" spacing={1}>
                     <Grid item>
                       <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={Locations}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => <TextField {...params} label="From" />}
+                        id="fromCombobox"
+                        options={locations}
+                        getOptionLabel={(option) => option.locationName}
+                        style={{width:300}}
+                        onInputChange={handleFromInputChange}
+                        renderInput={params => (
+                          <TextField {...params} label="From" variant="outlined" />
+                        )}
                       />
                     </Grid>
                     <Grid item>
                       <Grid container direction="row" alignItems="center" spacing={6}>
                           <Grid item>
                             <Autocomplete
-                              disablePortal
-                              id="combo-box-demo"
-                              options={Locations}
-                              sx={{ width: 300 }}
-                              renderInput={(params) => <TextField {...params} label="To" />}
+                              id="toCombobox"
+                              options={locations}
+                              getOptionLabel={(option) => option.locationName}
+                              style={{width:300}}
+                              onInputChange={handleToInputChange}
+                              renderInput={params => (
+                                <TextField {...params} label="To" variant="outlined" />
+                              )}
                             />
                           </Grid>
                           <Grid item>
@@ -82,23 +122,19 @@ function HomeQuery() {
                     <Grid item>
                       <Grid container direction="row" alignItems="center" spacing={1}>
                         <Grid item>
-                          <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateRangePicker
-                              startText="Departure Date"
-                              endText="Return Date"
-                              value={value}
-                              onChange={(newValue) => {
-                                setValue(newValue);
-                              }}
-                              renderInput={(startProps, endProps) => (
-                                <React.Fragment>
-                                  <TextField {...startProps} />
-                                  <Box sx={{ mx: 2 }}> to </Box>
-                                  <TextField {...endProps} />
-                                </React.Fragment>
-                              )}
-                            />
-                          </LocalizationProvider>
+                          <TextField 
+                            id="departD" 
+                            variant="outlined"
+                            onChange={(e) => setDepartureDate(e.target.value)}
+                            defaultValue={departureDate}
+                            margin="dense"
+                            type="date"
+                            required
+                            size="small"
+                            InputProps={{
+                              style: {fontFamily: ['rubik', 'sans-serif'].join(','),}                        
+                            }}                                             
+                          />                       
                         </Grid>
                       </Grid>
                     </Grid>

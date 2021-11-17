@@ -1,6 +1,8 @@
-import React from 'react';
-import { AppBar, Grid, IconButton, Link, Typography } from '@mui/material';
+import React, {useState, useEffect} from 'react';
+import { AppBar, Grid, IconButton, Link, Typography, Badge } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import {useHistory} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux'
 
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -50,6 +52,23 @@ const useStyles = makeStyles((theme) => ({
 
 function Nav() {
     const defaultStyle = useStyles();
+    let history = useHistory()
+    const cartD = useSelector(state => state.viewCartData)
+    const {cartData} = cartD
+    const [cartItemPax, setcartItemPax] = useState("");
+    let cartpax = 0;
+
+    useEffect(() => {
+        for (let i in cartData){
+            cartpax = cartpax + 1
+        }
+        
+        setcartItemPax(cartpax)
+    }, [cartData])
+
+    function cartOnClick() {
+        history.push('/cart')
+    }
 
     return (
         <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -71,7 +90,7 @@ function Nav() {
                     </Grid>
                 </Grid>
                 <Grid item className={defaultStyle.auxContainer}>
-                    <IconButton><ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit"></ShoppingCartIcon></IconButton>
+                    <IconButton><ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick}></ShoppingCartIcon></IconButton>
                 </Grid>
             </Grid>
         </AppBar>

@@ -36,7 +36,7 @@ function Login() {
                           <Grid xs={6}>
                           
                           <Typography style={{fontSize: 45, fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: "bold",color: 'white', textShadow: '1px 1px 2px black'}}>
-                              Once you have eTix, an ultimate journey is ready 
+                              Once you own eTix, an ultimate journey is ready 
                           </Typography>
                           
                           </Grid>

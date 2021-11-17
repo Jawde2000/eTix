@@ -9,6 +9,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import '../Header/header.css';
 import {useDispatch, useSelector} from 'react-redux'
 import {useHistory} from 'react-router-dom';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -93,7 +94,7 @@ function VendorMenu() {
                 </Link>
               </Grid>
               <Grid item xs={4} sm={4} md={4} >
-                <Link href="/menu/helpdesk" style={{textDecoration: "none"}}>
+                <Link href="/menu/helpmanage" style={{textDecoration: "none"}}>
                 <Button style={{maxWidth: '350px', maxHeight: '350px', minWidth: '350px', minHeight: '350px'}}>
                   <Grid xs={12}>
                   <Grid xs={12}>
@@ -127,6 +128,20 @@ function VendorMenu() {
                   </Grid>
                 </Button>
                 </Link>
+              </Grid>
+            </Grid>
+            <Grid s={1} item direction="row" display="flex" spacing={20}>
+              <Grid item xs={4} sm={4} md={4} >
+              </Grid>
+              <Grid item xs={4} sm={4} md={12} >
+                <Link href="/menu/ticket" style={{textDecoration: "none"}}>
+                <Button >
+                  <ConfirmationNumberIcon style={{fontSize: 50, color: "black"}}/>
+                  <Typography style={{fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: "bold", fontSize: 35, color: "black"}}>Ticket</Typography>
+                </Button>
+                </Link>
+              </Grid>
+              <Grid item xs={4} sm={4} md={4} >
               </Grid>
             </Grid>
           </Grid>

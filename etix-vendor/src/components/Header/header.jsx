@@ -1,29 +1,26 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
-import { makeStyles, withStyles} from '@mui/styles';
-import React from 'react';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container, useIsFocusVisible} from '@mui/material';
+import { makeStyles} from '@mui/styles';
+import React, {useEffect, useState} from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from '@material-ui/icons/Notifications';
-// import HelpIcon from '@material-ui/icons/Help';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import LogoutIcon from '@mui/icons-material/Logout';
+// import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useHistory } from "react-router-dom";
-import '../Header/header.css';
 import {useDispatch, useSelector} from 'react-redux'
-import { logout } from '../../actions/userActions/userActions'
+import { logout, getUser } from '../../actions/userActions/userActions'
+import Avatar from '@mui/material/Avatar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
     minHeight: 30,
     background: 'linear-gradient(to right, #0f0c29, #302b63, #24243e)',
     position: 'relative',
+   
     fontFamily: ['rubik', 'sans-serif'].join(','),
     boxShadow: 'none'
   },
@@ -41,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 13,
     fontWeight: 'bold',
     fontFamily: ['rubik', 'sans-serif'].join(','),
+    whiteSpace: "nowrap"
 },
 LoginButton: {
     float: 'right',
@@ -80,28 +78,58 @@ menu: {
   
 }));
 
-function Header() {
+const Header = (props) => {
   const defaultStyle = useStyles();
-  
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openD, setOpen] = useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleClickOpenD = () => {
+    setOpen(true);
+  };
+
+  const handleCloseD = () => {
+    setOpen(false);
+  };
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const dispatch = useDispatch()
+
+  const dispatch = useDispatch();
 
   let history = useHistory();
 
   function handleLogOut() {
+    setAnchorEl(null);
     dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
 
+  function handleProfile() {
+    history.push("/menu/profile"); // whichever component you want it to route to
+    handleClose();
+  }
+
   const userLogin = useSelector(state => state.userLogin)
   const { userInfo} = userLogin
+
+  const userDetail = useSelector(state => state.userDetail)
+  const {userD} = userDetail
+
+  const [name, setName] = useState(null);
+  const [id, setID] = useState(null);
+
+  useEffect(() => {
+    setName(userInfo? userInfo.username:null);
+    setID(userInfo? userInfo.userID:null);
+  }, [userInfo])
 
 
   return (
@@ -113,16 +141,18 @@ function Header() {
                 <Grid item sm={5} md={7}>
                 <div>
                 {/*<Tooltip title="User">*/}
+                <Container>
                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex"
                 aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
+                onClick={userInfo? handleClick: handleClickOpenD}
                 >
-                   <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
-                   <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','), whiteSpace: "nowrap"}}>
-                   {userInfo? userInfo.username : null}  
+                   {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + id + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
+                   <Typography className={defaultStyle.customizeText}> 
+                   {userInfo? name:"User"}
                    </Typography>
                 </Button>
-                <Menu
+                </Container>
+                {anchorEl? (<Menu
                 id="account"
                 MenuListProps={{
                   'aria-labelledby': 'fade-button',
@@ -132,10 +162,32 @@ function Header() {
                 onClose={handleClose}
                 TransitionComponent={Fade}
                 >
-                <MenuItem onClick={handleClose} >Profile</MenuItem>
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
-                </Menu>
+                </Menu>)
+                :
+                (<Dialog
+                fullScreen={fullScreen}
+                open={openD}
+                onClose={handleCloseD}
+                aria-labelledby="responsive-dialog-title"
+                >
+                <DialogTitle id="responsive-dialog-title">
+                  {"Notification"}
+                </DialogTitle>
+                <DialogContent>
+                <DialogContentText>
+                  Please log In to use this action
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleCloseD} autoFocus>
+                  OK
+                </Button>
+                </DialogActions>
+                </Dialog>)
+                }
                 </div>
                 </Grid>
                 </Grid>
