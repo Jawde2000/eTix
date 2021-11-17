@@ -67,7 +67,6 @@ class AdminSerializer(serializers.ModelSerializer):
         Token.objects.create(admin=admin)
         return admin
 
-
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket

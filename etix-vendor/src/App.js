@@ -22,6 +22,7 @@ import ServicesManagement from './components/ServiceManagement/ServicesManagemen
 import HelpManagement from './components/HelpMan/HelpManagement';
 import AddComment from './components/Helpdesk/AddComment';
 import AddService from './components/ServiceManagement/AddService';
+import TicketManagement from './components/TicketManagement/TicketManagement';
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
                 <Route exact path="/menu/servicemanagement/:id" component={Service} />
                 <Route exact path="/menu/sales" component={Sales} />
                 <Route exact path="/menu/sales/datageneration" component={DataGenerationService} />
+                <Route exact path="/menu/ticket" component={TicketManagement} />
               </Switch>
             <Footer />    
           </BrowserRouter>

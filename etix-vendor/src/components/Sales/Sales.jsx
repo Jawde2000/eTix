@@ -11,6 +11,8 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { listPayment } from '../../actions/salesActions/salesActions';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -48,7 +50,7 @@ function Sales() {
     const {userInfo} = userLogin
     
     const paymentList = useSelector(state => state.paymentList)
-    const {payments} = paymentList
+    const {payments, loading: loadpayment} = paymentList
 
     let history = useHistory()
 
@@ -188,6 +190,14 @@ function Sales() {
                     </Grid>
                 </Grid>
             </Grid>
+            <Grid>
+                {
+                  loadpayment? 
+                  <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                  <CircularProgress  style={{color: '#F5CB5C'}}/>
+                  </Backdrop>:null
+                }
+               </Grid>
             </Container>
         </Box>
     );

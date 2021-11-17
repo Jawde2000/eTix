@@ -61,8 +61,6 @@ export const listHelp = () => async (dispatch, getState) => {
             }
         }
 
-        console.log(userInfo.vendorInfo.vendorID)
-
         var { data } = await axios.get(
             'http://127.0.0.1:8000/api/user/vendorreceiver/' + userInfo.vendorInfo.vendorID + '/',
              config
@@ -74,8 +72,6 @@ export const listHelp = () => async (dispatch, getState) => {
         )
 
         var dataMerged = [...data, ...data2.data];
-
-        console.log(dataMerged);
 
         var userID = dataMerged?.map(help => {
             return help.user
@@ -94,8 +90,6 @@ export const listHelp = () => async (dispatch, getState) => {
             i.username = username[j]
             j = j + 1
         }
-
-        console.log(dataMerged)
 
         dispatch({
             type: HELP_LIST_SUCCESS,
@@ -163,8 +157,6 @@ export const getHelp = (id) => async (dispatch, getState) => {
             }
         }
 
-        console.log(data);
-
         dispatch({
             type: HELP_DETAIL_SUCCESS,
             payload: data
@@ -186,8 +178,6 @@ export const getHelpUser = (helps) => async (dispatch, getState) => {
         dispatch({
             type:HELP_USER_REQUEST
         })
-
-        console.log(helps)
 
         const {
             userLogin: {userInfo},
@@ -213,26 +203,12 @@ export const getHelpUser = (helps) => async (dispatch, getState) => {
             return help.user
         })
 
-        console.log(userID[0])
-
-        // var data = await axios.get(
-        //    `http://127.0.0.1:8000/api/user/${userID[0]}/`, config
-        // )
-
-        // console.log(data)
-
-        // var data = await userID?.map(idd => {     
-        //     return {Info: axios.get(`http://127.0.0.1:8000/api/user/${idd}/`, config2)}
-        // })
-
         var username = []
 
         for (let i of userID) {
             let r = await axios.get(`http://127.0.0.1:8000/api/user/${i}/`, config2)
             username.push(r.data.username)
         }
-
-        console.log(username)
 
         // const data = {
         //     ...data,

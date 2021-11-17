@@ -324,6 +324,7 @@ class Ticket(models.Model):
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
     service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
     ownBy = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    used = models.BooleanField(default=False)
     Token = models.TextField(
         default=get_token, unique=True, editable=False, max_length=32)
 
