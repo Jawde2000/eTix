@@ -152,6 +152,7 @@ def getVendorName(request):
         message = {'detail': 'No vendors exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def paymentProcess(request, pk):
@@ -168,7 +169,6 @@ def paymentProcess(request, pk):
 
             ticket.save()
 
-
         payment = Payment.objects.create(
             cart=cart,
             paymentStatus='CP'
@@ -180,6 +180,7 @@ def paymentProcess(request, pk):
     except:
         message = {'detail': 'Unsuccessful'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -245,8 +246,6 @@ def updateCustomer(request, pk):
     customer = Customer.objects.get(created_by=pk)
 
     data = request.data
-    customer.customerFirstName = data['customerFirstName']
-    customer.customerLastName = data['customerLastName']
     customer.customerContact_Number = data['customerContact_Number']
     customer.customerAddress = data['customerAddress']
     customer.customerBirthday = data['customerBirthday']
@@ -314,6 +313,7 @@ def createHelpDesk(request, pk):
 
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getItemsbyCart(request, pk):
@@ -331,6 +331,7 @@ def listHelpDeskbyUser(request, pk):
 
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def getReceiverHelpByID(request, pk):
     try:
@@ -340,6 +341,7 @@ def getReceiverHelpByID(request, pk):
     except:
         message = {'detail': 'receiver helplist is empty'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
