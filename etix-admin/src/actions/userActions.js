@@ -407,6 +407,12 @@ export const updateUser = (user, id) => async (dispatch, getState) => {
             type: USER_UPDATE_SUCCESS,
         })
 
+        data = {
+            ...userInfo,
+            username: user.username,
+            email: user.email,
+        }
+
         dispatch({
             type: USER_LOGIN_SUCCESS,
             payload: data,
@@ -441,6 +447,9 @@ export const updateCustomer = (user, customer, id) => async (dispatch, getState)
                 Authorization: `Bearer ${userInfo.token}`
             }
         }
+
+        console.log(user);
+        console.log(customer);
 
         var { data } = await axios.put(
             `http://127.0.0.1:8000/api/user/update/${id}/`,

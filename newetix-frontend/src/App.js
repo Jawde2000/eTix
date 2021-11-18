@@ -23,7 +23,9 @@ import Profile from './components/Profile/Profile'
 // Cart
 import Cart from './components/Cart/CartLanding'
 import Success from './components/Cart/Success'
-// Debugging
+// Activities
+import Activities from './components/Activities/Activities'
+import Ticket from './components/Ticketing/Ticket'
 
 
 const theme = createTheme({
@@ -79,6 +81,12 @@ function Router() {
                 </Route>
                 <Route path="/cart/payment/success" exact>
                     <Success />
+                </Route>
+                <Route path="/ticket/:id" exact>
+                    <Ticket />
+                </Route>
+                <Route path="/activities" exact>
+                    <Activities />
                 </Route>
             </Switch>
             <Footer />

@@ -101,6 +101,18 @@ const AddUser = ({props}) => {
 
     const handleSubmit = () =>{
         if(username && email && contact && password && passStatus){
+
+            let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+            if ( re.test(email) ) {
+                
+            }
+            else {
+                alert("Please enter correct email format. Failed to save.");
+                return;
+            }
+
+
             if(role==="Customer"){
                 if(birthdate && address && gender){
                     setUser({

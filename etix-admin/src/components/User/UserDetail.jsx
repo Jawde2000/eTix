@@ -112,6 +112,17 @@ const UserDetail = ({props}) => {
     const [picloading, setPloading] = useState(false);
 
     const handleSubmit = () =>{
+
+        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if ( re.test(email) ) {
+            
+        }
+        else {
+            alert("Please enter correct email format. Failed to save.");
+            return;
+        }
+
         setUptUser(
             {
                 username: username,
