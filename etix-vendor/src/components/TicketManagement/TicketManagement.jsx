@@ -1,6 +1,6 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Paper, TextField, Tooltip, Toolbar} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import React, {useEffect, props, useState, useRef} from 'react';
+import { AppBar, Grid, Box, Container, IconButton, Button, Icon, Paper, TextField, Tooltip, Toolbar, Typography} from '@mui/material';
+import { makeStyles, withStyles } from '@mui/styles';
+import React, {useEffect, props, useState, useRef, useCallback} from 'react';
 import moscow from '../globalAssets/moscow.jpg'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -19,13 +19,21 @@ import Backdrop from '@mui/material/Backdrop';
 import { useHistory } from 'react-router';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import QrCodeScannerSharpIcon from '@mui/icons-material/QrCodeScannerSharp';
+import QrReader from 'react-qr-reader'
 import { alpha } from '@mui/material/styles';
+import MuiDialog from '@material-ui/core/Dialog';
+import { useAsyncEffect } from "use-async-effect2";
+
+const Dialog = withStyles((theme) => ({
+  paper: {
+    height: 340 // 100% is for full height or anything else what you need
+  },
+}))(MuiDialog);
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -71,13 +79,22 @@ function TicketManagement() {
     const [rows, setRows] = useState([]);
     const [openDel, setOpenDel] = useState(false);
 
+    const [scan, setScan] = useState("No Result");
+
     const columns = [
       { field: 'id', headerName: 'Ticket ID', headerAlign: 'center',width: 150 },
       {
-        field: 'service',
-        headerName: 'Service ID',
+        field: 'route',
+        headerName: 'Route',
         headerAlign: 'center',
-        width: 350,
+        width: 150,
+        editable: false,
+      },
+      {
+        field: 'departureT',
+        headerName: 'Departure Terminal',
+        headerAlign: 'center',
+        width: 250,
         editable: false,
       },
       {
@@ -152,7 +169,8 @@ function TicketManagement() {
           // console.log(select)
           return {
             id: tk.ticketID,
-            service: tk.service,
+            route: tk.route,
+            departureT: tk.serviceInfo.servicedepartureTerminal,
             createdAt: tk.created_at,
             status: s
           }
@@ -222,6 +240,77 @@ function TicketManagement() {
               <Button onClick={handleClose} autoFocus>
                 No
               </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
+
+    const DialogScan = (ids) => {
+      const [open, setOpen] = useState(false);
+      const scanMounted = useRef(true);
+
+      const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        // ids = null;
+        setOpen(false);
+      };
+
+      const handleError = err => {
+        console.error(err)
+      }
+
+      const previewStyle = {
+        height: 140,
+        width: 220,
+      }
+
+      const handleScan = useCallback((data) => {
+        if(data){
+          setScan(data);
+          console.log(scan); 
+          setOpen(false);
+          return data;
+        }
+      }, [scan])
+
+      return (
+        <Toolbar>
+          <Tooltip title="Scan" onClick={handleClickOpen}>
+              <IconButton >
+              <QrCodeScannerSharpIcon />
+              </IconButton>
+          </Tooltip>
+          <Dialog
+            open={open}
+            // onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description" maxWidth="sm" 
+            PaperProps={{
+              sx: {
+                Height: 400
+              }
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Scan Ticket(s)"}
+            </DialogTitle>
+            <DialogContent>
+            <QrReader
+            facingMode={'environment'}
+            delay={300}
+            onError={handleError}
+            onScan={handleScan}
+            style={previewStyle}
+            resolution={600}
+            />
+            {/* <div><Typography>{setScan}</Typography></div> */}
+            </DialogContent>
+            <DialogActions>
+              <Button style={{color: "red"}} onClick={handleClose}>Cancel</Button>
             </DialogActions>
           </Dialog>
         </Toolbar>
@@ -351,7 +440,7 @@ function TicketManagement() {
                           <DialogDelete2 />
                           </Grid>
                           <Grid xs={6} item md={1}>
-                          <QrCodeScannerSharpIcon />
+                          <DialogScan />
                           </Grid>
                       </Grid>            
                   </Grid>
