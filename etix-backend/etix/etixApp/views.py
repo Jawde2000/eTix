@@ -403,6 +403,16 @@ def getVendorDByVID(request, pk):
     except:
         message = {'detail': 'vendor not found'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def getCartitemByCID(request, pk):
+    try:
+        cartItem = CartItems.objects.get(cart=pk)
+        serializer = CartItemsSerializer(cartItem, many=False)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'cart items not found'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VendorViewSet(viewsets.ModelViewSet):
