@@ -14,6 +14,10 @@ import {
     TICKET_SCANNED_FAIL,
     TICKET_SCANNED_RESET,
 
+    TICKET_REQUEST_DELETE,
+    TICKET_SUCCESS_DELETE,
+    TICKET_FAIL_DELETE,
+    TICKET_RESET_DELETE,
 } from '../../constants/ticketConstants/ticketConstants';
 import axios from 'axios';
 
@@ -62,6 +66,7 @@ export const ticketlist = () => async (dispatch, getState) => {
         var service = [];
         var cart = [];
         var cartItem = [];
+        var userDetails = [];
 
         // console.log(data);
 
@@ -75,12 +80,19 @@ export const ticketlist = () => async (dispatch, getState) => {
         for(let item of cart){
             let cartI = await axios.get(`http://127.0.0.1:8000/api/user/cartitems/${item.cartID}/`, config);
             cartItem.push(cartI.data);
+
+            let UserInfo = await axios.get(`http://127.0.0.1:8000/api/user/${item.user}/`, config);
+            userDetails.push(UserInfo.data)
         }
+
+        console.log(cart);
 
         for(let item of cartItem){
             let services = await axios.get(`http://127.0.0.1:8000/api/service/${item.service}/`, config);
             service.push(services.data);
         }
+
+        console.log(service);
 
         for(let item of service){
             let seat = await axios.get(`http://127.0.0.1:8000/api/seat/${item.seat}/`, config);
@@ -98,13 +110,15 @@ export const ticketlist = () => async (dispatch, getState) => {
         // console.log(locationFD);
         // console.log(cartItem);
         // console.log(service);
+        console.log(userDetails)
 
         data = data.map((item, index) => ({
             ...item,
             seatDetail: seatInfo[index],
             route: locationFD[index].locationName + ' - ' + locationED[index].locationName,
             cartItem: cartItem[index],
-            serviceInfo: service[index]
+            serviceInfo: service[index],
+            customerDetails: userDetails[index],
         }))
 
         // console.log(data);
@@ -226,3 +240,44 @@ export const scanning = (info) => async (dispatch, getState) => {
         })
     }
 }
+
+//delete ticket
+export const deleteTicket = (id) => async (dispatch, getState) => {
+    try{
+        
+        dispatch({
+            type:TICKET_REQUEST_DELETE
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.delete(
+            `http://127.0.0.1:8000/api/ticket/${id}/`,
+            config
+        )
+        
+        dispatch({
+            type: TICKET_SUCCESS_DELETE,
+            payload: data
+        })
+
+    }catch(error){
+        dispatch({
+            type: TICKET_FAIL_DELETE,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+

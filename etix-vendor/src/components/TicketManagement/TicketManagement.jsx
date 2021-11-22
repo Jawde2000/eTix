@@ -7,11 +7,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions';
-import { ticketlist, ticketUsed } from '../../actions/ticketActions/ticketActions';
+import { ticketlist, ticketUsed, deleteTicket } from '../../actions/ticketActions/ticketActions';
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
-import {TICKET_RESET, TICKET_RESET_USED} from '../../constants/ticketConstants/ticketConstants'
+import {TICKET_RESET, TICKET_RESET_USED, TICKET_RESET_DELETE} from '../../constants/ticketConstants/ticketConstants'
 import PropTypes from 'prop-types';
 import { DataGrid,GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -111,8 +110,8 @@ function TicketManagement() {
     const {userInfo} = userLogin
     let history = useHistory()
 
-    const deleteHelplist = useSelector(state => state.deleteHelplist)
-    const {success: successDelete, loading: loadDel} = deleteHelplist;
+    const deleteticket = useSelector(state => state.deleteTicket)
+    const {ticketSuccess: successDelete, loading: loadDel} = deleteticket;
     const ticketList = useSelector(state => state.ticketList);
     const {ticket, loading: loadticket, ticketSuccess} = ticketList;
 
@@ -141,8 +140,8 @@ function TicketManagement() {
         editable: false,
       },
       {
-        field: 'createdAt',
-        headerName: 'Created At',
+        field: 'username',
+        headerName: 'Username',
         headerAlign: 'center',
         width: 250,
         editable: false,
@@ -213,7 +212,7 @@ function TicketManagement() {
             id: tk.ticketID,
             route: tk.route,
             departureT: tk.serviceInfo.servicedepartureTerminal,
-            createdAt: tk.created_at,
+            username: tk.customerDetails.username,
             status: s
           }
         })
@@ -240,7 +239,7 @@ function TicketManagement() {
 
     const DialogDelete = (ids) => {
       const [open, setOpen] = useState(false);
-      console.log(ids);
+      // console.log(ids);
       const handleClickOpen = () => {
         setOpen(true);
       };
@@ -251,7 +250,7 @@ function TicketManagement() {
       };
     
       const handleDelete = () => {
-        dispatch(deleteHelp(ids.ids));
+        dispatch(deleteTicket(ids.ids));
         ids = null;
         setSelection([]);
       }
@@ -270,11 +269,11 @@ function TicketManagement() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Delete Message(s)"}
+              {"Delete Ticket(s)"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete the message(s)?
+                Are you sure you want to delete the ticket(s)?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -313,7 +312,7 @@ function TicketManagement() {
       useEffect(() => {
         if(scan) {
           if (scan !== "No Result"){
-            console.log(scan);
+            // console.log(scan);
             dispatch(ticketUsed(scan));
             setScan("No Result");
             history.go(0);
@@ -344,7 +343,7 @@ function TicketManagement() {
             }}
           >
             <DialogTitle id="alert-dialog-title">
-              {"Scan Ticket(s)"}
+              {"Ticket Scanner"}
             </DialogTitle>
             <DialogContent>
             <Scanner 
@@ -391,7 +390,7 @@ function TicketManagement() {
     
       const handleDelete = () => {
         select.map((ids) => {
-          dispatch(deleteHelp(ids.id));
+          dispatch(deleteTicket(ids.id));
         })
         
         setOpen(false);
@@ -418,11 +417,11 @@ function TicketManagement() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Delete Message(s)"}
+              {"Delete Ticket(s)"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete the message(s)?
+                Are you sure you want to delete the ticket(s)?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -439,9 +438,9 @@ function TicketManagement() {
 
     const DialogDel = () => {
       const handleClose = () => {
-        // dispatch({type: HELP_DELETE_RESET});
+        dispatch({type: TICKET_RESET_DELETE});
         setOpenDel(false);
-        history.push(`/menu/helpmanage`);
+        history.push(`/menu/ticket`);
       };
 
       return (

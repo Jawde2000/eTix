@@ -14,7 +14,10 @@ import {
     TICKET_SCANNED_FAIL,
     TICKET_SCANNED_RESET,
 
-
+    TICKET_REQUEST_DELETE,
+    TICKET_SUCCESS_DELETE,
+    TICKET_FAIL_DELETE,
+    TICKET_RESET_DELETE,
 } from '../constants/ticketConstants/ticketConstants';
 
 export const ticketReducer = (state = { }, action) => {
@@ -48,6 +51,25 @@ export const UsedticketReducer = (state = { }, action) => {
             return {loading: false, error: action.payload}
 
         case TICKET_RESET_USED:
+            return {}
+
+        default:
+            return state
+    }
+}
+
+export const DeleteticketReducer = (state = { }, action) => {
+    switch(action.type){
+        case TICKET_REQUEST_DELETE:
+            return {loading: true}
+        
+        case TICKET_SUCCESS_DELETE:
+            return {loading: false, ticketSuccess: true}
+        
+        case TICKET_FAIL_DELETE:
+            return {loading: false, error: action.payload}
+
+        case TICKET_RESET_DELETE:
             return {}
 
         default:
