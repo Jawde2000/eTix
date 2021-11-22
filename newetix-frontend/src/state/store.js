@@ -2,12 +2,13 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { routeLookupReducer, dateReducer, locationListReducer, allRoutesReducer, routeFilterReducer, locationSearchReducer } from './reducers/routeReducers';
-import { userLoginReducer, customerDetailsReducer } from './reducers/userReducers';
+import { userLoginReducer, customerDetailsReducer, userRegisterReducer } from './reducers/userReducers';
 import { vendorListReducer, helpdeskReducer, helpResponseReducer } from './reducers/helpReducers';
 import { cartAddReducer, cartViewReducer, deleteReducer, paymentReducer  } from './reducers/cartReducers';
 import { ticketReducer } from './reducers/ticketReducer';
 
 const reducer = combineReducers({
+    register: userRegisterReducer,
     routeLookup: routeLookupReducer,
     userLogin: userLoginReducer,
     vendorList: vendorListReducer,

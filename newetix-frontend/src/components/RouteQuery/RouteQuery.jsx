@@ -173,6 +173,8 @@ export default function RouteQuery() {
             setSelectedItem(null);
             setSelectedSeat("");
             alert(`added to cart Successfully`);
+            history.push('/')
+            history.go(0)
         }
     }, [addSuccess])
 

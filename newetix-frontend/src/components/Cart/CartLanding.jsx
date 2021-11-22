@@ -110,6 +110,7 @@ function CartLanding() {
     const handleRemove = (itemID) => {
         dispatch(removeItem(itemID))
         alert("Item deleted from cart!")
+        history.push('/')
         history.go(0)
     }
 

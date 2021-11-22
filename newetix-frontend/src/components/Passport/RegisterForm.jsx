@@ -51,6 +51,8 @@ const useStyles = makeStyles((theme) => ({
 function RegisterForm() {
     const defaultStyle = useStyles();
 
+    let re = /^(([^<>()[]\.,;:\s@"]+(.[^<>()[]\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phonenumber, setPhonenumber] = useState("");
@@ -59,11 +61,9 @@ function RegisterForm() {
       password: '',
       showPassword: false,
     });
-  
-    const userLogin = useSelector(state => state.userLogin)
-    const {error,  userInfo} = userLogin
+    const userLogin = useSelector(state => state.register)
+    const {errorRegister,  userInfo} = userLogin
     const dispatch = useDispatch()
-  
     let history = useHistory()
   
     useEffect(() => {
@@ -101,12 +101,18 @@ function RegisterForm() {
     }
     const handleLogin = (e) => {
         e.preventDefault()
-        dispatch(register(email, password, username, phonenumber))
+        if ( re.test(email) ) {
+          dispatch(register(email, password, username, phonenumber))
+        }
+        else {
+            alert("Please enter correct email format. Failed to save.");
+            return;
+        }
     }  
 
     return (
         <Container>
-        {error && <Grid sx={{maxWidth: 290}} container><Alert severity="error">User with this email already exist</Alert></Grid>}
+        {errorRegister && <Grid sx={{maxWidth: 290, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">User with this email already exist</Alert></Grid>}
         <Grid xs={12} container>
             <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
             label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}

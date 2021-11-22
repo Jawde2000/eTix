@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_DETAIL_RESET } from '../../state/actions/actionConstants';
-import { updateUser, customerEdit } from '../../state/actions/actions';
+import { updateUser, customerEdit, passwordChange } from '../../state/actions/actions';
 import images from '../globalAssets/scripts/bgchange';
 import S3 from 'react-aws-s3';
 import Avatar from '@mui/material/Avatar';
@@ -181,6 +181,13 @@ function UserDetail() {
         if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
             dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
             history.go(0)        
+            if (password != '' && confirmPass != '' && password == confirmPass) {
+                dispatch(passwordChange(password))
+                console.log("password changed")
+            }
+        } else if (password != '' && confirmPass != '' && password == confirmPass) {
+            dispatch(passwordChange(password))
+            console.log("password changed")
         } else {
             alert("Please fill in all of the fields!")
             console.log(fname, lname, contact, address, birthdate, gender)

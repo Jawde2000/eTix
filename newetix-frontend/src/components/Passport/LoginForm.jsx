@@ -59,14 +59,14 @@ function LoginForm() {
     });
   
     const userLogin = useSelector(state => state.userLogin)
-    const {error,  userInfo} = userLogin
+    const {errorLogin,  userInfo} = userLogin
     const dispatch = useDispatch()
   
     let history = useHistory()
   
     useEffect(() => {
       if(userInfo) {
-          history.push('/')
+        history.push('/')
       } 
     },[userInfo])
   
@@ -97,7 +97,7 @@ function LoginForm() {
 
     return (
         <Container>
-        {error && <Grid sx={{maxWidth: 290}} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
+        {errorLogin && <Grid sx={{maxWidth: 290}} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <Grid xs={12} container>
             <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
             label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
