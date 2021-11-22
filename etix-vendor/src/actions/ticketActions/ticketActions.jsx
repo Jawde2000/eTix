@@ -85,8 +85,6 @@ export const ticketlist = () => async (dispatch, getState) => {
             userDetails.push(UserInfo.data)
         }
 
-        console.log(cart);
-
         for(let item of cartItem){
             let services = await axios.get(`http://127.0.0.1:8000/api/service/${item.service}/`, config);
             service.push(services.data);
@@ -110,7 +108,7 @@ export const ticketlist = () => async (dispatch, getState) => {
         // console.log(locationFD);
         // console.log(cartItem);
         // console.log(service);
-        console.log(userDetails)
+        // console.log(userDetails)
 
         data = data.map((item, index) => ({
             ...item,
@@ -169,15 +167,15 @@ export const ticketUsed = (info) => async (dispatch, getState) => {
             info.lastIndexOf("")
         );
 
-        console.log(ticketid);
-        console.log(token);
+        // console.log(ticketid);
+        // console.log(token);
 
         const ticket = await axios.get(
             "http://127.0.0.1:8000/api/ticket/",
             config
         )
 
-        console.log(ticket);
+        // console.log(ticket);
 
         var isTicketExist;
 

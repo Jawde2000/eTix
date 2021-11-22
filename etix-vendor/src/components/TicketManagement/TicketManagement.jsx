@@ -114,12 +114,15 @@ function TicketManagement() {
     const {ticketSuccess: successDelete, loading: loadDel} = deleteticket;
     const ticketList = useSelector(state => state.ticketList);
     const {ticket, loading: loadticket, ticketSuccess} = ticketList;
+    const usedTicket = useSelector(state => state.useTicket)
+    const {ticketSuccess: successUse, loading: loadUse} = usedTicket;
 
     const [search, setSearch] = useState("");
     const [select, setSelection] = useState([]);
     const [row, setRow] = useState([]);
     const [rows, setRows] = useState([]);
     const [openDel, setOpenDel] = useState(false);
+    const [openRes, setOpenRes] = useState(false);
 
     const [scan, setScan] = useState("No Result");
 
@@ -157,10 +160,10 @@ function TicketManagement() {
             //style={{display:'flex';justifyContent:'center';alignItems:'center'}}  
               <Toolbar>
               {params.row.status === false? (
-              <Tooltip title="Open">
+              <Tooltip title="Valid">
               <CheckCircleIcon style={{color: 'green'}}/>
               </Tooltip>):(
-              <Tooltip title="Invalid">
+              <Tooltip title="Used">
               <CancelIcon style={{color: 'red'}}/>
               </Tooltip>)
               }
@@ -195,7 +198,7 @@ function TicketManagement() {
         else{
             history.push('/')
         }
-    }, [dispatch, successDelete, ticketSuccess])
+    }, [dispatch, successUse, successDelete])
 
     useEffect(() => {
       if(successDelete){
@@ -287,7 +290,7 @@ function TicketManagement() {
       );
     }
 
-    const DialogScan = (ids) => {
+    const DialogScan = () => {
       const [openS, setOpenS] = useState(false);
 
       const handleClickOpen = () => {
@@ -315,7 +318,7 @@ function TicketManagement() {
             // console.log(scan);
             dispatch(ticketUsed(scan));
             setScan("No Result");
-            history.go(0);
+            setOpenRes(true);
           }
         }
       }, [scan])
@@ -371,6 +374,79 @@ function TicketManagement() {
             </DialogContent>
             <DialogActions>
               <Button style={{color: "red"}} onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
+
+    const DialogResult = () => {
+
+      const handleClickOpen = () => {
+        setOpenRes(true);
+      };
+    
+      const handleClose = () => {
+        // ids = null;
+        setOpenRes(false);
+      };
+
+      const previewStyle = {
+        height: 150,
+        width: 220,
+      }
+
+      const handleDecode = (result) => {
+        // console.log(result);
+        setScan(result.data);
+      } 
+
+      useEffect(() => {
+        if(scan) {
+          if (scan !== "No Result"){
+            // console.log(scan);
+            dispatch(ticketUsed(scan));
+            setScan("No Result");
+            setOpenRes(true);
+          }
+        }
+      }, [scan])
+    
+      const handleScannerLoad = (mode) => {
+        // console.log(mode);
+      }    
+
+      return (
+        <Toolbar>
+          <Tooltip title="Scan" onClick={handleClickOpen}>
+              <IconButton style={{fontSize: 40, color: "black"}}>
+              <QrCodeScannerSharpIcon />
+              </IconButton>
+          </Tooltip>
+          <Dialog
+            open={openRes}
+            // onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description" maxWidth="sm" 
+            PaperProps={{
+              sx: {
+                Height: 300
+              }
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Ticket Result"}
+            </DialogTitle>
+            <DialogContent>
+              {successUse?<DialogContentText id="alert-dialog-description">
+                The ticket is valid. Have a safe ride
+              </DialogContentText> : 
+              <DialogContentText id="alert-dialog-description">
+                The ticket is used / Qrcode is not available. Please scan again.
+              </DialogContentText>}
+            </DialogContent>
+            <DialogActions>
+              {successUse?<Button style={{color: "green"}} onClick={handleClose}>OK</Button>:<Button style={{color: "red"}} onClick={handleClose}>OK</Button>}
             </DialogActions>
           </Dialog>
         </Toolbar>
@@ -547,6 +623,12 @@ function TicketManagement() {
                   <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
                   <CircularProgress  style={{color: '#F5CB5C'}}/>
                   </Backdrop>:null
+              }
+              </Grid>
+              <Grid>
+              {
+                  openRes? 
+                  <DialogResult />:null
               }
               </Grid>
               </Paper>
