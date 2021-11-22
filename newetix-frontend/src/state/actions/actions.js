@@ -204,6 +204,7 @@ export const logout = () => (dispatch) => {
     dispatch({type: actions.CART_VIEW_RESET})
     dispatch({type: actions.CART_ADD_RESET})
     dispatch({type: actions.CUSTOMER_DETAILS_RESET})
+    dispatch({type: actions.USER_REGISTER_RESET})
 }
 
 export const register = (email, password, username, phonenumber) => async(dispatch) => {
@@ -243,13 +244,13 @@ export const register = (email, password, username, phonenumber) => async(dispat
 
         if(!data.is_customer){
             dispatch({
-                type: actions.USER_LOGIN_FAIL,
+                type: actions.USER_REGISTER_FAIL,
                 payload: "Invalid User"
             })
         }
         else{
             dispatch({
-                type: actions.USER_LOGIN_SUCCESS,
+                type: actions.USER_REGISTER_SUCCESS,
                 payload: data
             })
             
@@ -259,7 +260,7 @@ export const register = (email, password, username, phonenumber) => async(dispat
 
     } catch(error) {
         dispatch({
-            type: actions.USER_LOGIN_FAIL,
+            type: actions.USER_REGISTER_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
@@ -955,63 +956,45 @@ export const getTickets = () => async (dispatch, getState) => {
     }
 }
 
-export const validateUser = (email) => async (dispatch) => {
+export const passwordChange = (password) => async (dispatch, getState) => {
     try {
         dispatch({
-            type: actions.VERIFY_USER_REQUEST
+            type: actions.USER_PASSWORD_CHANGE_PROCESSING
         })
-
+    
+        const {
+            userLogin: {userInfo},
+        } = getState()
+    
         const config = {
             headers: {
                 'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
             }
         }
-        
-        const {data} = await axios.get(`http://localhost:8000/api/user/validation/${email}/`, config)
-
-        dispatch({
-            type: actions.VERIFY_USER_SUCCESS,
-            payload: data
-        })
-
-    } catch(error) {
-        dispatch({
-            type: actions.VERIFY_USER_FAIL,
-            payload: error.response && error.response.data.detail
-                ? error.response.data.detail
-                : error.message,
-        })
-    }
-}
-
-export const resetPassword = (email) => async (dispatch) => {
-    try {
-        dispatch({
-            type: actions.RESET_USER_REQUEST
-        })
-
-        const config = {
-            headers: {
-                'Content-type' : 'application/json',
-            }
-        }
-        
-        const {data} = await axios.get(
-            `http://localhost:8000/api/user/resetpass/${email}/`,
+    
+        const { data } = await axios.put(
+            `http://localhost:8000/api/user/profile/update/`, 
+            {
+                'username': userInfo.username,
+                'email': userInfo.email,
+                'is_active': 'True',
+                'password': password
+            },
             config
         )
 
         dispatch({
-            type: actions.RESET_USER_SUCCESS,
-            payload: data
+            type: actions.USER_PASSWORD_CHANGE_SUCCESS
         })
 
     } catch(error) {
         dispatch({
-            type: actions.RESET_USER_FAIL,
+            type: actions.USER_PASSWORD_CHANGE_FAILURE,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
         })
     }
+    
 }

@@ -26,7 +26,9 @@ import Success from './components/Cart/Success'
 // Activities
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
-import ForgetPass from './components/ForgetPassword/ForgetPass';
+// Actions
+import { customerDetails, viewCartData } from './state/actions/actions';
+import { useDispatch } from 'react-redux';
 
 
 const theme = createTheme({
@@ -45,6 +47,11 @@ const theme = createTheme({
 })
 
 function Router() {
+    const dispatch = useDispatch();
+
+    dispatch(customerDetails())
+    dispatch(viewCartData())
+    
     return(
         <BrowserRouter>
             <Header />
@@ -63,7 +70,7 @@ function Router() {
                     <RouteQuery />
                 </Route>
                 <Route path="/help" exact>
-                    <HelpLanding />
+                    <HelpLanding />        
                 </Route>
                 <Route path="/help/inbox" exact>
                     <HelpMessaging />
