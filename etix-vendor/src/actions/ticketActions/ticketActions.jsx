@@ -4,6 +4,16 @@ import {
     TICKET_FAIL,
     TICKET_RESET,
 
+    TICKET_REQUEST_USED,
+    TICKET_SUCCESS_USED,
+    TICKET_FAIL_USED,
+    TICKET_RESET_USED,
+
+    TICKET_SCANNED_REQUEST,
+    TICKET_SCANNED_SUCCESS,
+    TICKET_SCANNED_FAIL,
+    TICKET_SCANNED_RESET,
+
 } from '../../constants/ticketConstants/ticketConstants';
 import axios from 'axios';
 
@@ -107,6 +117,109 @@ export const ticketlist = () => async (dispatch, getState) => {
     }catch(error){
         dispatch({
             type: TICKET_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const ticketUsed = (info) => async (dispatch, getState) => {
+    try{
+        
+        dispatch({
+            type:TICKET_REQUEST_USED
+        })
+
+        const {
+            userLogin: {userInfo},
+        } = getState()
+
+        console.log(info);
+
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        var ticketid = info.substring(
+            info.indexOf("=") + 1, 
+            info.lastIndexOf("&")
+        );
+
+        var token = info.substring(
+            info.indexOf("n=") + 2, 
+            info.lastIndexOf("")
+        );
+
+        console.log(ticketid);
+        console.log(token);
+
+        const ticket = await axios.get(
+            "http://127.0.0.1:8000/api/ticket/",
+            config
+        )
+
+        console.log(ticket);
+
+        var isTicketExist;
+
+        isTicketExist = ticket.data.filter((tk) => {
+            if (tk.used === false && tk.ticketID === ticketid) {
+                return true;
+            }
+        })
+
+        console.log(isTicketExist[0].used);
+        console.log(isTicketExist[0].ticketID);
+
+        if (!isTicketExist[0].used) {
+            const ticketIsUsed = await axios.put(
+                `http://127.0.0.1:8000/api/ticket/${ticketid}/`,
+                {
+                    used: true,
+                },
+                config            
+            )
+        } 
+        else {
+            dispatch({type: TICKET_FAIL_USED});
+        }
+        
+        dispatch({
+            type: TICKET_SUCCESS_USED,
+        })
+
+    }catch(error){
+        dispatch({
+            type: TICKET_FAIL_USED,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const scanning = (info) => async (dispatch, getState) => {
+    try{
+        
+        dispatch({
+            type:TICKET_SCANNED_REQUEST
+        })
+
+        console.log(info);
+
+        dispatch({
+            type: TICKET_SCANNED_SUCCESS,
+            data: info
+        })
+
+    }catch(error){
+        dispatch({
+            type: TICKET_SCANNED_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

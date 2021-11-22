@@ -6,7 +6,7 @@ import { registerReducer } from './reducers/registerReducers'
 import { helpListReducer, helpDeleteReducer, helpDetailReducer, helpSaveReducer, helpSendReducer, helpSendAddReducer} from './reducers/helpReducers'
 import { serviceReducer, serviceDetailReducer, serviceDeleteReducer, serviceSaveReducer, locationDetailReducer, serviceAddReducer } from './reducers/servicesReducers'
 import { paymentListReducer, serviceListDataReducer } from './reducers/salesReducer';
-import { ticketReducer } from './reducers/ticketReducers';
+import { ticketReducer, UsedticketReducer, scanReducer } from './reducers/ticketReducers';
 
 const reducer = combineReducers({
     userLogin: userLoginReducer,
@@ -29,6 +29,8 @@ const reducer = combineReducers({
     paymentList: paymentListReducer,
     servicesData: serviceListDataReducer,
     ticketList: ticketReducer,
+    useTicket: UsedticketReducer,
+    scanResult: scanReducer,
 })
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?JSON.parse(localStorage.getItem('userInfo')) : null
