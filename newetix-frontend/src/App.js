@@ -96,9 +96,6 @@ function Router() {
                 <Route path="/activities" exact>
                     <Activities />
                 </Route>
-                <Route path="/forgetpass" exact>
-                    <ForgetPass />
-                </Route>
             </Switch>
             <Footer />
         </BrowserRouter>
