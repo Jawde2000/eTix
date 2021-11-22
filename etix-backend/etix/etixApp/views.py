@@ -13,6 +13,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
+from etix.settings import EMAIL_HOST_USER
+from django.core.mail import send_mail
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -55,6 +57,43 @@ def getUsers(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
+
+
+# checking if user is exist with email. For forget password.
+@api_view(['GET'])
+def getUserByEmail(request, pk):
+    try:
+        user = User.objects.get(email=pk)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'No record Found with given email'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+
+# reset user password to default 123abc
+
+
+@api_view(['GET'])
+def resetPassword(request, pk):
+
+    try:
+
+        user = User.objects.get(email=pk)
+        serializer = UserSerializer(user, many=False)
+
+        user.password = make_password('123abc')
+        user.save()
+
+        subject = 'Reset Password'
+        message = 'Dear customer, your password had been reseted to 123abc. Please login to your account and edit your password as soon as posible.'
+        recepient = str(pk)
+        send_mail(subject, message, EMAIL_HOST_USER,
+                  [recepient], fail_silently=False)
+
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'Fail to reset Password'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

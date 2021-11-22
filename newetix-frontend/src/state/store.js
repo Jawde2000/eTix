@@ -6,6 +6,7 @@ import { userLoginReducer, customerDetailsReducer } from './reducers/userReducer
 import { vendorListReducer, helpdeskReducer, helpResponseReducer } from './reducers/helpReducers';
 import { cartAddReducer, cartViewReducer, deleteReducer, paymentReducer  } from './reducers/cartReducers';
 import { ticketReducer } from './reducers/ticketReducer';
+import { passwordResetReducer, verifyUserWithEmail } from './reducers/forgetPassReducers';
 
 const reducer = combineReducers({
     routeLookup: routeLookupReducer,
@@ -26,7 +27,9 @@ const reducer = combineReducers({
     locationSearch: locationSearchReducer,
     payment: paymentReducer,
     removeItem: deleteReducer,
-    getTickets: ticketReducer
+    getTickets: ticketReducer,
+    verifyUser: verifyUserWithEmail,
+    passwordReset: passwordResetReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

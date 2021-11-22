@@ -26,6 +26,7 @@ import Success from './components/Cart/Success'
 // Activities
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
+import ForgetPass from './components/ForgetPassword/ForgetPass';
 
 
 const theme = createTheme({
@@ -87,6 +88,9 @@ function Router() {
                 </Route>
                 <Route path="/activities" exact>
                     <Activities />
+                </Route>
+                <Route path="/forgetpass" exact>
+                    <ForgetPass />
                 </Route>
             </Switch>
             <Footer />
