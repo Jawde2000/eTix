@@ -67,6 +67,7 @@ function LoginForm() {
     useEffect(() => {
       if(userInfo) {
         history.push('/')
+        history.go(0)
       } 
     },[userInfo])
   

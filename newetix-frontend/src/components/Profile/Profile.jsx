@@ -179,12 +179,12 @@ function UserDetail() {
 
     const handleSubmit = () => {
         if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
+            console.log(fname, lname, contact, address, birthdate, gender)
             dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
-            history.go(0)        
             if (password != '' && confirmPass != '' && password == confirmPass) {
                 dispatch(passwordChange(password))
-                console.log("password changed")
             }
+            history.go(0)
         } else if (password != '' && confirmPass != '' && password == confirmPass) {
             dispatch(passwordChange(password))
             console.log("password changed")

@@ -101,13 +101,8 @@ function RegisterForm() {
     }
     const handleLogin = (e) => {
         e.preventDefault()
-        if ( re.test(email) ) {
-          dispatch(register(email, password, username, phonenumber))
-        }
-        else {
-            alert("Please enter correct email format. Failed to save.");
-            return;
-        }
+        dispatch(register(email, password, username, phonenumber))
+        history.push('/')
     }  
 
     return (

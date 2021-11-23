@@ -64,7 +64,6 @@ function Nav() {
         }
         
         setcartItemPax(cartpax)
-        console.log(cartpax)
     }, [cartData])
 
     function cartOnClick() {

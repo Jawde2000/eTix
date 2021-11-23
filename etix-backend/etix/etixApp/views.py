@@ -161,19 +161,25 @@ def paymentProcess(request, pk):
         cart = Cart.objects.get(cartID=data['cartID'])
         cartobj = CartItems.objects.filter(cart=cart)
         user = User.objects.get(userID=pk)
-        for obj in cartobj:
-            ticket = Ticket.objects.create(
-                service=obj.service,
-                ownBy=user
-            )
-
-            ticket.save()
 
         payment = Payment.objects.create(
             cart=cart,
             paymentStatus='CP'
         )
         payment.save()
+
+        for obj in cartobj:
+            ticket = Ticket.objects.create(
+                service=obj.service,
+                ownBy=user,
+                vendor=obj.service.vendor,
+                payment=payment,
+                cart=cart
+            )
+
+            print(obj.service)
+
+            ticket.save()
 
         serializer = PaymentSerializer(payment, many=False)
         return Response(serializer.data)
@@ -246,6 +252,8 @@ def updateCustomer(request, pk):
     customer = Customer.objects.get(created_by=pk)
 
     data = request.data
+    customer.customerFirstName = data['customerFirstName']
+    customer.customerLastName = data['customerLastName']
     customer.customerContact_Number = data['customerContact_Number']
     customer.customerAddress = data['customerAddress']
     customer.customerBirthday = data['customerBirthday']

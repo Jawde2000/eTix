@@ -5,7 +5,6 @@ import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { getTickets, vendorList, getAllRoutes } from '../../state/actions/actions'
 import TicketActivities from './TicketActivities'
 
 const useStyles = makeStyles((theme) => ({
@@ -40,15 +39,12 @@ function Activities() {
     const userLogin = useSelector(state => state.userLogin)
     const {error,  userInfo} = userLogin
 
-    const dispatch = useDispatch()
-    
     let history = useHistory()
 
     useEffect(() => {
         if(!userInfo) {
             history.push('/')
         }
-        dispatch(getTickets())
     },[userInfo])
 
     return (
