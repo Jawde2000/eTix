@@ -7,7 +7,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {useDispatch, useSelector} from 'react-redux'
-import { customerDetails, logout, viewCartData } from '../../../state/actions/actions';
+import { logout } from '../../../state/actions/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -78,7 +78,6 @@ function Top() {
     const defaultStyle = useStyles();
     const dispatch = useDispatch()
 
-
     const [anchorElN, setAnchorElN] = React.useState(null);
     const [anchorElA, setAnchorElA] = React.useState(null);
 
@@ -121,8 +120,6 @@ function Top() {
     useEffect(() => {
         if (userInfo){
             setImgSrc("https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".png")
-            dispatch(customerDetails())
-            dispatch(viewCartData())
         }
     }, [userInfo])
     
@@ -142,21 +139,11 @@ function Top() {
                     <Grid item className={defaultStyle.rightItem} direction="row" display="flex">   
                         <Grid item className={defaultStyle.rightItem}>
                             <Link href='' style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
-                        </Grid>   
-                        <Grid item className={defaultStyle.rightItem}>
-                            <div>
-                                <Button aria-controls="notifications" aria-haspopup="true" className={defaultStyle.NotificationButton} display="flex" aria-expanded={openN ? 'true' : undefined} onClick={handleClickN}>
-                                    <NotificationsIcon htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
-                                </Button>
-                                <Menu id="notifications" MenuListProps={{'aria-labelledby': 'notifications',}} anchorEl={anchorElN} open={openN} onClose={handleCloseN} TransitionComponent={Fade}>
-                                    <MenuItem onClick={handleCloseN}>No notifications yet!</MenuItem>
-                                </Menu>
-                            </div>
                         </Grid>    
                         <Grid item className={defaultStyle.rightItem}>
                             <div>
                                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex" aria-expanded={openA ? 'true' : undefined} onClick={handleClickA}>
-                                    {userInfo? <Avatar sx={{ bgcolor: "#F5CB5C" }} alt={userInfo.username} src={imgSrc} sx={{ width: 32, height: 32 }}/> : <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/> }
+                                    {userInfo? <Avatar sx={{ bgcolor: "#F5CB5C" }} alt={userInfo.username} src={imgSrc} sx={{ width: 32, height: 32 }}/> : <Typography className={defaultStyle.customizeText} style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C'}}>Register/Login</Typography> }
                                     <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}>
                                         {userInfo? userInfo.username : null} 
                                     </Typography>

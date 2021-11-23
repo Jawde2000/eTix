@@ -71,29 +71,33 @@ function Nav() {
     }
 
     return (
-        <AppBar className={defaultStyle.customizeAppbar} position="relative">
-            <Grid xs={12} container justify="center" direction="row" alignItems="center">
-                <Grid item>
-                    <Link href='http://localhost:3000/'         
-                        style={{ textDecorationLine: 'none', display: "flex",}}>        
-                        <img src={etixLogo} className={defaultStyle.resizePic} alt="eTix Logo"/>
-                        <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
-                            eTix 
-                        </Typography>
-                    </Link>
-                </Grid>
-                <Grid item className={defaultStyle.menuContainer}>
-                    <Grid xs={12} container justify="center" direction="row" alignItems="center">
-                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-                        <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
-                    </Grid>
-                </Grid>
-                <Grid item className={defaultStyle.auxContainer}>
-                    <IconButton><ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick}></ShoppingCartIcon></IconButton>
+        <Grid className={defaultStyle.customizeAppbar} container justify="center" direction="row" alignItems="center">
+            <Grid item xs={1}>
+                <Link href='http://localhost:3000/'         
+                    style={{ textDecorationLine: 'none', display: "flex",}}>        
+                    <img src={etixLogo} className={defaultStyle.resizePic} alt="eTix Logo"/>
+                    <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
+                        eTix 
+                    </Typography>
+                </Link>
+            </Grid>
+            <Grid item className={defaultStyle.menuContainer} xs={10}>
+                <Grid container justify="center" direction="row" alignItems="center">
+                    <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
+                    <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+                    <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
                 </Grid>
             </Grid>
-        </AppBar>
+            {cartItemPax? 
+                <Grid item className={defaultStyle.auxContainer} xs={1}>
+                    <IconButton><Badge badgeContent={cartItemPax} color="primary">
+                        <ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick} />
+                    </Badge></IconButton>
+                </Grid>
+                :
+                ''
+            }
+        </Grid>
     );
 
 }

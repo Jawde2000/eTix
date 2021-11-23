@@ -9,7 +9,7 @@ export const userLoginReducer = (state = { }, action) => {
            return {loading: false, userInfo: action.payload}
         
         case actions.USER_LOGIN_FAIL:
-           return {loading: false, error: action.payload}
+           return {loading: false, errorLogin: action.payload}
 
         case actions.USER_LOGOUT:
            return {}
@@ -31,6 +31,25 @@ export const customerDetailsReducer = (state = { }, action) => {
            return {loading: false, error: action.payload}
 
         case actions.CUSTOMER_DETAILS_RESET:
+            return {}
+
+        default:
+            return state
+    }
+}
+
+export const userRegisterReducer = (state = { }, action) => {
+    switch(action.type){
+        case actions.USER_REGISTER_PROCESS:
+            return {loading: true}
+        
+        case actions.USER_REGISTER_SUCCESS:
+           return {loading: false, customerInfo: action.payload}
+        
+        case actions.USER_REGISTER_FAIL:
+           return {loading: false, errorRegister: action.payload}
+
+        case actions.USER_REGISTER_RESET:
             return {}
 
         default:

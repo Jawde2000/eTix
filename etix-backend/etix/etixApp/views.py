@@ -200,19 +200,32 @@ def paymentProcess(request, pk):
         cart = Cart.objects.get(cartID=data['cartID'])
         cartobj = CartItems.objects.filter(cart=cart)
         user = User.objects.get(userID=pk)
-        for obj in cartobj:
-            ticket = Ticket.objects.create(
-                service=obj.service,
-                ownBy=user
-            )
-
-            ticket.save()
 
         payment = Payment.objects.create(
             cart=cart,
             paymentStatus='CP'
         )
         payment.save()
+
+        for obj in cartobj:
+            ticket = Ticket.objects.create(
+                service=obj.service,
+                ownBy=user,
+                vendor=obj.service.vendor,
+                payment=payment,
+                cart=cart
+            )
+
+            if (obj.seat_Type == "F"):
+                obj.service.seat.firstQuantity = obj.service.seat.firstQuantity - 1
+            elif (obj.seat_Type == "B"):
+                obj.service.seat.businessQuantity = obj.service.seat.businessQuantity - 1
+            elif (obj.seat_Type == "E"):
+                obj.service.seat.economyQuantity = obj.service.seat.economyQuantity - 1
+
+            obj.service.seat.save()
+
+            ticket.save()
 
         serializer = PaymentSerializer(payment, many=False)
         return Response(serializer.data)
@@ -285,6 +298,8 @@ def updateCustomer(request, pk):
     customer = Customer.objects.get(created_by=pk)
 
     data = request.data
+    customer.customerFirstName = data['customerFirstName']
+    customer.customerLastName = data['customerLastName']
     customer.customerContact_Number = data['customerContact_Number']
     customer.customerAddress = data['customerAddress']
     customer.customerBirthday = data['customerBirthday']
@@ -441,6 +456,16 @@ def getVendorDByVID(request, pk):
         return Response(serializer.data)
     except:
         message = {'detail': 'vendor not found'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def getCartitemByCID(request, pk):
+    try:
+        cartItem = CartItems.objects.get(cart=pk)
+        serializer = CartItemsSerializer(cartItem, many=False)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'cart items not found'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 

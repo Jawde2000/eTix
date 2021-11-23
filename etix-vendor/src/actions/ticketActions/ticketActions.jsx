@@ -29,33 +29,75 @@ export const ticketlist = () => async (dispatch, getState) => {
             config
         )
 
+        // var route = [];
+
+        // console.log(locationED);
+
+        
+        data = data.filter((item) => {
+            return item.vendor === userInfo.vendorInfo.vendorID;
+        })
+
         var data2 = await axios.get(
-            'http://127.0.0.1:8000/api/user/service/' + userInfo.vendorInfo.vendorID + '/',
+            `http://127.0.0.1:8000/api/user/service/${userInfo.vendorInfo.vendorID}/`,
             config
         )
 
         data2 = data2.data;
+        console.log(data2);
 
-        // console.log(data2);
-        var i = 0;
-        // var route = [];
+        var seatInfo = [];
+        var locationFD = [];
+        var locationED = [];
+        var service = [];
+        var cart = [];
+        var cartItem = [];
+
+        // console.log(data);
+
+        for(let item of data){
+            let carts = await axios.get(`http://127.0.0.1:8000/api/cart/${item.cart}/`, config);
+            cart.push(carts.data);
+        } 
         
-        // const locationFD = await axios.get(`http://127.0.0.1:8000/api/location/${data2.locationFrom}/`, config);
-        // const locationED = await axios.get(`http://127.0.0.1:8000/api/location/${data2.locationTo}/`, config);
+        // console.log(cart);
 
+        for(let item of cart){
+            let cartI = await axios.get(`http://127.0.0.1:8000/api/user/cartitems/${item.cartID}/`, config);
+            cartItem.push(cartI.data);
+        }
+
+        for(let item of cartItem){
+            let services = await axios.get(`http://127.0.0.1:8000/api/service/${item.service}/`, config);
+            service.push(services.data);
+        }
+
+        for(let item of service){
+            let seat = await axios.get(`http://127.0.0.1:8000/api/seat/${item.seat}/`, config);
+            seatInfo.push(seat.data);
+
+            let locationF = await axios.get(`http://127.0.0.1:8000/api/location/${item.locationFrom}/`, config);
+            locationFD.push(locationF.data);
+
+            let locationE = await axios.get(`http://127.0.0.1:8000/api/location/${item.locationTo}/`, config);
+            locationED.push(locationE.data);
+        }
+
+        // console.log(seatInfo);
         // console.log(locationED);
-        var dtemp = []
+        // console.log(locationFD);
+        // console.log(cartItem);
+        // console.log(service);
 
-        data = data.filter((item) => {
-            if (item.service === data2[i].serviceID) {
-                dtemp.push(data);
-            }
-            i++;
-        })
+        data = data.map((item, index) => ({
+            ...item,
+            seatDetail: seatInfo[index],
+            route: locationFD[index].locationName + ' - ' + locationED[index].locationName,
+            cartItem: cartItem[index],
+            serviceInfo: service[index]
+        }))
 
-        console.log(dtemp);
-        console.log(data);
-        data = dtemp[0];
+        // console.log(data);
 
         dispatch({
             type: TICKET_SUCCESS,

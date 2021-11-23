@@ -88,7 +88,7 @@ function TicketActivities() {
                                                 <Grid container direction="column" justifyContent="flex-start" alignItems="center">
                                                     <Grid item >
                                                         <img 
-                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${ticketData.route[routeIndex].vendorD.created_by}.png`}
+                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.service}.png`}
                                                             alt={`serviceLogo - ${ticketData.route[routeIndex].vendorD.vendorName}`}
                                                             style={{margin: 10, height: '90%', width:'90%',}}
                                                         /> 
