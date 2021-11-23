@@ -523,7 +523,7 @@ const Services = () =>{
                                                 >
                                                     {row.serviceID}
                                                 </TableCell>
-                                                <TableCell align="center">{row.vendorDetail}</TableCell>
+                                                <TableCell align="center"><Link to={`/user/${row.userID}`}>{row.vendorDetail}</Link></TableCell>
                                                 <TableCell align="center">{row.servicedepartureTerminal}</TableCell>
                                                 <TableCell align="center">{row.servicearrivalTerminal}</TableCell>
                                                 <TableCell align="center">{row.route}</TableCell>

@@ -71,6 +71,10 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
             vendorD: vendorD[index],
         }))
 
+        data = data.filter((item) => {
+            return Number(item.seatD.firstQuantity) !=0 || Number(item.seatD.businessQuantity) !=0 || Number(item.seatD.economyQuantity) != 0
+        })
+
         dispatch({type: actions.SEARCH_LOCATION_REQUEST})
 
         const location = {
@@ -978,6 +982,35 @@ export const getTickets = () => async (dispatch, getState) => {
     }
 }
 
+export const validateUser = (email) => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.VERIFY_USER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+        
+        const {data} = await axios.get(`http://localhost:8000/api/user/validation/${email}/`, config)
+
+        dispatch({
+            type: actions.VERIFY_USER_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.VERIFY_USER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+        
 export const passwordChange = (password) => async (dispatch, getState) => {
     try {
         dispatch({
@@ -1012,13 +1045,44 @@ export const passwordChange = (password) => async (dispatch, getState) => {
 
     } catch(error) {
         dispatch({
-            type: actions.USER_PASSWORD_CHANGE_FAILURE,
+          type: actions.USER_PASSWORD_CHANGE_FAILURE,
+          payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const resetPassword = (email) => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.RESET_USER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+        
+        const {data} = await axios.get(
+            `http://localhost:8000/api/user/resetpass/${email}/`,
+            config
+        )
+
+        dispatch({
+            type: actions.RESET_USER_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.RESET_USER_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
         })
     }
-    
 }
 
 export const cartDispatch = () => async (dispatch, getState) => {
@@ -1089,5 +1153,4 @@ export const cartDispatch = () => async (dispatch, getState) => {
                 : error.message,
         })
     }
-    
 }

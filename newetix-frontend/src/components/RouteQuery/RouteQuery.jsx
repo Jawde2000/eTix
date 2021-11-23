@@ -206,6 +206,36 @@ export default function RouteQuery() {
         setTerminalFilter(e.target.value)
     }
 
+    const findMinPrice = (economy, business, first) => {
+        
+        let min = 0;
+        if(Number(economy) !== 0){
+            min = Number(economy);
+        }
+        else if(Number(business) !== 0){
+            min = Number(business);
+        }
+        else if(Number(first) !== 0){
+            min = Number(first);
+        }
+        else {
+            return 0;
+        }
+        
+
+
+
+        if(min > business && Number(business) !== 0  ){
+            min = business;
+        }
+
+        if(min > first && Number(first) !== 0 ){
+            min = first;
+        }
+
+        return min;
+    }
+
   return (
       <Container className={classes.whole} maxWidth="Fixed">
           <Container>
@@ -434,7 +464,7 @@ export default function RouteQuery() {
                                                         </Grid>
                                                         <Grid item xs={12} container>
                                                             <Grid item xs={8} style={{paddingLeft: 20}}>
-                                                                {item.seatD.firstQuantity>0?
+                                                                {item.seatD.firstQuantity>0 && Number(item.seatD.firstPrice) != 0.00?
                                                                     (
                                                                         <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
                                                                             {`First Class : RM ${item.seatD.firstPrice}`}
@@ -445,7 +475,7 @@ export default function RouteQuery() {
                                                                         null
                                                                     )
                                                                 }
-                                                                {item.seatD.businessQuantity>0?
+                                                                {item.seatD.businessQuantity>0 && Number(item.seatD.businessPrice) !==0?
                                                                     (
                                                                         <Typography style={{fontSize: 20 , fontStyle: 'italic'}}>
                                                                             {`Business Class : RM ${item.seatD.businessPrice}`}
@@ -454,7 +484,7 @@ export default function RouteQuery() {
                                                                     : 
                                                                     null
                                                                 }
-                                                                {item.seatD.economyQuantity>0?
+                                                                {item.seatD.economyQuantity>0 && Number(item.seatD.economyPrice) !==0?
                                                                     (
                                                                         <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
                                                                             {`Economy Class : RM ${item.seatD.economyPrice}`}
@@ -467,7 +497,9 @@ export default function RouteQuery() {
                                                             <Grid item xs={4} style={{textAlign: 'right'}} >
                                                                 Start From: RM
                                                                 <Typography style={{fontSize: 40}} >
-                                                                    {`${item.seatD.economyPrice}`}
+                                                                    {
+                                                                        findMinPrice(item.seatD.economyPrice, item.seatD.businessPrice, item.seatD.firstPrice)
+                                                                    }
                                                                 </Typography>
                                                             </Grid>
                                                         </Grid>
@@ -505,9 +537,33 @@ export default function RouteQuery() {
                                                                                                 value={selectedSeat}
                                                                                                 onChange={(e) => setSelectedSeat(e.target.value)}
                                                                                             >
-                                                                                                <FormControlLabel value="F" control={<Radio />} label={`First Class - RM ${selectedItem.seatD.firstPrice}`} />
-                                                                                                <FormControlLabel value="B" control={<Radio />} label={`Business Class - RM ${selectedItem.seatD.businessPrice}`} />
-                                                                                                <FormControlLabel value="E" control={<Radio />} label={`Economy Class - RM ${selectedItem.seatD.economyPrice}`} />
+                                                                                                {Number(selectedItem.seatD.firstPrice)!== 0.00 && Number(selectedItem.seatD.firstQuantity)!==0?
+                                                                                                    (
+                                                                                                        <FormControlLabel value="F" control={<Radio />} label={`First Class - RM ${selectedItem.seatD.firstPrice}`} />
+                                                                                                    )
+                                                                                                    :
+                                                                                                    (
+                                                                                                        null
+                                                                                                    )
+                                                                                                }
+                                                                                                {selectedItem.seatD.businessPrice!==0 && Number(selectedItem.seatD.businessQuantity)!==0 ?
+                                                                                                    (
+                                                                                                        <FormControlLabel value="B" control={<Radio />} label={`Business Class - RM ${selectedItem.seatD.businessPrice}`} />
+                                                                                                    )
+                                                                                                    :
+                                                                                                    (
+                                                                                                        null
+                                                                                                    )
+                                                                                                }
+                                                                                                 {selectedItem.seatD.economy !== 0 && Number(selectedItem.seatD.economyQuantity)!==0?
+                                                                                                    (
+                                                                                                        <FormControlLabel value="E" control={<Radio />} label={`Economy Class - RM ${selectedItem.seatD.economyPrice}`} />
+                                                                                                    )
+                                                                                                    :
+                                                                                                    (
+                                                                                                        null
+                                                                                                    )
+                                                                                                }
                                                                                             </RadioGroup>
                                                                                         </FormControl>
                                                                                     </DialogContent>
