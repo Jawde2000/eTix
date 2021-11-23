@@ -93,6 +93,7 @@ export const listService = () => async (dispatch, getState) => {
         data = data.map((item, index) => ({
             ...item,
             vendorDetail: vendorInfo[index].vendorName,
+            userID: vendorInfo[index].created_by,
             seatDetail: seatInfo[index],
             firstQty: seatInfo[index].firstQuantity,
             businessQty: seatInfo[index].businessQuantity,

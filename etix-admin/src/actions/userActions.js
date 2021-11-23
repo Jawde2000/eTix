@@ -129,10 +129,47 @@ export const listUsers = () => async (dispatch, getState) => {
             }
         }
 
-        const { data } = await axios.get(
+        var { data } = await axios.get(
             'http://127.0.0.1:8000/api/users/',
             config
         )
+
+        let vendorInfo = [];
+
+        for(let i of data){
+            if(i.is_vendor){
+                let rst = await axios.get(
+                    `http://127.0.0.1:8000/api/user/vendor/${i.userID}/`,
+                    config
+                );
+                vendorInfo.push(rst.data);
+            }
+        }
+
+        console.log(vendorInfo);
+
+        let i=0;
+
+        if(vendorInfo.length != 0){
+            data = data.map((item, index) => {
+                if(item.is_vendor){
+
+                    let vendorIf = vendorInfo[i];
+
+                    i++;
+
+                    return ({
+                        ...item,
+                        vendorInfo: vendorIf,
+                    })
+                }
+                else{
+                    return ({
+                        ...item,
+                    })
+                }
+            })
+        }
         
         dispatch({
             type: USER_LIST_SUCCESS,
@@ -407,16 +444,20 @@ export const updateUser = (user, id) => async (dispatch, getState) => {
             type: USER_UPDATE_SUCCESS,
         })
 
-        data = {
-            ...userInfo,
-            username: user.username,
-            email: user.email,
+        if(id == userInfo.userID){
+            data = {
+                ...userInfo,
+                username: user.username,
+                email: user.email,
+            }
+
+            dispatch({
+                type: USER_LOGIN_SUCCESS,
+                payload: data,
+            })
         }
 
-        dispatch({
-            type: USER_LOGIN_SUCCESS,
-            payload: data,
-        })
+        
 
 
     }catch(error){

@@ -508,7 +508,7 @@ const Help = () =>{
                                         >
                                             {row.helpdeskID}
                                         </TableCell>
-                                        <TableCell align="center">{row.user}</TableCell>
+                                        <TableCell align="center"><Link to={`/user/${row.user}`}>{row.user}</Link></TableCell>
                                         <TableCell align="center">{row.to_vendor? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
                                         <TableCell align="center">{row.to_admin? (<CheckCircleIcon style={{color: 'green'}}/>) : (<CancelIcon style={{color: 'red'}} />)}</TableCell>
                                         <TableCell align="center">{row.helpdeskTitle}</TableCell>
