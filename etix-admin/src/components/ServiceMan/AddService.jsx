@@ -265,24 +265,7 @@ const AddService = () => {
                 <Grid container spacing={3} direction="column">
                     <Grid item xs={12} container>
                     <Grid item xs={12} sm={5} container textAlign="center">
-                        <Grid item xs={12} >
-                            Service Image
-                        </Grid>
-                        <Grid item xs={12}>
-                            <img 
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png"
-                                alt="logo"
-                                style={{marginTop: 10,minHeight: 150, maxWidth:150}}
-                            />
-                        </Grid>
-                        <Grid item xs={12} style={status === "X"? ({color: "red"}) : ({color: "green"})}>
-                            <Tooltip title="Change status">
-                                <IconButton onClick={handleChangeStatus}>
-                                    <ChangeCircleIcon />
-                                </IconButton>
-                            </Tooltip>
-                            {status === "O"? "Active" : "Inactive"}                
-                        </Grid>
+                        
                         <Grid item xs={12} container>
                             <Grid item xs={12} className={classes.title} style={{textAlign: 'left'}}>
                                 Service belongs
@@ -358,6 +341,14 @@ const AddService = () => {
                                         }} 
                                     />
                                 </Grid>
+                            </Grid>
+                            <Grid item xs={12} style={status === "X"? ({color: "red"}) : ({color: "green"})}>
+                                <Tooltip title="Change status">
+                                    <IconButton onClick={handleChangeStatus}>
+                                        <ChangeCircleIcon />
+                                    </IconButton>
+                                </Tooltip>
+                                {status === "O"? "Active" : "Inactive"}                
                             </Grid>
                         </Grid>
                         

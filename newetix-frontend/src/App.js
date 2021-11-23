@@ -26,10 +26,10 @@ import Success from './components/Cart/Success'
 // Activities
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
+import ForgetPass from './components/ForgetPassword/ForgetPass';
 // Actions
 import { customerDetails, viewCartData, getTickets, getAllRoutes, getLocations, cartDispatch } from './state/actions/actions';
 import { useDispatch } from 'react-redux';
-
 
 const theme = createTheme({
     palette: {
@@ -103,6 +103,9 @@ function Router() {
                 </Route>
                 <Route path="/activities" exact>
                     <Activities />
+                </Route>
+                <Route path="/forgetpass" exact>
+                    <ForgetPass />
                 </Route>
             </Switch>
             <Footer />

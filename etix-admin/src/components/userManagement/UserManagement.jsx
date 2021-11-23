@@ -522,7 +522,7 @@ const UserManagement = () =>{
                                         <TableCell align="center">{row.username}</TableCell>
                                         <TableCell align="center">{row.email}</TableCell>
                                         <TableCell align="center">{row.role}</TableCell>
-                                        <TableCell align="center">{row.is_active? "Active" : "Not Active"}</TableCell>
+                                        <TableCell align="center">{row.is_active? "Active" : "Not Active"} {row.is_vendor? (row.vendorInfo.vendorStatus? "| Verified" : "| Not Verified") : null}</TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="Edit">
                                                     <Link to={`/user/${row.userID}`}>
