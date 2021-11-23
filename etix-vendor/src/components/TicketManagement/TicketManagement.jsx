@@ -1,17 +1,16 @@
 import { AppBar, Grid, Box, Container, IconButton, Button, Icon, Paper, TextField, Tooltip, Toolbar, Typography} from '@mui/material';
 import { makeStyles, withStyles } from '@mui/styles';
-import React, {useEffect, props, useState, useRef, useCallback} from 'react';
+import React, {useEffect, props, useState, useCallback, Component, useContext, createContext} from 'react';
 import moscow from '../globalAssets/moscow.jpg'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { listHelp, deleteHelp } from '../../actions/helpActions/helpActions';
-import { ticketlist } from '../../actions/ticketActions/ticketActions';
+import { ticketlist, ticketUsed, deleteTicket } from '../../actions/ticketActions/ticketActions';
 import {useDispatch, useSelector} from 'react-redux'
 import ClearIcon from '@mui/icons-material/Clear';
-import {HELP_DELETE_RESET} from '../../constants/helpConstants/helpConstants'
+import {TICKET_RESET, TICKET_RESET_USED, TICKET_RESET_DELETE} from '../../constants/ticketConstants/ticketConstants'
 import PropTypes from 'prop-types';
 import { DataGrid,GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarColumnsButton} from '@mui/x-data-grid';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -23,17 +22,62 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 import QrCodeScannerSharpIcon from '@mui/icons-material/QrCodeScannerSharp';
-import QrReader from 'react-qr-reader'
 import { alpha } from '@mui/material/styles';
 import MuiDialog from '@material-ui/core/Dialog';
-import { useAsyncEffect } from "use-async-effect2";
+import QrReader from 'react-qr-reader';
+import Scanner from "react-webcam-qr-scanner";
 
-const Dialog = withStyles((theme) => ({
-  paper: {
-    height: 340 // 100% is for full height or anything else what you need
-  },
-}))(MuiDialog);
+// const DialogScan = withStyles((theme) => ({
+//   paper: {
+//     height: 295 // 100% is for full height or anything else what you need
+//   },
+// }))(MuiDialog);
+
+// class Scanner extends Component {
+//   constructor(props) {
+//     super(props)
+//     this.state = {
+//       result: 'No result'
+//     }
+//     this.returnValue = this.returnValue.bind(this);
+//   }
+
+//   returnValue(e) {
+//     return 
+//   }
+ 
+//   handleScan = (data) => {
+//     if (data) {
+//       this.state.setState({
+//         result: data
+//       })
+//       console.log(this.state.result);
+//     }
+//   }
+
+//   handleError = err => {
+//     console.error(err)
+//   }
+
+//   previewStyle = {
+//     height: 140,
+//     width: 220,
+//   }
+
+//   render() {
+//     return (
+//         <QrReader
+//           delay={300}
+//           onError={this.handleError}
+//           onScan={this.handleScan}
+//           style={this.previewStyle}
+//         />
+//     )
+//   }
+// }
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -66,18 +110,19 @@ function TicketManagement() {
     const {userInfo} = userLogin
     let history = useHistory()
 
-    const deleteHelplist = useSelector(state => state.deleteHelplist)
-    const {success: successDelete, loading: loadDel} = deleteHelplist;
-    const helpList = useSelector(state => state.helpList);
-    const {helps, loading: loadhelp} = helpList;
+    const deleteticket = useSelector(state => state.deleteTicket)
+    const {ticketSuccess: successDelete, loading: loadDel} = deleteticket;
     const ticketList = useSelector(state => state.ticketList);
-    const {ticket, loading: loadticket} = ticketList;
+    const {ticket, loading: loadticket, ticketSuccess} = ticketList;
+    const usedTicket = useSelector(state => state.useTicket)
+    const {ticketSuccess: successUse, loading: loadUse} = usedTicket;
 
     const [search, setSearch] = useState("");
     const [select, setSelection] = useState([]);
     const [row, setRow] = useState([]);
     const [rows, setRows] = useState([]);
     const [openDel, setOpenDel] = useState(false);
+    const [openRes, setOpenRes] = useState(false);
 
     const [scan, setScan] = useState("No Result");
 
@@ -98,8 +143,8 @@ function TicketManagement() {
         editable: false,
       },
       {
-        field: 'createdAt',
-        headerName: 'Created At',
+        field: 'username',
+        headerName: 'Username',
         headerAlign: 'center',
         width: 250,
         editable: false,
@@ -115,10 +160,10 @@ function TicketManagement() {
             //style={{display:'flex';justifyContent:'center';alignItems:'center'}}  
               <Toolbar>
               {params.row.status === false? (
-              <Tooltip title="Open">
+              <Tooltip title="Valid">
               <CheckCircleIcon style={{color: 'green'}}/>
               </Tooltip>):(
-              <Tooltip title="Invalid">
+              <Tooltip title="Used">
               <CancelIcon style={{color: 'red'}}/>
               </Tooltip>)
               }
@@ -148,13 +193,12 @@ function TicketManagement() {
 
     useEffect(() => {
         if(userInfo){
-            dispatch(listHelp());
             dispatch(ticketlist());
         }
         else{
             history.push('/')
         }
-    }, [dispatch, successDelete])
+    }, [dispatch, successUse, successDelete])
 
     useEffect(() => {
       if(successDelete){
@@ -171,13 +215,13 @@ function TicketManagement() {
             id: tk.ticketID,
             route: tk.route,
             departureT: tk.serviceInfo.servicedepartureTerminal,
-            createdAt: tk.created_at,
+            username: tk.customerDetails.username,
             status: s
           }
         })
         setRow(t);
       }
-    }, [ticket])
+    }, [ticket, ticketSuccess])
 
     const requestSearch = (searchValue) => {
       setSearch(searchValue)
@@ -198,7 +242,7 @@ function TicketManagement() {
 
     const DialogDelete = (ids) => {
       const [open, setOpen] = useState(false);
-
+      // console.log(ids);
       const handleClickOpen = () => {
         setOpen(true);
       };
@@ -209,7 +253,7 @@ function TicketManagement() {
       };
     
       const handleDelete = () => {
-        dispatch(deleteHelp(ids.ids));
+        dispatch(deleteTicket(ids.ids));
         ids = null;
         setSelection([]);
       }
@@ -228,11 +272,11 @@ function TicketManagement() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Delete Message(s)"}
+              {"Delete Ticket(s)"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete the message(s)?
+                Are you sure you want to delete the ticket(s)?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -246,71 +290,163 @@ function TicketManagement() {
       );
     }
 
-    const DialogScan = (ids) => {
-      const [open, setOpen] = useState(false);
-      const scanMounted = useRef(true);
+    const DialogScan = () => {
+      const [openS, setOpenS] = useState(false);
 
       const handleClickOpen = () => {
-        setOpen(true);
+        setOpenS(true);
       };
     
       const handleClose = () => {
         // ids = null;
-        setOpen(false);
+        setOpenS(false);
       };
 
-      const handleError = err => {
-        console.error(err)
-      }
-
       const previewStyle = {
-        height: 140,
+        height: 150,
         width: 220,
       }
 
-      const handleScan = useCallback((data) => {
-        if(data){
-          setScan(data);
-          console.log(scan); 
-          setOpen(false);
-          return data;
+      const handleDecode = (result) => {
+        // console.log(result);
+        setScan(result.data);
+      } 
+
+      useEffect(() => {
+        if(scan) {
+          if (scan !== "No Result"){
+            // console.log(scan);
+            dispatch(ticketUsed(scan));
+            setScan("No Result");
+            setOpenRes(true);
+          }
         }
       }, [scan])
+    
+      const handleScannerLoad = (mode) => {
+        // console.log(mode);
+      }    
 
       return (
         <Toolbar>
           <Tooltip title="Scan" onClick={handleClickOpen}>
-              <IconButton >
+              <IconButton style={{fontSize: 40, color: "black"}}>
               <QrCodeScannerSharpIcon />
               </IconButton>
           </Tooltip>
           <Dialog
-            open={open}
+            open={openS}
             // onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description" maxWidth="sm" 
             PaperProps={{
               sx: {
-                Height: 400
+                Height: 300
               }
             }}
           >
             <DialogTitle id="alert-dialog-title">
-              {"Scan Ticket(s)"}
+              {"Ticket Scanner"}
             </DialogTitle>
             <DialogContent>
-            <QrReader
+            <Scanner 
+            className="some-classname"
+            onDecode={handleDecode}
+            onScannerLoad={handleScannerLoad}
+            constraints={{ 
+              audio: false, 
+              video: { 
+                facingMode: "environment" 
+              } 
+            }}
+            style={previewStyle}
+            />
+            {/* <QrReader
             facingMode={'environment'}
             delay={300}
             onError={handleError}
             onScan={handleScan}
             style={previewStyle}
             resolution={600}
-            />
+            /> */}
             {/* <div><Typography>{setScan}</Typography></div> */}
+            {/* <Scanner /> */}
             </DialogContent>
             <DialogActions>
               <Button style={{color: "red"}} onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
+
+    const DialogResult = () => {
+
+      const handleClickOpen = () => {
+        setOpenRes(true);
+      };
+    
+      const handleClose = () => {
+        // ids = null;
+        setOpenRes(false);
+      };
+
+      const previewStyle = {
+        height: 150,
+        width: 220,
+      }
+
+      const handleDecode = (result) => {
+        // console.log(result);
+        setScan(result.data);
+      } 
+
+      useEffect(() => {
+        if(scan) {
+          if (scan !== "No Result"){
+            // console.log(scan);
+            dispatch(ticketUsed(scan));
+            setScan("No Result");
+            setOpenRes(true);
+          }
+        }
+      }, [scan])
+    
+      const handleScannerLoad = (mode) => {
+        // console.log(mode);
+      }    
+
+      return (
+        <Toolbar>
+          <Tooltip title="Scan" onClick={handleClickOpen}>
+              <IconButton style={{fontSize: 40, color: "black"}}>
+              <QrCodeScannerSharpIcon />
+              </IconButton>
+          </Tooltip>
+          <Dialog
+            open={openRes}
+            // onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description" maxWidth="sm" 
+            PaperProps={{
+              sx: {
+                Height: 300
+              }
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Ticket Result"}
+            </DialogTitle>
+            <DialogContent>
+              {successUse?<DialogContentText id="alert-dialog-description">
+                The ticket is valid. Have a safe ride
+              </DialogContentText> : 
+              <DialogContentText id="alert-dialog-description">
+                The ticket is used / Qrcode is not available. Please scan again.
+              </DialogContentText>}
+            </DialogContent>
+            <DialogActions>
+              {successUse?<Button style={{color: "green"}} onClick={handleClose}>OK</Button>:<Button style={{color: "red"}} onClick={handleClose}>OK</Button>}
             </DialogActions>
           </Dialog>
         </Toolbar>
@@ -330,7 +466,7 @@ function TicketManagement() {
     
       const handleDelete = () => {
         select.map((ids) => {
-          dispatch(deleteHelp(ids.id));
+          dispatch(deleteTicket(ids.id));
         })
         
         setOpen(false);
@@ -357,11 +493,11 @@ function TicketManagement() {
             aria-describedby="alert-dialog-description"
           >
             <DialogTitle id="alert-dialog-title">
-              {"Delete Message(s)"}
+              {"Delete Ticket(s)"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Are you sure you want to delete the message(s)?
+                Are you sure you want to delete the ticket(s)?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -378,9 +514,9 @@ function TicketManagement() {
 
     const DialogDel = () => {
       const handleClose = () => {
-        dispatch({type: HELP_DELETE_RESET});
+        dispatch({type: TICKET_RESET_DELETE});
         setOpenDel(false);
-        history.push(`/menu/helpmanage`);
+        history.push(`/menu/ticket`);
       };
 
       return (
@@ -487,6 +623,12 @@ function TicketManagement() {
                   <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
                   <CircularProgress  style={{color: '#F5CB5C'}}/>
                   </Backdrop>:null
+              }
+              </Grid>
+              <Grid>
+              {
+                  openRes? 
+                  <DialogResult />:null
               }
               </Grid>
               </Paper>

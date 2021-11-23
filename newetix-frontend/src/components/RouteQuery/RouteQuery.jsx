@@ -6,7 +6,7 @@ import {useHistory} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { findRoute } from '../../state/actions/actions';
+import { findRoute, viewCartData } from '../../state/actions/actions';
 import Query from './Query';
 import {getLocationName} from '../globalAssets/scripts/getLocationName';
 import SearchIcon from '@mui/icons-material/Search';
@@ -31,6 +31,7 @@ import Alert from '@mui/material/Alert';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams } from 'react-router';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -87,9 +88,63 @@ export default function RouteQuery() {
     const [selectedItem,setSelectedItem] = useState();
     const [filteredList, setFilteredList] = useState(null);
 
+    const [latTo, setLatTo] = useState(0);
+    const [longTo, setLongTo] = useState(0);
+    const [latF, setLatF] = useState(0);
+    const [longF, setLongF] = useState(0);
+    
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
     }
+
+    useEffect(() => {
+        if(data){
+            var axios = require("axios").default;
+            var options = {
+                method: 'GET',
+                url: 'https://forward-reverse-geocoding.p.rapidapi.com/v1/search',
+                params: {q: locationSearch.data.locationFrom, 'accept-language': 'en', polygon_threshold: '0.0'},
+                headers: {
+                    'x-rapidapi-host': 'forward-reverse-geocoding.p.rapidapi.com',
+                    'x-rapidapi-key': 'c0b1414666msh7239510d4240d30p1b7581jsn27d673214b95'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                setLatF(response.data[0].lat);
+                setLongF(response.data[0].lon);
+                console.log(latF);
+                console.log(longF);
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+    }, [locationSearch, data])
+
+    useEffect(() => {
+        if(data){
+            var axios = require("axios").default;
+
+            var options = {
+                method: 'GET',
+                url: 'https://forward-reverse-geocoding.p.rapidapi.com/v1/search',
+                params: {q: locationSearch.data.locationTo, 'accept-language': 'en', polygon_threshold: '0.0'},
+                headers: {
+                    'x-rapidapi-host': 'forward-reverse-geocoding.p.rapidapi.com',
+                    'x-rapidapi-key': 'c0b1414666msh7239510d4240d30p1b7581jsn27d673214b95'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                setLatTo(response.data[0].lat);
+                setLongTo(response.data[0].lon);
+                console.log(latTo);
+                console.log(longTo);
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+    }, [locationSearch, data])
 
     useEffect(() => {
         if(route){
@@ -173,8 +228,8 @@ export default function RouteQuery() {
             setSelectedItem(null);
             setSelectedSeat("");
             alert(`added to cart Successfully`);
-            history.push('/')
-            history.go(0)
+            dispatch({type: CART_ADD_RESET})
+            history.push('/cart')
         }
     }, [addSuccess])
 
@@ -303,7 +358,9 @@ export default function RouteQuery() {
                     <Grid item xs={12} container>
                         <Grid item xs={4} container style={{backgroundColor: "grey", minHeight: 50, padding: 20}}>
                             <Grid item xs={12} style={{backgroundColor: "green", maxHeight: "Fixed", maxWidth: "Fixed"}}>
-                                eg google map
+                                <iframe width="345" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                                src={"https://www.openstreetmap.org/export/embed.html?bbox="+longF+"%2C"+latF+"%2C"+longTo+"%2C"+latTo+"&amp;layer=mapnik"}
+                                ></iframe>
                             </Grid>
                         </Grid>
                         <Grid item xs={8} container style={{backgroundColor: 'grey', minHeight: 50, padding: 20}}>

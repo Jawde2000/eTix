@@ -5,9 +5,15 @@ import etixLogo from '../globalAssets/eTixLogo.png'
 import Clock from 'react-live-clock'
 import Moment from 'react-moment';
 import moment from 'moment';
+import { withStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom'
 
+const eTixTextTypography = withStyles({
+  root: {
+    color: "#CFDBD5"
+  }
+})(Typography);
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
@@ -54,12 +60,12 @@ function NavBar() {
               <Grid xs={12} direction="column">
            
               <Grid xs={12} container justify="center" direction="row" alignItems="center">
-              <Grid item>
+              <Grid item display="flex">
               <Link href={userInfo? 'http://localhost:3500/menu':'http://localhost:3500/'}         
                 style={{ textDecorationLine: 'none', display: "flex",}}>        
                   <img src={etixLogo} className={defaultStyle.resizePic}/>
-                  <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
-                    eTix 
+                  <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(','),textShadow: '1px 1px 2px black'}} display="flex">
+                    e<div style={{color: '#F5CB5C'}}>T</div><div style={{color: '#add8e6'}}>i</div><div style={{color: '#ffcccb'}}>x</div>
                   </Typography>
               </Link>
               </Grid>

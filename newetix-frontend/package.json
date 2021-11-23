@@ -18,6 +18,8 @@
     "react-aws-s3": "^1.5.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
+    "react-geocode": "^0.2.3",
+    "react-native-maps-directions": "^1.8.0",
     "react-paypal-button-v2": "^2.6.3",
     "react-qr-code": "^2.0.2",
     "react-redux": "^7.2.6",
