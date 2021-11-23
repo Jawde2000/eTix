@@ -19,6 +19,25 @@ export const userLoginReducer = (state = { }, action) => {
     }
 }
 
+export const userUpdateReducer = (state = { }, action) => {
+    switch(action.type){
+        case actions.USER_UPDATE_REQUEST:
+            return {loading: true}
+        
+        case actions.USER_UPDATE_SUCCESS:
+           return {loading: false, success: true}
+        
+        case actions.USER_UPDATE_FAIL:
+           return {loading: false, errorLogin: action.payload}
+
+        case actions.USER_UPDATE_RESET:
+           return {}
+
+        default:
+            return state
+    }
+}
+
 export const customerDetailsReducer = (state = { }, action) => {
     switch(action.type){
         case actions.CUSTOMER_DETAILS_REQUEST:

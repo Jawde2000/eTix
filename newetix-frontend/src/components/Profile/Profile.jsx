@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useReducer, useCallback} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input, Alert, Typography} from '@mui/material';
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Toolbar, Alert, Typography} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -22,7 +22,11 @@ import S3 from 'react-aws-s3';
 import Avatar from '@mui/material/Avatar';
 import moment from "moment";
 import Backdrop from '@mui/material/Backdrop';
-import JumpingDot from '../Profile/loadingdotJumping.gif';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,13 +60,15 @@ const useStyles = makeStyles((theme) => ({
 function UserDetail() {
     const classes = useStyles();
     const dispatch = useDispatch();    
-    const history = useHistory()
-    const ulist = useSelector(state => state.userLogin)
-    const clist = useSelector(state => state.customerDetails)
+    const history = useHistory();
+    const ulist = useSelector(state => state.userLogin);
+    const clist = useSelector(state => state.customerDetails);
     const cEdit = useSelector(state => state.customerEdit);
-    const {userInfo} = ulist
-    const {customerInfo} = clist
-    const {success: editSuccess} = cEdit
+    const userUpdate = useSelector(state => state.userUpdate);
+    const {userInfo} = ulist;
+    const {customerInfo} = clist;
+    const {success: editSuccess, loading: editLoading} = cEdit;
+    const {success: updateSuccess, loading: updateLoading} = userUpdate;
     
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -81,6 +87,10 @@ function UserDetail() {
     const [found, setFound] = useState(true);
     const [picloading, setPloading] = useState(false);
     const [file, setFile] = useState('');
+    const [openUp, setOpenUp] = useState(false);
+    const [openPasWar, setOpenPasWar] = useState(false);
+    const [openSameName, setSameName] = useState(false);
+    const [openPasNot, setOpenPasNot] = useState(false);
     
     const config = {
         bucketName: 'etixbucket',
@@ -106,7 +116,14 @@ function UserDetail() {
         if(userInfo){
             dispatch(customerDetails())
         }
-    }, [editSuccess])
+    }, [userInfo, editSuccess, updateSuccess])
+
+    useEffect(() => {
+        if(editSuccess || updateSuccess){
+            setOpenUp(true);
+            setEditing(false);
+        }
+    }, [editSuccess, updateSuccess])
 
     useEffect(async () => {
         PicExist()
@@ -193,22 +210,25 @@ function UserDetail() {
 
     const handleSubmit = () => {
         if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
-            console.log(fname, lname, contact, address, birthdate, gender)
-            dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
-            if (password != '' && confirmPass != '' && password == confirmPass) {
-                dispatch(passwordChange(password))
+            console.log(fname, lname, contact, address, birthdate, gender, username)
+            if (username != userInfo.username && password == '' && confirmPass == '') {
+                setOpenPasWar(true);
             }
-            history.go(0)
+            else if (username != userInfo.username && password != '' && confirmPass != ''){
+                dispatch(updateUser(username, password));
+            }
+            else if (username == userInfo.username  && password != '' && confirmPass != ''){
+                openPasWar(true);
+            }else {
+                dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
+            }
+            // history.go(0)
         } else if (password != '' && confirmPass != '' && password == confirmPass) {
             dispatch(passwordChange(password))
             console.log("password changed")
         } else {
             alert("Please fill in all of the fields!")
             console.log(fname, lname, contact, address, birthdate, gender)
-        }
-
-        if (userInfo.username != username){
-            dispatch(updateUser(username, userInfo.userID))
         }
     }
 
@@ -234,6 +254,119 @@ function UserDetail() {
 
     if (fname == '' && lname == '' && address == ''){
         iiMissing = true
+    }
+
+    const DialogRemainName = () => {
+        const handleClose = () => {
+          setSameName(false);
+          setEditing(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openSameName}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Username remain same</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogUpdate = () => {
+        const handleClose = () => {
+          setOpenUp(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openUp}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Profile Updated</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogPas = () => {
+        const handleClose = () => {
+          setOpenPasWar(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openPasWar}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>In order to change the username, you must key in your password</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogPasNotMat = () => {
+        const handleClose = () => {
+          setOpenPasNot(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openPasNot}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Password Not Match</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
     }
 
     return (
@@ -640,7 +773,7 @@ function UserDetail() {
                                                                 <Button 
                                                                     variant="outlined"
                                                                     startIcon={<AddIcon />}
-                                                                    onClick={()=> alert("Password Not Match")}
+                                                                    onClick={()=> setOpenPasNot(true)}
                                                                     style={{cursor: 'pointer', backgroundColor: '#F5CB5C', color: 'black', fontWeight: 'bolder', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
                                                                 >
                                                                     Save
@@ -676,6 +809,40 @@ function UserDetail() {
                     }
                     </Box>
                 </>
+            }
+            {
+                openPasWar?<DialogPas />:null
+            }
+            {
+                openUp?<DialogUpdate />:null
+            }
+            {
+                openSameName?<DialogRemainName />:null
+            }
+            {
+                openPasNot?<DialogPasNotMat />:null
+            }
+            {
+                editLoading?
+                <Box sx={{ display: 'flex' }}>
+                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                <CircularProgress  style={{color: '#F5CB5C'}}/>
+                {/* <img src={JumpingDot}/> */}
+                </Backdrop>
+                </Box>
+                :
+                null
+            }
+            {
+                updateLoading?
+                <Box sx={{ display: 'flex' }}>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                    <CircularProgress  style={{color: '#F5CB5C'}}/>
+                    {/* <img src={JumpingDot}/> */}
+                    </Backdrop>
+                </Box>
+                :
+                null
             }
         </Container>
         </Container>
