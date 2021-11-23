@@ -8,8 +8,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HelpIcon from '@mui/icons-material/Help';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { helpdeskList, helpResponseList } from '../../state/actions/actions';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { vendorList, helpdeskList, helpResponseList } from '../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -70,14 +70,19 @@ function Messaging() {
     }
 
     useEffect(() => {
+        if (!userInfo) {
+            history.push('/')
+        } else {
+            dispatch(helpdeskList())
+            dispatch(vendorList())
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
         if (helpList) {
             setRows(helpList)
         }
-
-        if (!userInfo) {
-            history.push('/')
-        }
-    });
+    }, [hlist])
 
     return (
         <Box className={classes.whole}>
