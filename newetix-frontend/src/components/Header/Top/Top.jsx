@@ -119,7 +119,7 @@ function Top() {
 
     useEffect(() => {
         if (userInfo){
-            setImgSrc("https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".png")
+            setImgSrc("https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpeg")
         }
     }, [userInfo])
     

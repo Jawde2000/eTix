@@ -265,7 +265,7 @@ function CartLanding() {
                                     <Grid item xs={12} container style={{background: 'linear-gradient(to right, rgb(15, 12, 41), rgb(48, 43, 99), rgb(36, 36, 62))', margin: 10}}>
                                         <Grid item xs={3}>
                                             <img 
-                                                src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendorD.created_by}.png`}
+                                                src={`https://etixbucket.s3.amazonaws.com/etix/${item.serviceID}.png`}
                                                 alt={`serviceLogo${item.vendor}`}
                                                 style={{margin: 10, height: 170, width:300,}}
                                             />

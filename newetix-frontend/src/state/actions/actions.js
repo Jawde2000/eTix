@@ -71,6 +71,10 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
             vendorD: vendorD[index],
         }))
 
+        data = data.filter((item) => {
+            return Number(item.seatD.firstQuantity) !=0 || Number(item.seatD.businessQuantity) !=0 || Number(item.seatD.economyQuantity) != 0
+        })
+
         dispatch({type: actions.SEARCH_LOCATION_REQUEST})
 
         const location = {
@@ -310,6 +314,7 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
             type: actions.CUSTOMER_EDIT_REQUEST
         })
 
+
         const {
             userLogin: {userInfo},
         } = getState()
@@ -333,6 +338,8 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
             },
             config
         )
+
+        console.log(data)
         
         dispatch({
             type: actions.CUSTOMER_EDIT_SUCCESS,
@@ -956,6 +963,35 @@ export const getTickets = () => async (dispatch, getState) => {
     }
 }
 
+export const validateUser = (email) => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.VERIFY_USER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+        
+        const {data} = await axios.get(`http://localhost:8000/api/user/validation/${email}/`, config)
+
+        dispatch({
+            type: actions.VERIFY_USER_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.VERIFY_USER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+        
 export const passwordChange = (password) => async (dispatch, getState) => {
     try {
         dispatch({
@@ -990,11 +1026,112 @@ export const passwordChange = (password) => async (dispatch, getState) => {
 
     } catch(error) {
         dispatch({
-            type: actions.USER_PASSWORD_CHANGE_FAILURE,
+          type: actions.USER_PASSWORD_CHANGE_FAILURE,
+          payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const resetPassword = (email) => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.RESET_USER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+        
+        const {data} = await axios.get(
+            `http://localhost:8000/api/user/resetpass/${email}/`,
+            config
+        )
+
+        dispatch({
+            type: actions.RESET_USER_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.RESET_USER_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,
         })
     }
+}
+
+export const cartDispatch = () => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: actions.CART_DISPATCH_REQUEST
+        })
     
+        const {
+            userLogin: {userInfo},
+        } = getState()
+    
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+    
+        const { data } = await axios.get(
+            `http://localhost:8000/api/cart/`,
+            config
+        )
+
+        let cart = ""
+
+        for(let i of data){
+            if(i.user === userInfo.userID){
+                cart = i.cartID
+            }
+        }
+
+        let payment = await axios.get(
+            `http://localhost:8000/api/payment/`,
+            config
+        )
+
+        for (let i of payment.data) {
+            if(i.cart == cart){
+                cart = null
+            }
+        }
+
+        //if cart exist, just create item. If it does not exist create a new cart and create item  && (cart != payment)
+        if(!cart){
+            let rst = await axios.post(
+                `http://127.0.0.1:8000/api/cart/`,
+                {
+                    user: userInfo.userID
+                },
+                config
+            )   
+        } else {
+            dispatch({
+                type: actions.CART_DISPATCH_UNCHANGED
+            })
+        }
+
+        dispatch({
+            type: actions.CART_DISPATCH_SUCCESS
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.CART_DISPATCH_FAILURE,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
 }

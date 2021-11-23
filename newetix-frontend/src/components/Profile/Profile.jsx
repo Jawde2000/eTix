@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useReducer, useCallback} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input, Alert} from '@mui/material';
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input, Alert, Typography} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -16,10 +16,13 @@ import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_DETAIL_RESET } from '../../state/actions/actionConstants';
-import { updateUser, customerEdit, passwordChange } from '../../state/actions/actions';
+import { updateUser, customerEdit, passwordChange, customerDetails } from '../../state/actions/actions';
 import images from '../globalAssets/scripts/bgchange';
 import S3 from 'react-aws-s3';
 import Avatar from '@mui/material/Avatar';
+import moment from "moment";
+import Backdrop from '@mui/material/Backdrop';
+import JumpingDot from '../Profile/loadingdotJumping.gif';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,13 +30,12 @@ const useStyles = makeStyles((theme) => ({
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundColor: "rgba(255,255,255,0.5)",
-        backgroundBlendMode: "lighten",
         minHeight: 500,
         fontFamily: ['rubik', 'sans-serif'].join(','),
         padding: 20
     },
     box: {
-        backgroundColor: "#CFDBD5",
+        backgroundColor: "#FFFEF7",
         marginBottom: 20,
         borderRadius: '25px',
         minHeight: 450,
@@ -47,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
     functionicon: {
         cursor: 'pointer',
+        color: 'black',
     },
 }));
 
@@ -56,8 +59,10 @@ function UserDetail() {
     const history = useHistory()
     const ulist = useSelector(state => state.userLogin)
     const clist = useSelector(state => state.customerDetails)
+    const cEdit = useSelector(state => state.customerEdit);
     const {userInfo} = ulist
     const {customerInfo} = clist
+    const {success: editSuccess} = cEdit
     
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -65,6 +70,7 @@ function UserDetail() {
     const [password, setPassword] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
     //customer
+    const [customerID, setID] = useState("");
     const [birthdate, setBirthDate] = useState("");
     const [address, setAddress] = useState("");
     const [gender, setGender] = useState('');
@@ -74,7 +80,7 @@ function UserDetail() {
     const [editing,setEditing] = useState(false);
     const [found, setFound] = useState(true);
     const [picloading, setPloading] = useState(false);
-    const [file, setFile] = useState('')
+    const [file, setFile] = useState('');
     
     const config = {
         bucketName: 'etixbucket',
@@ -95,6 +101,13 @@ function UserDetail() {
     
     var s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: 'AKIA4TYMPNP6EQNIB7HV', secretAccessKey: 'Vd8K2yLQrKZermLm4VxV1XJp9k73UPLLwQjfR', region: "ap-southeast-1"});
     
+
+    useEffect(() => {
+        if(userInfo){
+            dispatch(customerDetails())
+        }
+    }, [editSuccess])
+
     useEffect(async () => {
         PicExist()
 
@@ -103,10 +116,10 @@ function UserDetail() {
         }
     })
 
-    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file + ".png"));
+    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file + ".jpeg"));
 
     async function PicExist() {
-        let url = "https://etixbucket.s3.amazonaws.com/etix/" + file + '.png'
+        let url = "https://etixbucket.s3.amazonaws.com/etix/" + file + '.jpeg'
         await fetch(url).then((res) => {
             if (res.status == 404) {
                 setFound(false)
@@ -117,6 +130,7 @@ function UserDetail() {
             }
         }).catch((err) => {
             setFound(false)
+            console.log(err)
         });
     }
 
@@ -179,12 +193,12 @@ function UserDetail() {
 
     const handleSubmit = () => {
         if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
+            console.log(fname, lname, contact, address, birthdate, gender)
             dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
-            history.go(0)        
             if (password != '' && confirmPass != '' && password == confirmPass) {
                 dispatch(passwordChange(password))
-                console.log("password changed")
             }
+            history.go(0)
         } else if (password != '' && confirmPass != '' && password == confirmPass) {
             dispatch(passwordChange(password))
             console.log("password changed")
@@ -214,6 +228,7 @@ function UserDetail() {
             setContact(customerInfo.customerContact_Number)
             setAddress(customerInfo.customerAddress)
             setBirthDate(customerInfo.customerBirthday)
+            setID(customerInfo.customerID)
         }
     }, [userInfo, customerInfo])
 
@@ -226,14 +241,20 @@ function UserDetail() {
         <Container >
             {!userInfo? 
                 <Box sx={{ display: 'flex' }}>
-                    <CircularProgress />
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                    <CircularProgress  style={{color: '#F5CB5C'}}/>
+                    {/* <img src={JumpingDot}/> */}
+                    </Backdrop>
                 </Box>
                 :
                 <>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
+                        <Typography paddingRight="12" textAlign="center" style={{fontSize:20, fontWeight: 'bolder'}}>My Profile</Typography>
+                    </Grid>
+                    <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
                         <Grid item xs={12} className={classes.action} container>
-                            <Grid item xs={4} textAlign="center" style={{fontSize:20}}>
-                                User ID: {userInfo.userID}
+                            <Grid item xs={4} textAlign="center" style={{fontSize:20, fontWeight: 'bolder'}}>
+                                User ID: {customerID}
                             </Grid>
                             {iiMissing? 
                             <Grid item xs={4} textAlign="center" style={{fontSize:12}}>
@@ -243,7 +264,7 @@ function UserDetail() {
                             }
                             <Grid item xs={iiMissing? 3 : 7} textAlign="right">
                                 <Tooltip title="Edit User">
-                                    <IconButton onClick={() => setEditing(!editing)}>
+                                    <IconButton onClick={() => setEditing(!editing)} style={{bottom: '15px'}}>
                                         <EditIcon className={classes.functionicon} fontSize="large" />
                                     </IconButton>
                                 </Tooltip>
@@ -251,6 +272,13 @@ function UserDetail() {
                         </Grid>
                     </Grid>
                     <Box sx={{width:'90%'}} className={classes.box}>
+                    {!userInfo?
+                    <Box sx={{ display: 'flex' }}>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                    <CircularProgress  style={{color: '#F5CB5C'}}/>
+                    {/* <img src={JumpingDot}/> */}
+                    </Backdrop>
+                    </Box>:
                         <Grid container spacing={3} direction="column">
                             <Grid item xs={12} container>
                                 
@@ -271,12 +299,12 @@ function UserDetail() {
                                         (
                                         <div>
                                         <label htmlFor="contained-button-file">
-                                        <input type="file"  accept="image/png" id="contained-button-file" onChange={upload}
+                                        <input type="file"  accept="image/*" id="contained-button-file" onChange={upload}
                                         style={{justifyContent:'center', alignItems:'center', display: 'none'}}
                                         />
                                         {picloading? (<Box sx={{ display: 'flex' }}
                                         style={{justifyContent:'center', alignItems:'center'}}
-                                        ><CircularProgress /></Box>):(<Button variant="contained" component="span" >Upload</Button>)}
+                                        ><CircularProgress /></Box>):(<Button variant="contained" component="span" style={{color: 'gray', backgroundColor: 'white'}}>Upload Image</Button>)}
                                         </label>                            
                                         </div>
                                         )}
@@ -323,7 +351,7 @@ function UserDetail() {
                                                             fullWidth
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                             }} 
                                                         />
                                                     </Grid>   
@@ -354,7 +382,7 @@ function UserDetail() {
                                                             disabled
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                             }} 
                                                         />
                                                     </Grid>   
@@ -390,7 +418,7 @@ function UserDetail() {
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
-                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                                         }} 
                                                                     />
                                                                 </Grid>   
@@ -419,7 +447,7 @@ function UserDetail() {
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
-                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                                         }} 
                                                                     />
                                                                 </Grid>   
@@ -448,7 +476,7 @@ function UserDetail() {
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
-                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                                         }} 
                                                                     />
                                                                 </Grid>   
@@ -473,12 +501,15 @@ function UserDetail() {
                                                                         variant="outlined"
                                                                         onChange={handleChangeBirthDate}
                                                                         defaultValue={birthdate}
+                                                                        inputProps={{
+                                                                            max: (moment().subtract(13, "years")).format('YYYY-MM-DD'),
+                                                                        }}                                                                       
                                                                         margin="dense"
                                                                         type="date"
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
-                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                                         }} 
                                                                     />
                                                                 </Grid>   
@@ -507,7 +538,7 @@ function UserDetail() {
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
-                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                            style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                                         }} 
                                                                     />
                                                                 </Grid>   
@@ -577,7 +608,7 @@ function UserDetail() {
                                                             fullWidth
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                             }} 
                                                         />
                                                     </Grid>
@@ -597,7 +628,7 @@ function UserDetail() {
                                                             fullWidth
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
                                                             }} 
                                                         />
                                                     </Grid>
@@ -610,7 +641,7 @@ function UserDetail() {
                                                                     variant="outlined"
                                                                     startIcon={<AddIcon />}
                                                                     onClick={()=> alert("Password Not Match")}
-                                                                    style={{cursor: 'pointer', backgroundColor: 'green', color: 'black', fontWeight: 'bold', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
+                                                                    style={{cursor: 'pointer', backgroundColor: '#F5CB5C', color: 'black', fontWeight: 'bolder', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
                                                                 >
                                                                     Save
                                                                 </Button>
@@ -620,7 +651,7 @@ function UserDetail() {
                                                                 <Button 
                                                                     variant="outlined"
                                                                     startIcon={<AddIcon />}
-                                                                    style={{cursor: 'pointer', backgroundColor: 'green', color: 'black', fontWeight: 'bold', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
+                                                                    style={{cursor: 'pointer', backgroundColor: '#F5CB5C', color: 'black', fontWeight: 'bolder', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
                                                                     onClick={handleSubmit}
                                                                 >
                                                                     Save
@@ -642,6 +673,7 @@ function UserDetail() {
                                 <Grid item xs={12} sm={1} />
                             </Grid>
                         </Grid>
+                    }
                     </Box>
                 </>
             }
