@@ -38,6 +38,25 @@ export const customerDetailsReducer = (state = { }, action) => {
     }
 }
 
+export const customerEditReducer = (state = { }, action) => {
+    switch(action.type){
+        case actions.CUSTOMER_EDIT_REQUEST:
+            return {loading: true}
+        
+        case actions.CUSTOMER_EDIT_SUCCESS:
+           return {loading: false, success: true}
+        
+        case actions.CUSTOMER_EDIT_FAILURE:
+           return {loading: false, error: action.payload}
+
+        case actions.CUSTOMER_EDIT_RESET:
+            return {}
+
+        default:
+            return state
+    }
+}
+
 export const userRegisterReducer = (state = { }, action) => {
     switch(action.type){
         case actions.USER_REGISTER_PROCESS:

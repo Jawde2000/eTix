@@ -47,19 +47,6 @@ const theme = createTheme({
 })
 
 function Router() {
-    const dispatch = useDispatch();
-    
-    dispatch(customerDetails())
-    dispatch(cartDispatch())
-    dispatch(viewCartData())
-
-    async function getEssentialCartData(){
-        await dispatch(getAllRoutes())
-        await dispatch(getLocations())
-        await dispatch(getTickets())
-    }
-
-    getEssentialCartData()
     return(
         <BrowserRouter>
             <Header />
