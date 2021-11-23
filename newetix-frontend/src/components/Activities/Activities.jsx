@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button } from '@mui/material'
+import { Grid, Box, Typography, TextField, Button, CircularProgress } from '@mui/material'
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
@@ -38,6 +38,7 @@ function Activities() {
 
     const userLogin = useSelector(state => state.userLogin)
     const {error,  userInfo} = userLogin
+    const [checkTicketRetrieval, setCheckTicketRetrieval] = React.useState(false)
 
     let history = useHistory()
 

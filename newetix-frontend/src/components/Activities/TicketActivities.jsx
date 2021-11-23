@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles, styled } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button, Paper, Stack, Pagination } from '@mui/material'
+import { Grid, Box, Typography, TextField, Button, Paper, Stack, Pagination, CircularProgress } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
+import { getTickets, getAllRoutes } from '../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 function TicketActivities() {
     const classes = useStyles();
     let history = useHistory()
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const userLogin = useSelector(state => state.userLogin)
     const ticketList = useSelector(state => state.getTickets)
@@ -26,6 +26,7 @@ function TicketActivities() {
     const {ticketData} = ticketList
 
     const [listofTickets, setListofTickets] = useState([])
+    const [loadStatus, setLoadStatus] = useState(true)
 
     let hasTickets = false
     let reallyhasTickets = false
@@ -34,43 +35,53 @@ function TicketActivities() {
     useEffect(() => {
         if(!userLogin) {
             history.push('/')
+        } else {
+            dispatch(getTickets())
         }
+    }, [dispatch])
 
-        if (ticketData) {
+    useEffect(() => {
+        if (ticketData){
             setListofTickets(ticketData.tickets)
+            setLoadStatus(false)
         }
-
-    }, [ticketData, userLogin])
+    }, [ticketList])
 
     let routeIndex = 0
     let fromIndex = 0
     let toIndex = 0
+    let vendorIndex = 0
 
     const handleRender = (item) => {
-        console.log(item)
-        console.log(ticketData)
-
-        for (var i in ticketData.route){
-            if (ticketData.route[i].serviceID == item.service) {
-                routeIndex = i
+        if (!loadStatus){
+            for (var i in ticketData.routes){
+                if (ticketData.routes[i].serviceID == item.service) {
+                    routeIndex = i
+                }
             }
-        }
+    
+            for (var k in ticketData.locations) {
+                if (ticketData.locations[k].locationID == ticketData.routes[routeIndex].locationFrom){
+                    fromIndex = k
+                } 
+                
+                if (ticketData.locations[k].locationID == ticketData.routes[routeIndex].locationTo) {
+                    toIndex = k
+                }
+            }
 
-        for (var k in ticketData.locations) {
-            if (ticketData.locations[k].locationID == ticketData.route[routeIndex].locationFrom){
-                fromIndex = k
-            } 
-            
-            if (ticketData.locations[k].locationID == ticketData.route[routeIndex].locationTo) {
-                toIndex = k
+            for (var l in ticketData.vendorD) {
+                if (ticketData.vendorD[l].vendorID == item.vendor) {
+                    vendorIndex = l
+                }
             }
         }
     }
 
     return (
             <Grid container direction="column" justifyContent="center" alignItems="center" >
-                {ticketList?
-                    (listofTickets.map((item, index) => {
+                {ticketData?
+                    (ticketData.tickets.map((item, index) => {
                         hasTickets = false
 
                         handleRender(item)
@@ -89,13 +100,13 @@ function TicketActivities() {
                                                     <Grid item >
                                                         <img 
                                                             src={`https://etixbucket.s3.amazonaws.com/etix/${item.service}.png`}
-                                                            alt={`serviceLogo - ${ticketData.route[routeIndex].vendorD.vendorName}`}
+                                                            alt={`serviceLogo - ${ticketData.vendorD[vendorIndex].vendorName}`}
                                                             style={{margin: 10, height: '90%', width:'90%',}}
                                                         /> 
                                                     </Grid>
                                                     <Grid item>
                                                         <Typography style={{fontSize: 15, color: 'white'}}>
-                                                            {ticketData.route[routeIndex].vendorD.vendorName}
+                                                            {ticketData.vendorD[vendorIndex].vendorName}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -104,7 +115,7 @@ function TicketActivities() {
                                             <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
                                                 <Grid item xs={12} >
                                                     <Typography style={{fontSize: 30}}>
-                                                        {ticketData.route[routeIndex].serviceName}
+                                                        {ticketData.routes[routeIndex].serviceName}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={12} >
@@ -121,7 +132,7 @@ function TicketActivities() {
                                                     <Grid item xs={12}>
                                                         <Grid item xs={8}>
                                                             <Typography style={{fontSize: 20}}>
-                                                                {`To Board: ${ticketData.route[routeIndex].serviceStartDate} / ${ticketData.route[routeIndex].serviceTime}`}
+                                                                {`To Board: ${ticketData.routes[routeIndex].serviceStartDate} / ${ticketData.routes[routeIndex].serviceTime}`}
                                                             </Typography>
                                                         </Grid> 
                                                     </Grid>
@@ -136,7 +147,7 @@ function TicketActivities() {
                             </>)
                     }))
                 :
-                    ''
+                    <CircularProgress />
                 }
                 {reallyhasTickets?
                     ''

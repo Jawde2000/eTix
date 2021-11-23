@@ -26,9 +26,6 @@ import Success from './components/Cart/Success'
 // Activities
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
-// Actions
-import { customerDetails, viewCartData, getTickets, getAllRoutes, getLocations, cartDispatch } from './state/actions/actions';
-import { useDispatch } from 'react-redux';
 
 
 const theme = createTheme({
@@ -47,19 +44,6 @@ const theme = createTheme({
 })
 
 function Router() {
-    const dispatch = useDispatch();
-    
-    dispatch(customerDetails())
-    dispatch(cartDispatch())
-    dispatch(viewCartData())
-
-    async function getEssentialCartData(){
-        await dispatch(getAllRoutes())
-        await dispatch(getLocations())
-        await dispatch(getTickets())
-    }
-
-    getEssentialCartData()
     return(
         <BrowserRouter>
             <Header />
