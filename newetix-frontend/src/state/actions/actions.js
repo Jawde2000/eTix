@@ -71,6 +71,10 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
             vendorD: vendorD[index],
         }))
 
+        data = data.filter((item) => {
+            return Number(item.seatD.firstQuantity) !=0 || Number(item.seatD.businessQuantity) !=0 || Number(item.seatD.economyQuantity) != 0
+        })
+
         dispatch({type: actions.SEARCH_LOCATION_REQUEST})
 
         const location = {
