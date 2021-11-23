@@ -436,6 +436,17 @@ def getServiceByVendorID(request, pk):
         message = {'detail': 'service not exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def getServicebyID(pk):
+    try:
+        services = Services.objects.get(serviceID=pk)
+        serializer = ServicesSerializer(services, many=false)
+        return Response(serializer.data)
+    except:
+        message = {'detail': 'serviceID invalid'}
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
+        
+
 
 @api_view(['GET'])
 def getVendorHelpByID(request, pk):

@@ -918,8 +918,6 @@ export const getTickets = () => async (dispatch, getState) => {
     
         const {
             userLogin: {userInfo},
-            locationList: {locations},
-            getAllRoutes: {route}
         } = getState()
 
         let tickets = []
@@ -942,11 +940,32 @@ export const getTickets = () => async (dispatch, getState) => {
             }
         }
 
-        let releventdata = {tickets, locations, route}
+        let loc = await axios.get(
+            `http://127.0.0.1:8000/api/location/`,
+            config
+        )
+
+        let locations = loc.data
+        let routes = []
+
+        for (var i in tickets) {
+            let serviceq = await axios.get(
+                `http://127.0.0.1:8000/api/service/${tickets[i].service}/`,
+                config
+            )
+            routes.push(serviceq.data)
+        }
+        
+        let vendor = await axios.get(
+            `http://127.0.0.1:8000/api/vendor/`,
+            config
+        )
+        
+        let vendorD = vendor.data
+
+        let releventdata = {tickets, locations, routes, vendorD}
         
         data = releventdata
-
-        console.log(data)
 
         dispatch({
             type: actions.TICKET_LIST_SUCCESS,

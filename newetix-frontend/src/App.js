@@ -31,6 +31,7 @@ import ForgetPass from './components/ForgetPassword/ForgetPass';
 import { customerDetails, viewCartData, getTickets, getAllRoutes, getLocations, cartDispatch } from './state/actions/actions';
 import { useDispatch } from 'react-redux';
 
+
 const theme = createTheme({
     palette: {
         type: 'light',
@@ -47,19 +48,6 @@ const theme = createTheme({
 })
 
 function Router() {
-    const dispatch = useDispatch();
-    
-    dispatch(customerDetails())
-    dispatch(cartDispatch())
-    dispatch(viewCartData())
-
-    async function getEssentialCartData(){
-        await dispatch(getAllRoutes())
-        await dispatch(getLocations())
-        await dispatch(getTickets())
-    }
-
-    getEssentialCartData()
     return(
         <BrowserRouter>
             <Header />
