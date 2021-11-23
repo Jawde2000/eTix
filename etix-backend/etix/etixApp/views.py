@@ -177,7 +177,14 @@ def paymentProcess(request, pk):
                 cart=cart
             )
 
-            print(obj.service)
+            if (obj.seat_Type == "F"):
+                obj.service.seat.firstQuantity = obj.service.seat.firstQuantity - 1
+            elif (obj.seat_Type == "B"):
+                obj.service.seat.businessQuantity = obj.service.seat.businessQuantity - 1
+            elif (obj.seat_Type == "E"):
+                obj.service.seat.economyQuantity = obj.service.seat.economyQuantity - 1
+
+            obj.service.seat.save()
 
             ticket.save()
 
