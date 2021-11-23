@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location, CartItems
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -21,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ['email', 'username',
+    list_display = ['userID', 'email', 'username',
                     'is_superuser', 'is_vendor', 'is_customer']
     list_filter = ['is_superuser', 'is_vendor', 'is_customer']
     fieldsets = (
@@ -56,7 +56,7 @@ class CustomerModel(admin.ModelAdmin):
 class VendorModel(admin.ModelAdmin):
     list_filter = ('vendorID', 'vendorContact_Number', 'vendorStatus')
     list_display = ('vendorID', 'vendorContact_Number', 'vendorStatus',
-                    'vendorName', 'vendorBankAcc', 'vendorRegistrationNo')
+                    'vendorName', 'vendorBankAcc', 'vendorBankName', 'vendorRegistrationNo')
 
 
 @admin.register(Admin)
@@ -67,15 +67,15 @@ class AdminModel(admin.ModelAdmin):
 
 @admin.register(Ticket)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('ticketID', 'ticketName')
-    list_display = ('ticketID', 'ticketName')
+    list_filter = ('ticketID', 'service')
+    list_display = ('ticketID', 'service')
 
 
 @admin.register(HelpDesk)
 class TicketModel(admin.ModelAdmin):
     list_filter = ('helpdeskID', 'helpdeskStatus')
     list_display = ('helpdeskID', 'helpdeskTitle',
-                    'helpdeskDateTime', 'helpdeskStatus', 'customer')
+                    'helpdeskDateTime', 'helpdeskStatus', 'user')
 
 
 @admin.register(HelpResponse)
@@ -87,8 +87,15 @@ class TicketModel(admin.ModelAdmin):
 
 @admin.register(Cart)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('cartID', 'customer')
-    list_display = ('cartID', 'service', 'cartTotal', 'customer')
+    list_filter = ('cartID', 'user')
+    list_display = ('cartID', 'cartTotal', 'user')
+
+
+@admin.register(CartItems)
+class TicketModel(admin.ModelAdmin):
+    list_filter = ('cartItemsID', 'cart')
+    list_display = ('cartItemsID', 'service',
+                    'seat_Type', 'seat_price', 'cart')
 
 
 @admin.register(Payment)
@@ -97,34 +104,23 @@ class TicketModel(admin.ModelAdmin):
     list_display = ('paymentID', 'paymentStatus', 'cart', 'paymentDateTime')
 
 
+@admin.register(Location)
+class LocationModel(admin.ModelAdmin):
+    list_filter = ('locationID', 'locationName')
+    list_display = ('locationID', 'locationName')
+
+
 @admin.register(Services)
 class TicketModel(admin.ModelAdmin):
     list_filter = ('serviceID', 'serviceStatus')
     list_display = ('serviceID', 'serviceName', 'serviceDesc',
-                    'serviceRowCapacity', 'destination', 'serviceStatus', 'vendor')
-
-
-@admin.register(Destination)
-class TicketModel(admin.ModelAdmin):
-    list_filter = ('destinationID', 'destinationFrom')
-    list_display = ('destinationID', 'destinationTimeDeparture', 'destinationOnwardDate',
-                    'destinationStartName', 'destinationEndName', 'destinationFrom', 'destinationTo')
+                    'serviceStatus', 'serviceTime', 'serviceFrequency',
+                    'serviceStartDate', 'vendor', 'seat')
 
 
 @admin.register(Seat)
 class TicketModel(admin.ModelAdmin):
-    list_filter = ('seatID', 'status')
-    list_display = ('seatID', 'status')
-
-
-@admin.register(SeatType)
-class TicketModel(admin.ModelAdmin):
-    list_filter = ('seatTypeID', 'seatTypeName')
-    list_display = ('seatTypeID', 'seatTypeName',
-                    'seatTypePrice', 'seatTypeQuantity')
-
-
-@admin.register(Row)
-class TicketModel(admin.ModelAdmin):
-    list_filter = ('rowID', 'capacity')
-    list_display = ('rowID', 'capacity')
+    list_filter = ('seatID', 'economyQuantity', 'businessQuantity',
+                   'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')
+    list_display = ('seatID', 'economyQuantity', 'businessQuantity',
+                    'firstQuantity', 'economyPrice', 'businessPrice', 'firstPrice')

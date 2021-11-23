@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Destination, Seat, SeatType, Row
+from .models import User, Customer, Vendor, Admin, Ticket, HelpDesk, HelpResponse, Cart, Payment, Services, Seat, Location, CartItems
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.views import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -9,8 +10,8 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email',
-                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser']
+        fields = ['userID', 'username', 'email',
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'is_active']
 
         extra_kwargs = {'password': {
             'write_only': True,
@@ -23,18 +24,37 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserSerializerWithToken(UserSerializer):
+    token = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['userID', 'username', 'email',
+                  'is_customer', 'is_vendor', 'is_staff', 'is_superuser', 'is_active', 'token']
+
+    def get_token(self, obj):
+        token = RefreshToken.for_user(obj)
+        return str(token.access_token)
+
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['customerID', 'customerFirstName', 'customerLastName',
-                  'customerContact_Number', 'customerAddress', 'customerBirthday']
+        fields = ['customerID', 'customerFirstName', 'customerLastName', 'customerGender',
+                  'customerContact_Number', 'customerAddress', 'customerBirthday', 'created_by']
 
 
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         fields = ['vendorID', 'vendorContact_Number', 'vendorStatus',
-                  'vendorName', 'vendorBankAcc', 'vendorRegistrationNo']
+                  'vendorName', 'vendorBankName', 'vendorBankAcc', 'vendorRegistrationNo', 'created_by']
+
+
+class VendorSerializerStripped(serializers.ModelSerializer):
+    class Meta:
+        model = Vendor
+        fields = ['vendorID', 'vendorName']
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -47,11 +67,10 @@ class AdminSerializer(serializers.ModelSerializer):
         Token.objects.create(admin=admin)
         return admin
 
-
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ['ticketID', 'ticketName']
+        fields = '__all__'
 
 
 class HelpDeskSerializer(serializers.ModelSerializer):
@@ -72,9 +91,21 @@ class CartSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CartItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItems
+        fields = '__all__'
+
+
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
+        fields = '__all__'
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
         fields = '__all__'
 
 
@@ -84,25 +115,13 @@ class ServicesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DestinationSerializer(serializers.ModelSerializer):
+class LocationSerializerIDonly(serializers.ModelSerializer):
     class Meta:
-        model = Destination
-        fields = '__all__'
+        model = Location
+        fields = ['locationID']
 
 
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
-        fields = '__all__'
-
-
-class SeatTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SeatType
-        fields = '__all__'
-
-
-class RowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Row
         fields = '__all__'

@@ -1,11 +1,11 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button,} from '@mui/material';
+import { AppBar, Grid,   Typography} from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import {Link} from 'react-router-dom';
 import React, { useState } from 'react';
 import etixLogo from '../globalAssets/eTixLogo.png'
 import Clock from 'react-live-clock'
-import Moment from 'react-moment';
 import moment from 'moment';
-import { useLocation } from 'react-router-dom'
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 function NavBar() {
   const defaultStyle = useStyles();
-  const [value, setValue] = useState("/");
+  const [value] = useState("/");
   var dateAndTime= moment().format("DD/MM/YYYY");
 
   return (
@@ -52,9 +52,9 @@ function NavBar() {
            
               <Grid xs={12} container justify="center" direction="row" alignItems="center">
               <Grid item>
-              <Link href={value}           
+              <Link to={value}           
                 style={{ textDecorationLine: 'none', display: "flex",}}>        
-                  <img src={etixLogo} className={defaultStyle.resizePic}/>
+                  <img src={etixLogo} alt="etixLogo" className={defaultStyle.resizePic}/>
                   <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
                     eTix 
                   </Typography>

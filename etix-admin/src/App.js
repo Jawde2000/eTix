@@ -1,61 +1,72 @@
 import './App.css';
-import React, {Box} from 'react';   
-import {Route, BrowserRouter, Switch} from 'react-router-dom';
-import { makeStyles } from '@mui/styles';
-import NavBar from './components/NavBar/NavBar';
+import React from 'react';   
+import {Route, BrowserRouter, useHistory, Switch} from 'react-router-dom';
+import AdminMenu from './components/adminMenu/AdminMenu';
+import {useCookies} from 'react-cookie'
+
+import Topbar from './components/NavBar/Topbar'
 import Login from './components/Login/Login'
 import Footer from './components/Footer/Footer'
-import AdminMenu from './components/adminMenu/AdminMenu';
-import Header from './components/NavBar/Header';
 import UserManagement from './components/userManagement/UserManagement';
-import DataGeneration from './components/DataGeneration/DataGenerationService';
 import Helpdesk from './components/Helpdesk/HelpdeskDetail';
-import HelpMan from './components/HelpMan/Help';
-import Sales from './components/Sales/Sales';
+import Sales from './components/Sales/Sales'
 import Service from './components/Service/Service';
-import ServiceMan from './components/ServiceMan/Service'
+import ServiceMan from './components/ServiceMan/Services'
+import User from './components/User/UserDetail'
+import DataGenerationService from './components/DataGeneration/DataGenerationService';
+import {CookiesProvider} from 'react-cookie'
+import Help from './components/HelpMan/Help';
+import UserDetail from './components/User/UserDetail';
+import AddUser from './components/User/AddUser';
 
-function Router() {
-
-  return (
-    <BrowserRouter>
-    <Switch>
-      <Route path={"/menu/users", "/menu"}>
-        <Header />
-      </Route>
-    </Switch>
-      <NavBar />
-    <Switch>
-    <Route path="/" exact>
-      <Login />
-    </Route>
-    <Route path="/menu" exact>
-      <AdminMenu />
-    </Route>
-    <Route path="/menu/servicemanagement">
-      <ServiceMan />
-    </Route>
-    <Route path="/menu/helpdesk">
-      <HelpMan />
-    </Route>
-    <Route path="/menu/sales">
-      <Sales />
-    </Route>
-    <Route path="/menu/users" exact>
-      <UserManagement />
-    </Route>
-    </Switch>
-    <Footer />
-    </BrowserRouter>
-  )
-}
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AddService from './components/ServiceMan/AddService';
+const theme = createTheme({
+    palette: {
+        type: 'light',
+        primary: {
+          main: '#1c183f'
+        },
+        secondary: {
+          main: '#f5cb5c'
+        },
+    },
+    typography: {
+        fontFamily: 'Rubik'
+    }
+})
 
 function App() {
+  const [token, setToken, removeToken] = useCookies(['mytoken'])
+  let history = useHistory()
+
+
 
   return (
     <div> 
       <div>
-        <Router />
+      <ThemeProvider theme={theme}>
+          <CookiesProvider>
+            <BrowserRouter>
+              <Topbar />
+                <Switch>
+                  <Route exact path="/" component={Login} />
+                  <Route exact path="/menu" component={AdminMenu}  />
+                  <Route exact path="/sales/datageneration" component={DataGenerationService} />
+                  <Route exact path="/menu/sales" component={Sales} />
+                  <Route exact path="/menu/servicemanagement" component={ServiceMan} />
+                  <Route exact path="/service/:id" component={Service} />
+                  <Route exact path="/menu/users" component={UserManagement} />
+                  <Route exact path="/menu/helpdesk" component={Help} /> 
+                  <Route exact path="/user/:id" component={UserDetail}/>
+                  <Route exact path="/addUser" component={AddUser} />
+                  <Route exact path="/help/:id" component={Helpdesk} />
+                  <Route exact path="/newService" component={AddService}/>
+                </Switch>
+              <Footer />    
+            </BrowserRouter>
+        </CookiesProvider>
+      </ThemeProvider>
       </div>
     </div>
   );

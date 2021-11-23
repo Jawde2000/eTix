@@ -1,27 +1,19 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Menu, MenuItem, Fade} from '@mui/material';
-import { makeStyles, withStyles} from '@mui/styles';
-import React from 'react';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container} from '@mui/material';
+import { makeStyles} from '@mui/styles';
+import React, {useEffect, useState} from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from '@material-ui/icons/Notifications';
-// import HelpIcon from '@material-ui/icons/Help';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import GroupWorkIcon from '@material-ui/icons/GroupWork';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import LogoutIcon from '@mui/icons-material/Logout';
+// import NotificationsIcon from '@material-ui/icons/Notifications';
 import { useHistory } from "react-router-dom";
+import {useDispatch, useSelector} from 'react-redux'
+import { logout } from '../../actions/userActions'
+import Avatar from '@mui/material/Avatar';
+import { getUser } from '../../actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
   customizeAppbar: {
     minHeight: 30,
     background: 'linear-gradient(to right, rgb(65, 41, 90), rgb(47, 7, 67))',
     position: 'relative',
-   
     fontFamily: ['rubik', 'sans-serif'].join(','),
     boxShadow: 'none'
   },
@@ -31,11 +23,12 @@ const useStyles = makeStyles((theme) => ({
   },
   rightItem: {
     float: "right"
-  },customizeText: {
+  },
+  customizeText: {
     paddingLeft: 5,
     color: '#F5CB5C',
     font: 'robo',
-    fontSize: 13,
+    fontSize: 20,
     fontWeight: 'bold',
     fontFamily: ['rubik', 'sans-serif'].join(','),
 },
@@ -77,14 +70,8 @@ menu: {
   
 }));
 
-function logout() {
-  localStorage.clear();
-  window.location.href = '/';
-}
-
-function Header() {
+const Header = () => {
   const defaultStyle = useStyles();
-  
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -93,14 +80,26 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const dispatch = useDispatch()
 
   let history = useHistory();
 
   function handleLogOut() {
-    sessionStorage.setItem("userToken", '');
-    sessionStorage.clear();
+    dispatch(logout())
     history.push("/"); // whichever component you want it to route to
   }
+
+  const userLogin = useSelector(state => state.userLogin)
+  const { userInfo} = userLogin
+
+  const userDetail = useSelector(state => state.userDetail)
+  const {userD} = userDetail
+
+  const [username, setName] = useState(null);
+
+  useEffect(() => {
+    setName(userInfo.username);
+  }, [userInfo])
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -111,15 +110,17 @@ function Header() {
                 <Grid item sm={5} md={7}>
                 <div>
                 {/*<Tooltip title="User">*/}
+                <Container>
                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex"
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 >
-                   <AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>
+                   {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
                    <Typography className={defaultStyle.customizeText}>
-                   Zhipeng
+                      {userInfo? username:"User"}
                    </Typography>
                 </Button>
+                </Container>
                 <Menu
                 id="account"
                 MenuListProps={{
@@ -130,7 +131,6 @@ function Header() {
                 onClose={handleClose}
                 TransitionComponent={Fade}
                 >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>
