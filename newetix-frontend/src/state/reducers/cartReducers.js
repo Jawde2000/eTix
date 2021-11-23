@@ -50,9 +50,11 @@ export const deleteReducer = (state = {}, action) => {
         case constants.DELETING_CART_ITEM:
             return {loading: true}
         case constants.DELETED_CART_ITEM:
-            return {loading: false}
+            return {loading: false, success: true}
         case constants.UNSUCCESSFUL_DELETE_CART_ITEM:
             return {loading: false, error: action.payload}
+        case constants.DELETE_CART_RESET:
+            return {}
         default:
             return state
     }

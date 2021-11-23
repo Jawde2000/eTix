@@ -4,11 +4,13 @@ import { Grid, Box, Typography, TextField, Button, Alert, CircularProgress, Tool
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { paymentSuccess, removeItem } from '../../state/actions/actions'
+import { paymentSuccess, removeItem, viewCartData } from '../../state/actions/actions'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { routeLookupReducer } from '../../state/reducers/routeReducers';
+import {DELETE_CART_RESET, CART_VIEW_RESET} from '../../state/actions/actionConstants';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -56,6 +58,10 @@ function CartLanding() {
     const clist = useSelector(state => state.viewCartData)
     const cuslist = useSelector(state => state.customerDetails)
     const allr = useSelector(state => state.getAllRoutes)
+    const RemoveItem = useSelector(state => state.removeItem);
+    const {success: successDelete} = RemoveItem;
+    const cartAdd = useSelector(state => state.cartAdd)
+    const {loading: addLoading, success: addSuccess} = cartAdd
     const {cartData} = clist
     const {customerInfo} = cuslist
     const {route, loading: loadingRoute} = allr
@@ -67,6 +73,25 @@ function CartLanding() {
     const [payment, setPayment] = useState(0)
     const [cartID, setCartID] = useState('')
     const [ready, setReady] = useState(false)
+
+    useEffect(() => {
+        if(cartData) {
+            dispatch(viewCartData());
+        }       
+    }, [successDelete])
+
+    useEffect(() => {
+        if(addSuccess){
+            dispatch(viewCartData());
+        }
+    }, [addSuccess])
+
+    useEffect(() => {
+        if(successDelete) {
+            dispatch({type: DELETE_CART_RESET})
+            dispatch({type: CART_VIEW_RESET})
+        }
+    }, [successDelete])
     
     useEffect(async () => {
         let totaltemp = 0
@@ -79,8 +104,13 @@ function CartLanding() {
                 totaltemp = parseFloat(cartData[i].seat_price) + parseFloat(totaltemp)
             }
             setTotal((parseFloat(totaltemp)).toFixed(2))
-            setCartID(cartData[0].cart)
-            setReady(true)
+            
+            if (!cartData){
+                setReady(false)
+            } else {
+                setCartID(cartData[0].cart)
+                setReady(true)
+            }
 
             if (route) {
                 for (let i in cartData){
@@ -110,8 +140,6 @@ function CartLanding() {
     const handleRemove = (itemID) => {
         dispatch(removeItem(itemID))
         alert("Item deleted from cart!")
-        history.push('/')
-        history.go(0)
     }
 
     const handleSuccess = () => {

@@ -6,7 +6,7 @@ import {useHistory} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { findRoute } from '../../state/actions/actions';
+import { findRoute, viewCartData } from '../../state/actions/actions';
 import Query from './Query';
 import {getLocationName} from '../globalAssets/scripts/getLocationName';
 import SearchIcon from '@mui/icons-material/Search';
@@ -228,8 +228,8 @@ export default function RouteQuery() {
             setSelectedItem(null);
             setSelectedSeat("");
             alert(`added to cart Successfully`);
-            history.push('/')
-            history.go(0)
+            dispatch({type: CART_ADD_RESET})
+            history.push('/cart')
         }
     }, [addSuccess])
 
