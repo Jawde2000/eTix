@@ -23,6 +23,7 @@ import HelpManagement from './components/HelpMan/HelpManagement';
 import AddComment from './components/Helpdesk/AddComment';
 import AddService from './components/ServiceManagement/AddService';
 import TicketManagement from './components/TicketManagement/TicketManagement';
+import ForgetPass from './components/ForgetPassword/ForgetPass';
 
 function App() {
 
@@ -51,6 +52,7 @@ function App() {
                 <Route exact path="/menu/sales" component={Sales} />
                 <Route exact path="/menu/sales/datageneration" component={DataGenerationService} />
                 <Route exact path="/menu/ticket" component={TicketManagement} />
+                <Route exact path="/forgetpass" component={ForgetPass} />
               </Switch>
             <Footer />    
           </BrowserRouter>

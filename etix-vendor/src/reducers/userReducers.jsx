@@ -20,6 +20,8 @@ import {
     USER_UPDATE_RESET,
 } from '../constants/userConstants/userConstants'
 
+import * as constt from '../constants/userConstants/userConstants'
+
 export const userLoginReducer = (state = { }, action) => {
     switch(action.type){
         case USER_LOGIN_REQUEST:
@@ -90,6 +92,45 @@ export const vendorUpdateReducer = (state={}, action) => {
 
         case USER_VENDOR_UPDATE_RESET:
             return {}
+
+        default:
+            return state
+    }
+}
+
+
+export const verifyUserWithEmail = (state = { }, action) => {
+    switch(action.type){
+        case constt.VERIFY_USER_REQUEST:
+            return {loading: true}
+        
+        case constt.VERIFY_USER_SUCCESS:
+           return {loading: false, UserExist: true}
+        
+        case constt.VERIFY_USER_FAIL:
+           return {loading: false, error: action.payload, UserExist: false}
+
+        case constt.VERIFY_USER_RESET:
+           return {}
+
+        default:
+            return state
+    }
+}
+
+export const passwordResetReducer = (state = { }, action) => {
+    switch(action.type){
+        case constt.RESET_USER_REQUEST:
+            return {loading: true}
+        
+        case constt.RESET_USER_SUCCESS:
+           return {loading: false, success: true}
+        
+        case constt.RESET_USER_FAIL:
+           return {loading: false, error: action.payload}
+
+        case constt.RESET_USER_RESET:
+           return {}
 
         default:
             return state
