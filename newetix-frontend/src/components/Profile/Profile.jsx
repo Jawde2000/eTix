@@ -64,11 +64,13 @@ function UserDetail() {
     const ulist = useSelector(state => state.userLogin);
     const clist = useSelector(state => state.customerDetails);
     const cEdit = useSelector(state => state.customerEdit);
+    const passwordReset = useSelector(state => state.passwordReset)
     const userUpdate = useSelector(state => state.userUpdate);
     const {userInfo} = ulist;
     const {customerInfo} = clist;
     const {success: editSuccess, loading: editLoading} = cEdit;
     const {success: updateSuccess, loading: updateLoading} = userUpdate;
+    const {success:  resetSuccess, loading: resetLoading} = passwordReset;
     
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -116,14 +118,14 @@ function UserDetail() {
         if(userInfo){
             dispatch(customerDetails())
         }
-    }, [userInfo, editSuccess, updateSuccess])
+    }, [userInfo, editSuccess, updateSuccess, resetSuccess])
 
     useEffect(() => {
-        if(editSuccess || updateSuccess){
+        if(editSuccess || updateSuccess || resetSuccess){
             setOpenUp(true);
             setEditing(false);
         }
-    }, [editSuccess, updateSuccess])
+    }, [editSuccess, updateSuccess, resetSuccess])
 
     useEffect(async () => {
         PicExist()
@@ -216,9 +218,11 @@ function UserDetail() {
             }
             else if (username != userInfo.username && password != '' && confirmPass != ''){
                 dispatch(updateUser(username, password));
+                dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
             }
             else if (username == userInfo.username  && password != '' && confirmPass != ''){
-                openPasWar(true);
+                dispatch(passwordChange(password));
+                dispatch(customerEdit(fname, lname, contact, address, birthdate, gender));
             }else {
                 dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
             }
@@ -229,6 +233,29 @@ function UserDetail() {
         } else {
             alert("Please fill in all of the fields!")
             console.log(fname, lname, contact, address, birthdate, gender)
+        }
+    }
+
+    const handleEdit = () => {
+        if(editing){
+            if(userInfo) {
+                setFile(userInfo.userID)
+                setUsername(userInfo.username)
+                setEmail(userInfo.email)
+            } 
+    
+            if(customerInfo) {
+                setFname(customerInfo.customerFirstName)
+                setLname(customerInfo.customerLastName)
+                setGender(customerInfo.customerGender)
+                setContact(customerInfo.customerContact_Number)
+                setAddress(customerInfo.customerAddress)
+                setBirthDate(customerInfo.customerBirthday)
+                setID(customerInfo.customerID)
+            }
+            setEditing(!editing);
+        } else {
+            setEditing(!editing);
         }
     }
 
@@ -396,8 +423,8 @@ function UserDetail() {
                             : ''
                             }
                             <Grid item xs={iiMissing? 3 : 7} textAlign="right">
-                                <Tooltip title="Edit User">
-                                    <IconButton onClick={() => setEditing(!editing)} style={{bottom: '15px'}}>
+                                <Tooltip title="Edit profile">
+                                    <IconButton onClick={handleEdit} style={{bottom: '15px'}}>
                                         <EditIcon className={classes.functionicon} fontSize="large" />
                                     </IconButton>
                                 </Tooltip>
