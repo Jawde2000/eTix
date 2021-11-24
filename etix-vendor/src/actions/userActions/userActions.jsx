@@ -20,6 +20,7 @@ import {
 import {USER_SERVICE_RESET} from '../../constants/serviceConstants/serviceConstants';
 import {HELP_LIST_RESET} from '../../constants/helpConstants/helpConstants';
 import axios from 'axios'
+import * as actions from '../../constants/userConstants/userConstants';
 
 export const login = (email, password) => async (dispatch) => {
     try{
@@ -298,6 +299,69 @@ export const updateUser = (user, id) => async (dispatch, getState) => {
     }catch(error){
         dispatch({
             type: USER_UPDATE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+
+
+export const validateUser = (email) => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.VERIFY_USER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+        
+        const {data} = await axios.get(`http://localhost:8000/api/user/validation/${email}/`, config)
+
+        dispatch({
+            type: actions.VERIFY_USER_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.VERIFY_USER_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const resetPassword = (email) => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.RESET_USER_REQUEST
+        })
+
+        const config = {
+            headers: {
+                'Content-type' : 'application/json',
+            }
+        }
+        
+        const {data} = await axios.get(
+            `http://localhost:8000/api/user/resetpass/${email}/`,
+            config
+        )
+
+        dispatch({
+            type: actions.RESET_USER_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.RESET_USER_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

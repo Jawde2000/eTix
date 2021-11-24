@@ -58,7 +58,7 @@ function Router() {
                 <Route path="/passport" exact>
                     <Passport />
                 </Route>
-                <Route path="/routes/:fromm/:too" exact>
+                <Route path="/routes/:fromm/:too/:datee" exact>
                     <RouteQuery />
                 </Route>
                 <Route path="/help" exact>
@@ -87,6 +87,9 @@ function Router() {
                 </Route>
                 <Route path="/activities" exact>
                     <Activities />
+                </Route>
+                <Route path="/forgotpass" exact>
+                    <ForgetPass />
                 </Route>
             </Switch>
             <Footer />

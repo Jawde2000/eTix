@@ -15,6 +15,7 @@ import { getLocations, findRoute, vendorList, getAllRoutes, customerDetails } fr
 
 
 const homeStyles = makeStyles((theme) => ({
+  
   whole: {
     backgroundImage: `url(${images()})`,
     backgroundRepeat: "no-repeat",
@@ -55,6 +56,14 @@ function HomeQuery() {
       dispatch(getAllRoutes())
   }, [])
 
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  const todayDate = yyyy + '-' + mm + '-' + dd;
+
+  console.log(todayDate)
+
 
   var history = useHistory();
 
@@ -69,7 +78,7 @@ function HomeQuery() {
       return;
     }
     process(from, to)
-    history.push(`/routes/${from}/${to}`);
+    history.push(`/routes/${from}/${to}/${departureDate}`);
   }
 
   const handleFromInputChange = (event, value) =>  {
@@ -133,7 +142,8 @@ function HomeQuery() {
                             type="date"
                             required
                             size="small"
-                            InputProps={{
+                            inputProps={{
+                              min: todayDate,
                               style: {fontFamily: ['rubik', 'sans-serif'].join(','),}                        
                             }}                                             
                           />                       

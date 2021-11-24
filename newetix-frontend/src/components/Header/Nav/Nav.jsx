@@ -96,7 +96,7 @@ function Nav() {
             <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
             <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
             {cartItemPax? 
-                <Grid item className={defaultStyle.auxContainer}>
+                <Grid item className={defaultStyle.auxContainer} justify="space-between">
                     <IconButton><Badge badgeContent={cartItemPax} color="primary">
                         <ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick} />
                     </Badge></IconButton>
