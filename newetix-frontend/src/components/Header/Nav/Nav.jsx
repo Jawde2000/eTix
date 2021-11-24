@@ -3,9 +3,9 @@ import { AppBar, Grid, IconButton, Link, Typography, Badge } from '@mui/material
 import { makeStyles } from '@mui/styles';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { viewCartData } from '../../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
@@ -55,19 +55,34 @@ const useStyles = makeStyles((theme) => ({
 
 function Nav() {
     const defaultStyle = useStyles();
-    let history = useHistory()
-    const cartD = useSelector(state => state.viewCartData)
-    const {cartData} = cartD
+    let history = useHistory();
+    const dispatch = useDispatch();
+    const userLogin = useSelector(state => state.userLogin);
+    const {userInfo} = userLogin;
+    const cartD = useSelector(state => state.viewCartData);
+    const {cartData} = cartD;
+    const removeItem = useSelector(state => state.removeItem);
+    const {success: removeSuccess} = removeItem;
+    const cartAdd = useSelector(state => state.cartAdd);
+    const {success: addcartSuccess} = cartAdd;
     const [cartItemPax, setcartItemPax] = useState("");
-    let cartpax = 0;
 
     useEffect(() => {
-        for (let i in cartData){
-            cartpax = cartpax + 1
+        if(userInfo){
+            dispatch(viewCartData());
+        }
+    }, [userInfo, addcartSuccess, removeSuccess])
+
+    useEffect(() => {
+        if(cartData !== null){
+            if(cartData || addcartSuccess || removeSuccess){
+                let cartpax = Object.keys(cartData).length;
+                setcartItemPax(cartpax);
+            }   
         }
         
-        setcartItemPax(cartpax)
-    }, [cartData])
+        console.log(cartItemPax);
+    }, [addcartSuccess, removeSuccess, cartData])
 
     function cartOnClick() {
         history.push('/cart')
@@ -87,16 +102,13 @@ function Nav() {
    
             <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
             <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
-            {cartItemPax? 
-                <Grid item className={defaultStyle.auxContainer} justify="space-between">
-                    <IconButton><Badge badgeContent={cartItemPax} color="primary">
-                        <ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick} />
-                    </Badge></IconButton>
-                </Grid>
-                :
-                ''
-            }
+            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
+            </Grid>     
+            <Grid item className={defaultStyle.auxContainer} justify="space-between">
+                <IconButton><Badge badgeContent={cartItemPax} color="primary">
+                    <ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick} />
+                </Badge></IconButton>
+             </Grid>
         </Grid>
     );
 
