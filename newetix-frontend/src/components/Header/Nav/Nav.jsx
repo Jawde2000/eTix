@@ -3,6 +3,7 @@ import { AppBar, Grid, IconButton, Link, Typography, Badge } from '@mui/material
 import { makeStyles } from '@mui/styles';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
+import { cartDispatch, viewCartData } from '../../../state/actions/actions';
 
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -56,10 +57,16 @@ const useStyles = makeStyles((theme) => ({
 function Nav() {
     const defaultStyle = useStyles();
     let history = useHistory()
+    const dispatch = useDispatch()
     const cartD = useSelector(state => state.viewCartData)
     const {cartData} = cartD
     const [cartItemPax, setcartItemPax] = useState("");
     let cartpax = 0;
+
+    useEffect(() => {
+        dispatch(cartDispatch())
+        dispatch(viewCartData())
+    }, [dispatch])
 
     useEffect(() => {
         for (let i in cartData){
