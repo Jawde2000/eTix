@@ -27,6 +27,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import SecurityTwoToneIcon from '@mui/icons-material/SecurityTwoTone';
+import PersonTwoToneIcon from '@mui/icons-material/PersonTwoTone';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,13 +66,13 @@ function UserDetail() {
     const ulist = useSelector(state => state.userLogin);
     const clist = useSelector(state => state.customerDetails);
     const cEdit = useSelector(state => state.customerEdit);
-    const passwordReset = useSelector(state => state.passwordReset)
+    const passwordChanges = useSelector(state => state.passwordChanges)
     const userUpdate = useSelector(state => state.userUpdate);
     const {userInfo} = ulist;
     const {customerInfo} = clist;
     const {success: editSuccess, loading: editLoading} = cEdit;
     const {success: updateSuccess, loading: updateLoading} = userUpdate;
-    const {success:  resetSuccess, loading: resetLoading} = passwordReset;
+    const {success:  changeSuccess, loading: changeLoading} = passwordChanges;
     
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -91,8 +93,10 @@ function UserDetail() {
     const [file, setFile] = useState('');
     const [openUp, setOpenUp] = useState(false);
     const [openPasWar, setOpenPasWar] = useState(false);
-    const [openSameName, setSameName] = useState(false);
+    const [openEmpty, setEmpty] = useState(false);
     const [openPasNot, setOpenPasNot] = useState(false);
+    const [openPas, setOpenPas] = useState(false);
+    const [openPer, setOpenPer] = useState(false);
     
     const config = {
         bucketName: 'etixbucket',
@@ -118,14 +122,37 @@ function UserDetail() {
         if(userInfo){
             dispatch(customerDetails())
         }
-    }, [userInfo, editSuccess, updateSuccess, resetSuccess])
+    }, [userInfo, editSuccess, updateSuccess, changeSuccess])
 
     useEffect(() => {
-        if(editSuccess || updateSuccess || resetSuccess){
+        if(editSuccess){
             setOpenUp(true);
             setEditing(false);
         }
-    }, [editSuccess, updateSuccess, resetSuccess])
+    }, [editSuccess])
+
+    useEffect(() => {
+        if(picloading){
+            if(openPer === true){
+                setOpenPasWar(!openPasWar);
+                setOpenPer(!openPasWar);
+            }
+        }
+    }, [picloading])
+
+    // useEffect(() => {
+    //     if(!editing){
+    //         setOpenPasWar(false);
+    //         setOpenPer(true);
+    //     }
+    // }, [editing])
+
+    useEffect(() => {
+        if(changeSuccess){
+            setOpenPas(true);
+            setEditing(false);
+        }
+    }, [changeSuccess])
 
     useEffect(async () => {
         PicExist()
@@ -211,28 +238,16 @@ function UserDetail() {
     }
 
     const handleSubmit = () => {
-        if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
-            console.log(fname, lname, contact, address, birthdate, gender, username)
-            if (username != userInfo.username && password == '' && confirmPass == '') {
-                setOpenPasWar(true);
-            }
-            else if (username != userInfo.username && password != '' && confirmPass != ''){
-                dispatch(updateUser(username, password));
-                dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
-            }
-            else if (username == userInfo.username  && password != '' && confirmPass != ''){
-                dispatch(passwordChange(password));
-                dispatch(customerEdit(fname, lname, contact, address, birthdate, gender));
-            }else {
-                dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
-            }
+        if (!openPer && fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){          
+            dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
             // history.go(0)
-        } else if (password != '' && confirmPass != '' && password == confirmPass) {
-            dispatch(passwordChange(password))
-            console.log("password changed")
-        } else {
-            alert("Please fill in all of the fields!")
-            console.log(fname, lname, contact, address, birthdate, gender)
+        }
+
+        if (openPasWar && password != '' && confirmPass != ''){
+            console.log("pass");
+            dispatch(passwordChange(password));
+        } else if (openPasWar && password == '' && confirmPass == '') {
+            setEmpty(true);
         }
     }
 
@@ -283,23 +298,23 @@ function UserDetail() {
         iiMissing = true
     }
 
-    const DialogRemainName = () => {
+    const DialogEmpty = () => {
         const handleClose = () => {
-          setSameName(false);
+          setEmpty(false);
           setEditing(false);
         };
   
         return (
           <Toolbar>
             <Dialog
-              open={openSameName}
+              open={openEmpty}
               onClose={handleClose}
             >
               <DialogTitle id="alert-dialog-title">
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  <Typography>Username remain same</Typography>
+                  <Typography>Password is empty</Typography>
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -315,6 +330,7 @@ function UserDetail() {
     const DialogUpdate = () => {
         const handleClose = () => {
           setOpenUp(false);
+          history.go(0);
         };
   
         return (
@@ -342,20 +358,21 @@ function UserDetail() {
 
     const DialogPas = () => {
         const handleClose = () => {
-          setOpenPasWar(false);
+          setOpenPas(false);
+          history.go(0);
         };
   
         return (
           <Toolbar>
             <Dialog
-              open={openPasWar}
+              open={openPas}
               onClose={handleClose}
             >
               <DialogTitle id="alert-dialog-title">
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  <Typography>In order to change the username, you must key in your password</Typography>
+                  <Typography>Password Updated</Typography>
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -396,6 +413,11 @@ function UserDetail() {
         );
     }
 
+    const handleSecurity = () => {
+        setOpenPasWar(!openPasWar);
+        setOpenPer(!openPasWar);
+    }
+
     return (
         <Container className={classes.root} maxWidth="Fixed">
         <Container >
@@ -409,11 +431,11 @@ function UserDetail() {
                 :
                 <>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
-                        <Typography paddingRight="12" textAlign="center" style={{fontSize:20, fontWeight: 'bolder'}}>My Profile</Typography>
+                        <Typography paddingRight="12" textAlign="center" style={{fontSize:25, fontWeight: 'bolder'}}>My Profile</Typography>
                     </Grid>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
                         <Grid item xs={12} className={classes.action} container>
-                            <Grid item xs={4} textAlign="center" style={{fontSize:20, fontWeight: 'bolder'}}>
+                            <Grid item xs={4} textAlign="center" style={{fontSize:25, fontWeight: 'bolder'}}>
                                 User ID: {customerID}
                             </Grid>
                             {iiMissing? 
@@ -509,6 +531,7 @@ function UserDetail() {
                                                             defaultValue={username}
                                                             margin="dense"
                                                             fullWidth
+                                                            disabled
                                                             size="small"
                                                             InputProps={{
                                                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
@@ -552,12 +575,23 @@ function UserDetail() {
                                         </Grid>
                                         {customerInfo?
                                             (
-                                                <>
-                                                    <Grid item xs={12} style={{fontWeight:'bold', marginTop: 20}}>
+                                                <>  {
+                                                    !editing?
+                                                    <Grid item xs={5} style={{fontWeight:'bold', marginTop: 20}}>                                               
+                                                        Personal Information   
+                                                    </Grid>    
+                                                    :
+                                                    <Grid item xs={5} color={openPer?'black':'red'} style={{fontWeight:'bold', marginTop: 20}}>                                               
                                                         Personal Information
-                                                    </Grid>
+                                                    <Tooltip title="Click here to change personal information" placement="right-start">
+                                                    <IconButton onClick={handleSecurity}>
+                                                        <PersonTwoToneIcon /> 
+                                                    </IconButton>
+                                                    </Tooltip>                       
+                                                    </Grid>    
+                                                    }
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item xs={3} color={!openPer?'black':'gray'} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             First Name : 
                                                         </Grid>
                                                         {!editing ?
@@ -575,6 +609,7 @@ function UserDetail() {
                                                                         onChange={handleChangefname}
                                                                         defaultValue={fname}
                                                                         margin="dense"
+                                                                        disabled={openPer}
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
@@ -586,7 +621,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Last Name : 
                                                         </Grid>
                                                         {!editing ?
@@ -604,6 +639,7 @@ function UserDetail() {
                                                                         onChange={handleChangelname}
                                                                         defaultValue={lname}
                                                                         margin="dense"
+                                                                        disabled={openPer}
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
@@ -615,7 +651,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Phone Number : 
                                                         </Grid>
                                                         {!editing ?
@@ -633,6 +669,7 @@ function UserDetail() {
                                                                         onChange={handleChangeUserPhone}
                                                                         defaultValue={contact}
                                                                         margin="dense"
+                                                                        disabled={openPer}
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
@@ -644,7 +681,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30 , marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Birth Date: 
                                                         </Grid>
                                                         {!editing ?
@@ -667,6 +704,7 @@ function UserDetail() {
                                                                         margin="dense"
                                                                         type="date"
                                                                         fullWidth
+                                                                        disabled={openPer}
                                                                         size="small"
                                                                         InputProps={{
                                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
@@ -677,7 +715,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Address : 
                                                         </Grid>
                                                         {!editing ?
@@ -696,6 +734,7 @@ function UserDetail() {
                                                                         defaultValue={address}
                                                                         margin="dense"
                                                                         fullWidth
+                                                                        disabled={openPer}
                                                                         size="small"
                                                                         InputProps={{
                                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
@@ -705,7 +744,7 @@ function UserDetail() {
                                                             )
                                                         }  
                                                     </Grid>
-                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                    <Grid item color={!openPer?'black':'gray'} xs={12} container container style={{marginLeft: 30, marginTop:10}}>
                                                         
                                                         {!editing ?
                                                             (
@@ -724,7 +763,7 @@ function UserDetail() {
                                                                     </RadioGroup>
                                                                 </FormControl>
                                                             )
-                                                            :
+                                                            :!openPer?
                                                             (
                                                                 <FormControl component="fieldset">
                                                                     <FormLabel component="legend">Gender</FormLabel>
@@ -740,7 +779,21 @@ function UserDetail() {
                                                                         <FormControlLabel value="P" control={<Radio />} label="Others" />
                                                                     </RadioGroup>
                                                                 </FormControl> 
-                                                            )
+                                                            ):
+                                                            <FormControl component="fieldset">
+                                                                    <FormLabel component="legend" style={{fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: 'bold'}}>Gender</FormLabel>
+                                                                    <RadioGroup
+                                                                        row
+                                                                        aria-label="gender"
+                                                                        name="gender-radio-buttons-group"
+                                                                        value={gender}
+                                                                        disabled
+                                                                    >
+                                                                        <FormControlLabel value="M" control={<Radio />} label="Male" />
+                                                                        <FormControlLabel value="F" control={<Radio />} label="Female" />
+                                                                        <FormControlLabel value="P" control={<Radio />} label="Others" />
+                                                                    </RadioGroup>
+                                                                </FormControl>
                                                         }  
                                                     </Grid>
                                                 </>
@@ -753,28 +806,42 @@ function UserDetail() {
                                         {editing?
                                             (
                                                 <>
+                                                
+                                                <Grid item xs={5} color={!openPasWar?'black':'red'} style={{fontWeight:'bold', marginTop: 20}}>                                               
+                                                    Change Password
+                                                    <Tooltip title="Click here to change password" placement="right-start">
+                                                    <IconButton onClick={handleSecurity}>
+                                                        <SecurityTwoToneIcon /> 
+                                                    </IconButton>
+                                                    </Tooltip>                       
+                                                </Grid>      
                                                 <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
-                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                        Password: 
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) } color={!openPasWar?'gray':'black'}>
+                                                        New Password: 
                                                     </Grid>
                                                     <Grid item xs={9} textAlign="left">
                                                         <TextField 
                                                             id="password" 
                                                             variant="outlined"
                                                             onChange={hadleChangePassword}
-                                                            defaultValue={password}
                                                             margin="dense"
-                                                            type='password'
                                                             fullWidth
+                                                            autoComplete='off'
+                                                            disabled={!openPasWar}
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"},
+                                                                autoComplete: 'new-password',
+                                                                form: {
+                                                                    autocomplete: 'off',
+                                                                },
+                                                                type: 'password',
                                                             }} 
                                                         />
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
-                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) } color={!openPasWar?'gray':'black'}>
                                                         Confirm Password: 
                                                     </Grid>
                                                     <Grid item xs={9} textAlign="left">
@@ -782,13 +849,18 @@ function UserDetail() {
                                                             id="confirmPass" 
                                                             variant="outlined"
                                                             onChange={handleChangeConfirmPassword}
-                                                            defaultValue={confirmPass}
                                                             type='password'
                                                             margin="dense"
                                                             fullWidth
+                                                            disabled={!openPasWar}
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"},
+                                                                autoComplete: 'new-password',
+                                                                form: {
+                                                                    autocomplete: 'off',
+                                                                },
+                                                                type: 'password',
                                                             }} 
                                                         />
                                                     </Grid>
@@ -838,13 +910,13 @@ function UserDetail() {
                 </>
             }
             {
-                openPasWar?<DialogPas />:null
+                openPas?<DialogPas />:null
             }
             {
                 openUp?<DialogUpdate />:null
             }
             {
-                openSameName?<DialogRemainName />:null
+                openEmpty?<DialogEmpty />:null
             }
             {
                 openPasNot?<DialogPasNotMat />:null

@@ -76,6 +76,25 @@ export const customerEditReducer = (state = { }, action) => {
     }
 }
 
+export const PasswordChangeReducer = (state = { }, action) => {
+    switch(action.type){
+        case actions.USER_PASSWORD_CHANGE_PROCESSING:
+            return {loading: true}
+        
+        case actions.USER_PASSWORD_CHANGE_SUCCESS:
+           return {loading: false, success: true}
+        
+        case actions.USER_PASSWORD_CHANGE_FAILURE:
+           return {loading: false, error: action.payload}
+
+        case actions.USER_PASSWORD_CHANGE_RESET:
+            return {}
+
+        default:
+            return state
+    }
+}
+
 export const userRegisterReducer = (state = { }, action) => {
     switch(action.type){
         case actions.USER_REGISTER_PROCESS:
