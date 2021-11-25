@@ -23,6 +23,7 @@ import Profile from './components/Profile/Profile'
 // Cart
 import Cart from './components/Cart/CartLanding'
 import Success from './components/Cart/Success'
+import NewCart from './components/Cart/newCart'
 // Activities
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
@@ -80,7 +81,7 @@ function Router() {
                     <Profile />
                 </Route>
                 <Route path="/cart" exact>
-                    <Cart />
+                    <NewCart />
                 </Route>
                 <Route path="/cart/payment/success" exact>
                     <Success />
