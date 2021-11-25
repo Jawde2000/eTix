@@ -31,7 +31,7 @@ import Alert from '@mui/material/Alert';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams } from 'react-router';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -477,7 +477,9 @@ export default function RouteQuery() {
                             loadingRoute || filterLoading?
                             (
                                 <Box sx={{ display: 'flex' }}>
-                                    <CircularProgress />
+                                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                                <CircularProgress  style={{color: '#F5CB5C'}}/>    
+                                </Backdrop>
                                 </Box>
                             )
                             :
@@ -654,11 +656,23 @@ export default function RouteQuery() {
                                 :
                                 (
                                     <Box sx={{ display: 'flex' }}>
-                                        <CircularProgress />
+                                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                                    <CircularProgress  style={{color: '#F5CB5C'}}/>    
+                                    </Backdrop>
                                     </Box>
                                 )
                                 
                             )
+                        }
+                        {
+                        addLoading?
+                        <Box sx={{ display: 'flex' }}>
+                        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                        <CircularProgress  style={{color: '#F5CB5C'}}/>    
+                        </Backdrop>
+                        </Box>
+                        :
+                        null
                         }
                     </Grid>
                 </Grid>
