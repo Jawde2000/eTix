@@ -210,12 +210,13 @@ export default function RouteQuery() {
 
     function handleSubmit(e) {
       e.preventDefault();
-      if(to === null){
+      console.log(from, to)
+      if(!to){
         alert("Please pick a location of arrival");
         return;
       }
 
-      if(from === null){
+      if(!from){
         alert("Please pick a location of departure");
         return;
       }
@@ -359,7 +360,7 @@ export default function RouteQuery() {
                             type="date"
                             required
                             size="small"
-                            InputProps={{
+                            inputProps={{
                                 min: todayDate,
                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white'}                        
                             }}                                             

@@ -1,19 +1,19 @@
 import {  Grid, Box,  Link, Typography, Autocomplete, Container } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, {useEffect, useState} from 'react';
-import images from '../globalAssets/scripts/bgchange';
+import images from '../globalAssets/bangkok.jpg';
 import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import Alert from '@mui/material/Alert';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SendIcon from '@mui/icons-material/Send';
-import { resetPassword, validateUser } from '../../state/actions/actions';
+import { resetPassword, validateUser } from '../../actions/userActions/userActions';
 import { useHistory } from 'react-router';
-import { VERIFY_USER_RESET, RESET_USER_RESET } from '../../state/actions/actionConstants';
+import { VERIFY_USER_RESET, RESET_USER_RESET } from '../../constants/userConstants/userConstants';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
-      backgroundImage: `url(${images()})`,
+      backgroundImage: `images`,
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
       backgroundBlendMode: "lighten",
@@ -65,7 +65,7 @@ export default function ForgetPass() {
             alert("Successfully Reseted Password. Please check you email.");
             dispatch({type: VERIFY_USER_RESET});
             dispatch({type: RESET_USER_RESET});
-            history.push('/passport');
+            history.push('/');
         } else {
             console.log("Fail to reset");
         }

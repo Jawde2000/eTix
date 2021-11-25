@@ -398,6 +398,17 @@ const UserDetail = ({props}) => {
         history.push('/menu/users/');
     }
 
+    const handleEditing = () => {
+        if(editing){
+            dispatch(getUser(id));
+            setEditing(!editing);
+            return;
+        }
+
+        setEditing(!editing);
+
+    }
+
     return (
         <Container className={classes.root} maxWidth="Fixed">
         <Container >
@@ -422,7 +433,7 @@ const UserDetail = ({props}) => {
                             <Grid item xs={4} textAlign="right">
                                 <Tooltip title="Edit User">
                                     {/* Set onclick edit here  with props*/}
-                                    <IconButton onClick={() => setEditing(!editing)}>
+                                    <IconButton onClick={handleEditing}>
                                         <EditIcon className={classes.functionicon} fontSize="large" />
                                     </IconButton>
                                 </Tooltip>
