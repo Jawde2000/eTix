@@ -152,6 +152,11 @@ export const Services = () =>{
                     </Typography>
                     <Grid container spacing={3}>
                         {Repeat(classes, services, imgSrc)}
+                        <Grid item xs={12} container>
+                            <Grid item xs={12} style={{textAlign: 'center'}}>
+                                <Button variant="contained" href="/">Start Purchasing Ticket!</Button>
+                            </Grid>
+                        </Grid>
                     </Grid>
                     </>
                 )
