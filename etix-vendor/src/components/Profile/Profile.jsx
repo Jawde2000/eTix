@@ -24,20 +24,31 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Header from '../Header/header';
 import Backdrop from '@mui/material/Backdrop';
+import moscow from '../globalAssets/moscow.jpg';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         minHeight: 500,
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        padding: 20,
+        backgroundImage: `url(${moscow})`,
     },
     box: {
-        backgroundColor: "#CFDBD5",
-        marginTop: 20,
+        // backgroundColor: "#CFDBD5",
+        // marginTop: 20,
+        // marginBottom: 20,
+        // borderRadius: 5,
+        // minHeight: 450,
+        // margin: 'auto',
+        // fontFamily: ['rubik', 'sans-serif'].join(',')
+        backgroundColor: "#FFFEF7",
         marginBottom: 20,
-        borderRadius: 5,
+        borderRadius: '25px',
         minHeight: 450,
+        marginTop: 15,
         margin: 'auto',
-        fontFamily: ['rubik', 'sans-serif'].join(',')
+        fontFamily: ['rubik', 'sans-serif'].join(','),
+        fontSize:18
     },
     action: {
         minHeight: 50,
@@ -303,6 +314,17 @@ const Profile = ({props}) => {
         dispatch({type: USER_DETAIL_RESET});
         history.push('/menu');
     }
+
+    const handleEditing = () => {
+        if(editing){
+            dispatch(getUser(userID));
+            setEditing(!editing);
+            return;
+        }
+
+        setEditing(!editing);
+
+    }
     
     return (
         <Container className={classes.root} maxWidth="Fixed">
@@ -328,7 +350,7 @@ const Profile = ({props}) => {
                             <Grid item xs={4} textAlign="right">
                                 <Tooltip title="Edit User">
                                     {/* Set onclick edit here  with props*/}
-                                    <IconButton onClick={() => setEditing(!editing)}>
+                                    <IconButton onClick={handleEditing}>
                                         <EditIcon className={classes.functionicon} fontSize="large" />
                                     </IconButton>
                                 </Tooltip>
@@ -361,7 +383,7 @@ const Profile = ({props}) => {
                                         />
                                         {picloading? (<Box sx={{ display: 'flex' }}
                                         style={{justifyContent:'center', alignItems:'center'}}
-                                        ><CircularProgress /></Box>):(<Button variant="contained" component="span" >Upload</Button>)}
+                                        ><CircularProgress /></Box>):(<Button variant="contained" component="span" style={{color: 'gray', backgroundColor: 'white'}} >Upload Image</Button>)}
                                         </label>                            
                                         </div>
                                         )}
@@ -448,6 +470,7 @@ const Profile = ({props}) => {
                                                             margin="dense"
                                                             fullWidth
                                                             size="small"
+                                                            disabled
                                                             InputProps={{
                                                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','),}
                                                             }} 

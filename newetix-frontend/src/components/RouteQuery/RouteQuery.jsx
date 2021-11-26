@@ -32,6 +32,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams } from 'react-router';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Backdrop from '@mui/material/Backdrop';
+import { getLocations, vendorList, getAllRoutes } from '../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -56,7 +57,7 @@ export default function RouteQuery() {
     const dispatch = useDispatch();
 
     const classes = useStyles()
-
+    const [i, seti] = useState(0);
     const routeLookup = useSelector(state => state.routeLookup)
     const {route, loading: loadingRoute, error: routeError} = routeLookup
 
@@ -72,7 +73,7 @@ export default function RouteQuery() {
     const locationSearch = useSelector(state => state.locationSearch)
     const {loading: locationLoading, data} = locationSearch
 
-    const {fromm, too} = useParams();
+    const {fromm, too, datee} = useParams();
 
     const [to, setTo] = useState(too);
     const [from, setFrom] = useState(fromm);
@@ -146,8 +147,17 @@ export default function RouteQuery() {
         }
     }, [locationSearch, data])
 
+    
     useEffect(() => {
-        if(route){
+        if(i === 0 && route.length===0){
+            dispatch(getLocations())
+            dispatch(vendorList())
+            dispatch(getAllRoutes())
+            dispatch(findRoute(fromm, too, datee));
+            seti(1);
+        }
+
+        if(route.length!==0){
             setServiceList(route)
             setFilteredList(route)
         }
@@ -159,7 +169,7 @@ export default function RouteQuery() {
             setFrom(data.locationFrom)
             setTo(data.locationTo)
             setDepartureDate(data.departureDate)
-        }
+        } 
     }, [locationSearch])
 
     useEffect(() => {
@@ -195,17 +205,18 @@ export default function RouteQuery() {
         setMaxPrice()
         setPriceFlt("")
         setTerminalFilter("")
-        history.push(`/routes/${from}/${to}`)
+        history.push(`/routes/${from}/${to}/${departureDate}`)
     }
 
     function handleSubmit(e) {
       e.preventDefault();
-      if(to === null){
+      console.log(from, to)
+      if(!to){
         alert("Please pick a location of arrival");
         return;
       }
 
-      if(from === null){
+      if(!from){
         alert("Please pick a location of departure");
         return;
       }
@@ -265,16 +276,16 @@ export default function RouteQuery() {
         
         let min = 0;
         if(Number(economy) !== 0){
-            min = Number(economy);
+            min = Number(economy).toFixed(2);
         }
         else if(Number(business) !== 0){
-            min = Number(business);
+            min = Number(business).toFixed(2);
         }
         else if(Number(first) !== 0){
-            min = Number(first);
+            min = Number(first).toFixed(2);
         }
         else {
-            return 0;
+            return 0.00;
         }
         
 
@@ -290,6 +301,12 @@ export default function RouteQuery() {
 
         return min;
     }
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    const todayDate = yyyy + '-' + mm + '-' + dd;
 
   return (
       <Container className={classes.whole} maxWidth="Fixed">
@@ -343,8 +360,9 @@ export default function RouteQuery() {
                             type="date"
                             required
                             size="small"
-                            InputProps={{
-                              style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white'}                        
+                            inputProps={{
+                                min: todayDate,
+                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white'}                        
                             }}                                             
                           /> 
                         </Grid>

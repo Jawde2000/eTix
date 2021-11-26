@@ -5,9 +5,9 @@ export const ticketReducer = (state = {}, action) => {
         case constants.TICKET_LIST_REQUEST:
             return {loading: true}
         case constants.TICKET_LIST_SUCCESS:
-            return {loading: false, ticketData: action.payload}
+            return {loading: false, ticketData: action.payload, success: true}
         case constants.TICKET_LIST_FAILURE:
-            return {loading: false, error: action.payload}
+            return {loading: false, error: action.payload, success: false}
         case constants.TICKET_LIST_RESET:
             return {}
         default:

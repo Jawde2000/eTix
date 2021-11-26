@@ -1,11 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button } from '@mui/material'
+import { Grid, Box, Typography, TextField, Button, CircularProgress } from '@mui/material'
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import TicketActivities from './TicketActivities'
+import CompletedTickets from './CompletedTickets'
+import BoardingTickets from './BoardingTickets'
+import { getTickets } from '../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -36,16 +39,35 @@ const useStyles = makeStyles((theme) => ({
 function Activities() {
     const classes = useStyles();
 
+    const dispatch = useDispatch();
     const userLogin = useSelector(state => state.userLogin)
     const {error,  userInfo} = userLogin
+    const [filtered, setFiltered] = React.useState(false)
+    const [all, setAll] = React.useState(true)
 
     let history = useHistory()
+    dispatch(getTickets())
 
     useEffect(() => {
         if(!userInfo) {
             history.push('/')
         }
     },[userInfo])
+
+    const handleAll = () => {
+        setFiltered(false)
+        setAll(true)
+    }
+
+    const handleBoarding = () => {
+        setFiltered(false)
+        setAll(false)
+    }
+
+    const handleUsed = () => {
+        setFiltered(true)
+        setAll(false)
+    }
 
     return (
         <Box className={classes.whole}>
@@ -65,23 +87,36 @@ function Activities() {
                         <Grid item className={`${classes.sect} ${classes.articles}`}>
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" sx={{paddingTop:"25px"}} spacing={4}>
                                 <Grid item>
-                                    <Typography variant="h5">All</Typography>
+                                    <Typography variant="h5" onClick={(() => {handleAll()})}>All</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h5">To Board</Typography>
+                                    <Typography variant="h5" onClick={(() => {handleBoarding()})}>To Board</Typography>
+                                </Grid>
+                                <Grid item >
+                                    <Typography variant="h5" onClick={(() => {handleUsed()})}>Completed</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h5">Completed<br /><br /><br /><br /><br /><br /><br /><br /></Typography>
+                                    <br /><br /><br /><br /><br /><br /><br /><br />
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h4">Help Center</Typography>
+                                    <Typography variant="h4" onClick={(() => {history.push('/help')})}>Help Center</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={8} sx={{marginTop: '25px'}}>
-                    <TicketActivities />
+                    {all? 
+                        <TicketActivities />
+                    :
+                        <>
+                            {setFiltered?
+                                <BoardingTickets />
+                            :
+                                <CompletedTickets />
+                            }
+                        </>
+                    }
                 </Grid>
             </Grid>
         </Box>

@@ -65,6 +65,9 @@ urlpatterns = [
     path('api/user/service/<str:pk>/',
          views.getServiceByVendorID, name='service-vendorid'),
 
+     path('api/service/<str:pk>/',
+          views.getServicebyID, name='service-serviceid'),
+
     # get vendor helplist by vendorID
     path('api/user/vendorhelp/<str:pk>/',
          views.getVendorHelpByID, name='help-vendorid'),

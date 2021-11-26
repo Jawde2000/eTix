@@ -75,6 +75,27 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
             return Number(item.seatD.firstQuantity) !=0 || Number(item.seatD.businessQuantity) !=0 || Number(item.seatD.economyQuantity) != 0
         })
 
+        let minprice = [];
+
+        for(let i of data) {
+            let min = i.seatD.economyPrice;
+
+            if(min > i.seatD.businessPrice){
+                min = i.seatD.businessPrice;
+            }
+
+            if(min > i.seatD.firstPrice){
+                min = i.seatD.firstPrice;
+            }
+
+            minprice.push(min);
+        }
+
+        data = data.map((item,index) => ({
+            ...item,
+            minPrice : minprice[index],
+        }))
+
         dispatch({type: actions.SEARCH_LOCATION_REQUEST})
 
         const location = {
@@ -798,10 +819,10 @@ export const filterRoute = (serviceList, priceArrg=null, minPrice=null, maxPrice
         console.log(priceArrg)
         if(priceArrg){
             if(priceArrg==="asc"){
-                serviceList.sort((a,b) => (a.seatD.economyPrice > b.seatD.economyPrice) ? 1 : ((b.seatD.economyPrice > a.seatD.economyPrice) ? -1 : 0));
+                serviceList.sort((a,b) => (a.minPrice > b.minPrice) ? 1 : ((b.minPrice > a.minPrice) ? -1 : 0));
             }
             else if(priceArrg==="dsc"){
-                serviceList.sort((a,b) => (a.seatD.economyPrice < b.seatD.economyPrice) ? 1 : ((b.seatD.economyPrice < a.seatD.economyPrice) ? -1 : 0));
+                serviceList.sort((a,b) => (a.minPrice < b.minPrice) ? 1 : ((b.minPrice < a.minPrice) ? -1 : 0));
             }
         }
 
@@ -936,8 +957,6 @@ export const getTickets = () => async (dispatch, getState) => {
     
         const {
             userLogin: {userInfo},
-            locationList: {locations},
-            getAllRoutes: {route}
         } = getState()
 
         let tickets = []
@@ -960,11 +979,32 @@ export const getTickets = () => async (dispatch, getState) => {
             }
         }
 
-        let releventdata = {tickets, locations, route}
+        let loc = await axios.get(
+            `http://127.0.0.1:8000/api/location/`,
+            config
+        )
+
+        let locations = loc.data
+        let routes = []
+
+        for (var i in tickets) {
+            let serviceq = await axios.get(
+                `http://127.0.0.1:8000/api/service/${tickets[i].service}/`,
+                config
+            )
+            routes.push(serviceq.data)
+        }
+        
+        let vendor = await axios.get(
+            `http://127.0.0.1:8000/api/vendor/`,
+            config
+        )
+        
+        let vendorD = vendor.data
+
+        let releventdata = {tickets, locations, routes, vendorD}
         
         data = releventdata
-
-        console.log(data)
 
         dispatch({
             type: actions.TICKET_LIST_SUCCESS,

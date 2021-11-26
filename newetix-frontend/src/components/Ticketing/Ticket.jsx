@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import { Grid, Box, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles';
 import etixLogo from '../globalAssets/eTixLogo.png'
@@ -8,6 +8,7 @@ import QRCode from "react-qr-code";
 import Pdf from "react-to-pdf"
 import images from '../globalAssets/scripts/bgchange';
 import { set } from 'date-fns/esm';
+import { getTickets, customerDetails } from '../../state/actions/actions';
 
 const ref = React.createRef();
 
@@ -41,13 +42,14 @@ export const Ticket = ({props}) => {
     const classes = useStyles();
     const { id } = useParams();
     let history = useHistory();
+    const dispatch = useDispatch();
 
     const userLogin = useSelector(state => state.userLogin)
     const ticketList = useSelector(state => state.getTickets)
-    const customerDetails = useSelector(state => state.customerDetails)
+    const customerD = useSelector(state => state.customerDetails)
     const {userInfo} = userLogin
     const {ticketData} = ticketList
-    const {customerInfo} = customerDetails
+    const {customerInfo} = customerD
 
     const [serviceName, setServiceName] = useState("Teyvat Express");
     const [fromLocation, setFromLocation] = useState("Mondstadt");
@@ -62,24 +64,34 @@ export const Ticket = ({props}) => {
     useEffect(() => {
         if(!userLogin) {
             history.push('/')
+        } else {
+            dispatch(customerDetails())
+            dispatch(getTickets())
         }
+    }, [dispatch])
 
+    useEffect(() => {
         if (ticketData) {
             for (var i in ticketData.tickets) {
                 if (id == ticketData.tickets[i].ticketID) {
                     setToken(ticketData.tickets[i].Token)
-                    for (var j in ticketData.route) {
-                        if (ticketData.route[j].serviceID == ticketData.tickets[i].service) {
-                            setServiceName(ticketData.route[j].serviceName)
-                            setDate(ticketData.route[j].serviceStartDate)
-                            setTime(ticketData.route[j].serviceTime)
-                            setvendorName(ticketData.route[j].vendorD.vendorName)
+                    for (var j in ticketData.routes) {
+                        if (ticketData.routes[j].serviceID == ticketData.tickets[i].service) {
+                            setServiceName(ticketData.routes[j].serviceName)
+                            setDate(ticketData.routes[j].serviceStartDate)
+                            setTime(ticketData.routes[j].serviceTime)
 
                             for (var l in ticketData.locations) {
-                                if (ticketData.locations[l].locationID == ticketData.route[j].locationTo) {
+                                if (ticketData.locations[l].locationID == ticketData.routes[j].locationTo) {
                                     setToLocation(ticketData.locations[l].locationName)
-                                } else if (ticketData.locations[l].locationID == ticketData.route[j].locationFrom) {
+                                } else if (ticketData.locations[l].locationID == ticketData.routes[j].locationFrom) {
                                     setFromLocation(ticketData.locations[l].locationName)
+                                }
+                            }
+
+                            for (var k in ticketData.vendorD) {
+                                if (ticketData.routes[j].vendor == ticketData.vendorD[k].vendorID){
+                                    setvendorName(ticketData.vendorD[k].vendorName)
                                 }
                             }
                         }
@@ -92,7 +104,7 @@ export const Ticket = ({props}) => {
             setfName(customerInfo.customerFirstName)
             setlName(customerInfo.customerLastName)
         }
-    }, [ticketData, userLogin])
+    }, [ticketList, customerD])
 
     return (
         <Grid container direction="column" alignItems="center" className={classes.bgg} sx={{paddingTop: '15px'}}>
