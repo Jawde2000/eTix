@@ -29,7 +29,9 @@ import NewCart from './components/Cart/newCart'
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
 import ForgetPass from './components/ForgetPassword/ForgetPass';
-
+// Footer Pages
+import Privacy from './components/Static/Privacy';
+import About from './components/Static/About'
 
 const theme = createTheme({
     palette: {
@@ -93,6 +95,12 @@ function Router() {
                 </Route>
                 <Route path="/forgotpass" exact>
                     <ForgetPass />
+                </Route>
+                <Route path="/privacy" exact>
+                    <Privacy />
+                </Route>
+                <Route path="/about" exact>
+                    <About />
                 </Route>
             </Switch>
             <Footer />

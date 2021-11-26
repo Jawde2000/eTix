@@ -21,40 +21,22 @@ function Footer() {
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={3}>
-                            <Box borderBottom={1}>About eTix</Box>
+                            <Box borderBottom={1}>eTix</Box>
                             <Box style={{paddingTop: 10, paddingBottom: 5}}>
                                 <Link href="/about" color="inherit" underline={'none'}>
                                     About Us
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/privacyPolicy" color="inherit" underline={'none'}>
+                                <Link href="/privacy" color="inherit" underline={'none'}>
                                     Privacy Policy
-                                </Link>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={3}>
-                            <Box borderBottom={1}>Follow Us</Box>
-                            <Box style={{paddingTop: 10, paddingBottom: 5}}>
-                                <Link href="/" color="inherit" underline={'none'}>
-                                    Twitter
-                                </Link>
-                            </Box>
-                            <Box style={{paddingBottom: 5}}>
-                                <Link href="/" color="inherit" underline={'none'}>
-                                    Facebook
-                                </Link>
-                            </Box>
-                            <Box>
-                                <Link href="/" color="inherit" underline={'none'}>
-                                    Instagram
                                 </Link>
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1}>Payment</Box>
                             <Box>
-                                <img src="https://www.milkshakedesign.com/wp-content/uploads/2018/12/paypal-logo-payment.png" width='250px' alt="Paypal" />
+                                <Link href="https://www.paypal.com/us/digital-wallet/how-paypal-works"><img style={{marginTop: '5px'}} src="https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/C2/logos-buttons/optimize/Full_Online_Tray_RGB.png" width='250px' alt="Paypal" /></Link>
                             </Box>
                         </Grid>
                     </Grid>
