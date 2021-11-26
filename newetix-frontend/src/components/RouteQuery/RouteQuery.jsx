@@ -240,6 +240,7 @@ export default function RouteQuery() {
             setSelectedSeat("");
             alert(`added to cart Successfully`);
             dispatch({type: CART_ADD_RESET})
+            dispatch({type: ROUTE_RESET});
             history.push('/cart')
         }
     }, [addSuccess])
@@ -291,12 +292,12 @@ export default function RouteQuery() {
 
 
 
-        if(min > business && Number(business) !== 0  ){
-            min = business;
+        if(min > Number(business) && Number(business) !== 0  ){
+            min = Number(business).toFixed(2);
         }
 
-        if(min > first && Number(first) !== 0 ){
-            min = first;
+        if(min > Number(first) && Number(first) !== 0 ){
+            min = Number(first).toFixed(2);
         }
 
         return min;

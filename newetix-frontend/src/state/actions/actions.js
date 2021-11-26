@@ -78,14 +78,14 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
         let minprice = [];
 
         for(let i of data) {
-            let min = i.seatD.economyPrice;
+            let min = Number(i.seatD.economyPrice);
 
-            if(min > i.seatD.businessPrice){
-                min = i.seatD.businessPrice;
+            if(min > Number(i.seatD.businessPrice)){
+                min = Number(i.seatD.businessPrice);
             }
 
-            if(min > i.seatD.firstPrice){
-                min = i.seatD.firstPrice;
+            if(min > Number(i.seatD.firstPrice)){
+                min = Number(i.seatD.firstPrice);
             }
 
             minprice.push(min);
