@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Repeat(classes, services) {
+function Repeat(classes, services, imgSrc) {
 
     return services.map((e, i) =>
         <Grid item xs={12} sm={4} lg={3}>
@@ -53,7 +53,7 @@ function Repeat(classes, services) {
                     component="img"
                     alt="services img"
                     height="140"
-                    image={services[i]}
+                    image={imgSrc[i]}
                     title="services img"
                     />
                     <CardContent className={classes.cardContent}>
@@ -65,6 +65,12 @@ function Repeat(classes, services) {
             </Card>
         </Grid>
     )
+}
+
+const findImg = (userID) => {
+    const file = userID + '.jpg';
+
+    return "https://etixbucket.s3.amazonaws.com/etix/" + file
 }
 
 export const Services = () =>{
@@ -79,7 +85,26 @@ export const Services = () =>{
 
     const [allService, setAllService] = useState();
 
-    // const [imgSrc, setImgSrc] = useState([]);
+    const [imgSrc, setImgSrc] = useState([]);
+
+    const config = {
+        bucketName: 'etixbucket',
+        dirName: 'etix', 
+        region: 'ap-southeast-1',
+        accessKeyId: 'AKIA4TYMPNP6EQNIB7HV',
+        secretAccessKey: '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'
+    }
+    
+    const AWS = require('aws-sdk')
+    AWS.config.update({
+        accessKeyId: "AKIA4TYMPNP6EQNIB7HV",
+        secretAccessKey: "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",
+        region: "ap-southeast-1",
+    });
+
+    const ReactS3Client = new S3(config);
+    
+    var s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: 'AKIA4TYMPNP6EQNIB7HV', secretAccessKey: 'Vd8K2yLQrKZermLm4VxV1XJp9k73UPLLwQjfR', region: "ap-southeast-1"});
 
     useEffect(() => {
         if(services){
@@ -90,54 +115,23 @@ export const Services = () =>{
 
         if(listServicesSuccess){
             setAllService(services)
+
+            let imgs = [];
+
+            services.map((item) => {
+                imgs.push(findImg(item.userID));
+            })
+
+            setImgSrc(imgs);
         }
 
     }, [servicesList])
 
     
 
-    // const file = userInfo.userID + '.jpg'
-    
-    // const config = {
-    //     bucketName: 'etixbucket',
-    //     dirName: 'etix', 
-    //     region: 'ap-southeast-1',
-    //     accessKeyId: 'AKIA4TYMPNP6EQNIB7HV',
-    //     secretAccessKey: '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'
-    // }
-    
-    // const AWS = require('aws-sdk')
-    // AWS.config.update({
-    //     accessKeyId: "AKIA4TYMPNP6EQNIB7HV",
-    //     secretAccessKey: "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",
-    //     region: "ap-southeast-1",
-    // });
-
-    // const ReactS3Client = new S3(config);
-    
-    // var s3 = new AWS.S3({ apiVersion: '2006-03-01', accessKeyId: 'AKIA4TYMPNP6EQNIB7HV', secretAccessKey: 'Vd8K2yLQrKZermLm4VxV1XJp9k73UPLLwQjfR', region: "ap-southeast-1"});
-    
-    // useEffect(async () => {
-    //     PicExist()
-    // })
+    // 
 
     // const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file));
-
-    // async function PicExist() {
-    //     const url = "https://etixbucket.s3.amazonaws.com/etix/" + file
-    //     await fetch(url).then((res) => {
-    //         if (res.status == 404) {
-    //             setFound(false)
-    //             console.log("found")
-    //         } 
-    //         else {
-    //             console.log("found")
-    //             setFound(true)
-    //         }
-    //     }).catch((err) => {
-    //         setFound(false)
-    //     });
-    // }
 
 
     return (
@@ -157,7 +151,7 @@ export const Services = () =>{
                         </Box>
                     </Typography>
                     <Grid container spacing={3}>
-                        {Repeat(classes, services)}
+                        {Repeat(classes, services, imgSrc)}
                     </Grid>
                     </>
                 )
