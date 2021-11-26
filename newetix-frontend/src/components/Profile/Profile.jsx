@@ -69,7 +69,7 @@ function UserDetail() {
     const passwordChanges = useSelector(state => state.passwordChanges)
     const userUpdate = useSelector(state => state.userUpdate);
     const {userInfo} = ulist;
-    const {customerInfo} = clist;
+    const {customerInfo, loading: cusDetailLoading} = clist;
     const {success: editSuccess, loading: editLoading} = cEdit;
     const {success: updateSuccess, loading: updateLoading} = userUpdate;
     const {success:  changeSuccess, loading: changeLoading} = passwordChanges;
@@ -329,8 +329,9 @@ function UserDetail() {
 
     const DialogUpdate = () => {
         const handleClose = () => {
-          setOpenUp(false);
           history.go(0);
+          setOpenUp(false);
+          
         };
   
         return (
@@ -934,6 +935,17 @@ function UserDetail() {
             }
             {
                 updateLoading?
+                <Box sx={{ display: 'flex' }}>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                    <CircularProgress  style={{color: '#F5CB5C'}}/>
+                    {/* <img src={JumpingDot}/> */}
+                    </Backdrop>
+                </Box>
+                :
+                null
+            }
+            {
+                cusDetailLoading?
                 <Box sx={{ display: 'flex' }}>
                     <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
                     <CircularProgress  style={{color: '#F5CB5C'}}/>

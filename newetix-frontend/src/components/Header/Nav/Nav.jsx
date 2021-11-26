@@ -83,7 +83,8 @@ function Nav() {
     }, [userInfo, addcartSuccess, removeSuccess])
 
     useEffect(() => {
-        if(cartData !== null){
+        if(typeof(cartData) !== 'undefined' && cartData !== null){
+            console.log(cartData);
             if(cartData || addcartSuccess || removeSuccess){
                 let cartpax = Object.keys(cartData).length;
                 if(cartpax > 0){
