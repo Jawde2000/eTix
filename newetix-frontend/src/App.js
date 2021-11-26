@@ -7,7 +7,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 // Homepage
 import HomeQuery from './components/HomeServices/HomeQuery';
-import HomeOperators from './components/HomeServices/Operators';
+import Stepper from './components/HomeServices/Stepper';
 // Popular Attractions
 import Attractions from './components/Static/Attractions';
 // Passport & Retrieval
@@ -53,7 +53,7 @@ function Router() {
             <Switch>
                 <Route path="/" exact>
                     <HomeQuery />
-                    <HomeOperators />
+                    <Stepper />
                 </Route>
                 <Route path="/attractions" exact>
                     <Attractions />
