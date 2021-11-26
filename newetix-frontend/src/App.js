@@ -18,6 +18,7 @@ import RouteQuery from './components/RouteQuery/RouteQuery';
 import HelpLanding from './components/HelpCenter/Landing'
 import HelpMessaging from './components/HelpCenter/Messaging'
 import HelpDetail from './components/HelpCenter/Detail'
+import HelpArticles from './components/HelpCenter/Article/Landing'
 // Profile
 import Profile from './components/Profile/Profile'
 // Cart
@@ -72,8 +73,8 @@ function Router() {
                 <Route path="/help/message/:id" exact>
                     <HelpDetail />
                 </Route>
-                <Route path="/help/articles/:id" exact>
-                    <RouteQuery />
+                <Route path="/help/articles/" exact>
+                    <HelpArticles />
                 </Route>
                 <Route path="/profile" exact>
                     <Profile />
