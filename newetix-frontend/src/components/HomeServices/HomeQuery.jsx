@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Grid, Typography, TextField, Box, Button, Autocomplete } from '@mui/material';
+import { Grid, Typography, TextField, Box, Button, Autocomplete, Toolbar } from '@mui/material';
 import DateRangePicker from '@mui/lab/DateRangePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -12,6 +12,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import images from '../globalAssets/scripts/bgchange';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocations, findRoute, vendorList, getAllRoutes, customerDetails } from '../../state/actions/actions';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 
 
 const homeStyles = makeStyles((theme) => ({
@@ -71,10 +76,22 @@ function HomeQuery() {
       dispatch(findRoute(from, to, departureDate))
   }
 
+  const [emptyFrom, setEmptyFrom] = useState(false);
+  const [emptyTo, setEmptyTo] = useState(false);
+  const [emptyDate, setEmptyDate] = useState(false);
+
   function handleSubmit(e) {
     e.preventDefault();
+    if(!from){
+      setEmptyFrom(true);
+      return;
+    }
+    if(!to){
+      setEmptyTo(true);
+      return;
+    }
     if(departureDate === null){
-      alert("Please pick a date of departure");
+      setEmptyDate(true);
       return;
     }
     process(from, to)
@@ -87,6 +104,90 @@ function HomeQuery() {
 
   const handleToInputChange = (event, value) => {
     setTo(value)
+  }
+
+  const DialogFromEmpty = () => {
+    const handleClose = () => {
+      setEmptyFrom(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={emptyFrom}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <Typography>Please enter departure state</Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+  }
+
+  const DialogToEmpty = () => {
+    const handleClose = () => {
+      setEmptyTo(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={emptyTo}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <Typography>Please enter arrival state</Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+  }
+
+  const DialogDateEmpty = () => {
+    const handleClose = () => {
+      setEmptyDate(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={emptyDate}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <Typography>Please enter departure Date</Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
   }
   
   return (
@@ -159,6 +260,15 @@ function HomeQuery() {
                       </Grid>
                     </Grid>
                   </Grid>
+                  {
+                    emptyFrom?<DialogFromEmpty />:null
+                  }
+                  {
+                    emptyTo?<DialogToEmpty />:null
+                  }
+                  {
+                    emptyDate?<DialogDateEmpty />:null
+                  }
                 </Grid>
               </Grid>
             </Grid>
