@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 function TicketActivities() {
     const classes = useStyles();
     let history = useHistory()
+    const dispatch = useDispatch();
 
     const userLogin = useSelector(state => state.userLogin)
     const ticketList = useSelector(state => state.getTickets)
@@ -87,6 +88,7 @@ function TicketActivities() {
                             hasTickets = true
                             reallyhasTickets = true
                         }
+                        
                         return (<>
                                 {hasTickets?
                                     <Grid item className={classes.whole} sx={{marginBottom: '24px'}}>
