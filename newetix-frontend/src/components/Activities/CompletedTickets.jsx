@@ -49,6 +49,7 @@ function TicketActivities() {
     let fromIndex = 0
     let toIndex = 0
     let vendorIndex = 0
+    let completedTix = false
 
     const handleRender = (item) => {
         if (!loadStatus){
@@ -87,63 +88,71 @@ function TicketActivities() {
                         if (item.ownBy == userInfo.userID){
                             hasTickets = true
                             reallyhasTickets = true
+
+                            if (item.used) {
+                                completedTix = true
+                            }
                         }
                         
-                        return (<>
-                                {hasTickets?
-                                    <Grid item className={classes.whole} sx={{marginBottom: '24px'}}>
-                                        {handleRender(item)}
-                                        <Grid container direction="row">
-                                            <Grid item xs={3}>
-                                                <Grid container direction="column" justifyContent="flex-start" alignItems="center">
-                                                    <Grid item >
-                                                        <img 
-                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.service}.png`}
-                                                            alt={`serviceLogo - ${ticketData.vendorD[vendorIndex].vendorName}`}
-                                                            style={{margin: 10, height: '90%', width:'90%',}}
-                                                        /> 
+                        if (completedTix) {
+                            return (<>
+                                    {hasTickets?
+                                        <Grid item className={classes.whole} sx={{marginBottom: '24px'}}>
+                                            {handleRender(item)}
+                                            <Grid container direction="row">
+                                                <Grid item xs={3}>
+                                                    <Grid container direction="column" justifyContent="flex-start" alignItems="center">
+                                                        <Grid item >
+                                                            <img 
+                                                                src={`https://etixbucket.s3.amazonaws.com/etix/${item.service}.png`}
+                                                                alt={`serviceLogo - ${ticketData.vendorD[vendorIndex].vendorName}`}
+                                                                style={{margin: 10, height: '90%', width:'90%',}}
+                                                            /> 
+                                                        </Grid>
+                                                        <Grid item>
+                                                            <Typography style={{fontSize: 15, color: 'white'}}>
+                                                                {ticketData.vendorD[vendorIndex].vendorName}
+                                                            </Typography>
+                                                        </Grid>
                                                     </Grid>
-                                                    <Grid item>
-                                                        <Typography style={{fontSize: 15, color: 'white'}}>
-                                                            {ticketData.vendorD[vendorIndex].vendorName}
+                                                    
+                                                </Grid>
+                                                <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
+                                                    <Grid item xs={12} >
+                                                        <Typography style={{fontSize: 30}}>
+                                                            {ticketData.routes[routeIndex].serviceName}
                                                         </Typography>
                                                     </Grid>
-                                                </Grid>
-                                                
-                                            </Grid>
-                                            <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
-                                                <Grid item xs={12} >
-                                                    <Typography style={{fontSize: 30}}>
-                                                        {ticketData.routes[routeIndex].serviceName}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={12} >
-                                                    <Typography style={{fontSize: 20}}>
-                                                        {`${ticketData.locations[fromIndex].locationName} - ${ticketData.locations[toIndex].locationName}`}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item xs={12} container>
-                                                    <Grid item xs={12} style={{textAlign: 'right'}} >
-                                                        <QrCode2Icon fontSize='large' sx={{fontSize: '75px'}} onClick={(() => history.push(`/ticket/${item.ticketID}`))} />
+                                                    <Grid item xs={12} >
+                                                        <Typography style={{fontSize: 20}}>
+                                                            {`${ticketData.locations[fromIndex].locationName} - ${ticketData.locations[toIndex].locationName}`}
+                                                        </Typography>
                                                     </Grid>
-                                                </Grid>
-                                                <Grid item xs={12}>
+                                                    <Grid item xs={12} container>
+                                                        <Grid item xs={12} style={{textAlign: 'right'}} >
+                                                            <QrCode2Icon fontSize='large' sx={{fontSize: '75px'}} onClick={(() => history.push(`/ticket/${item.ticketID}`))} />
+                                                        </Grid>
+                                                    </Grid>
                                                     <Grid item xs={12}>
-                                                        <Grid item xs={8}>
-                                                            <Typography style={{fontSize: 20}}>
-                                                                {`To Board: ${ticketData.routes[routeIndex].serviceStartDate} / ${ticketData.routes[routeIndex].serviceTime}`}
-                                                            </Typography>
-                                                        </Grid> 
+                                                        <Grid item xs={12}>
+                                                            <Grid item xs={8}>
+                                                                <Typography style={{fontSize: 20}}>
+                                                                    {`To Board: ${ticketData.routes[routeIndex].serviceStartDate} / ${ticketData.routes[routeIndex].serviceTime}`}
+                                                                </Typography>
+                                                            </Grid> 
+                                                        </Grid>
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
+                                            {hasTickets = false}
                                         </Grid>
-                                        {hasTickets = false}
-                                    </Grid>
-                                    :
-                                    ''
-                                }
+                                        :
+                                        ''
+                                    }
                             </>)
+                        } else {
+                            return (<></>)
+                        }
                     }))
                 :
                     <CircularProgress />

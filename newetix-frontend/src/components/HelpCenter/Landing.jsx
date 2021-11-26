@@ -71,7 +71,7 @@ function Landing() {
                                 <Grid item>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h4" onClick={(() => {history.push('/help/articles')})}>Articles</Typography>
+                                    <Typography variant="h4" style={{cursor: 'pointer'}}  onClick={(() => {history.push('/help/articles')})}>Articles</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>

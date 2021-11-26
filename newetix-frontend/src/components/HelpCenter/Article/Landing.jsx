@@ -64,20 +64,20 @@ function Landing() {
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
                                 <Grid item></Grid>
                                 <Grid item>
-                                    <Typography variant="h5" onClick={(() => {set1(true); set2(false); set3(false); set4(false); setShow(false)})}>How to purchase?</Typography>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(true); set2(false); set3(false); set4(false); setShow(false)})}>How to purchase?</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h5" onClick={(() => {set1(false); set2(true); set3(false); set4(false); setShow(false)})}>How to find routes?</Typography>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(false); set2(true); set3(false); set4(false); setShow(false)})}>How to find routes?</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h5" onClick={(() => {set1(false); set2(false); set3(true); set4(false); setShow(false)})}>Payments</Typography>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(false); set2(false); set3(true); set4(false); setShow(false)})}>Payments</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h5" onClick={(() => {set1(false); set2(false); set3(false); set4(true); setShow(false)})}>Digital tickets</Typography>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(false); set2(false); set3(false); set4(true); setShow(false)})}>Digital tickets</Typography>
                                 </Grid>
                                 <Grid item></Grid>
                                 <Grid item>
-                                    <Typography variant="h4" onClick={(() => {history.push('/help')})}>Messaging System</Typography>
+                                    <Typography variant="h4" style={{cursor: 'pointer'}} onClick={(() => {history.push('/help')})}>Messaging System</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>

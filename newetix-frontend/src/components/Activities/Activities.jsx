@@ -42,7 +42,8 @@ function Activities() {
     const dispatch = useDispatch();
     const userLogin = useSelector(state => state.userLogin)
     const {error,  userInfo} = userLogin
-    const [filtered, setFiltered] = React.useState(false)
+    const [boarding, setBoarding] = React.useState(false)
+    const [completed, setCompleted] = React.useState(false)
     const [all, setAll] = React.useState(true)
 
     let history = useHistory()
@@ -55,18 +56,21 @@ function Activities() {
     },[userInfo])
 
     const handleAll = () => {
-        setFiltered(false)
+        setBoarding(false)
+        setCompleted(false)
         setAll(true)
     }
 
     const handleBoarding = () => {
-        setFiltered(false)
+        setCompleted(false)
         setAll(false)
+        setBoarding(true)
     }
 
     const handleUsed = () => {
-        setFiltered(true)
+        setBoarding(false)
         setAll(false)
+        setCompleted(true)
     }
 
     return (
@@ -86,19 +90,19 @@ function Activities() {
                         </Grid>
                         <Grid item className={`${classes.sect} ${classes.articles}`}>
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" sx={{paddingTop:"25px"}} spacing={4}>
-                                <Grid item>
+                                <Grid item style={{cursor: 'pointer'}}>
                                     <Typography variant="h5" onClick={(() => {handleAll()})}>All</Typography>
                                 </Grid>
-                                <Grid item>
+                                <Grid item style={{cursor: 'pointer'}}>
                                     <Typography variant="h5" onClick={(() => {handleBoarding()})}>To Board</Typography>
                                 </Grid>
-                                <Grid item >
+                                <Grid item style={{cursor: 'pointer'}}>
                                     <Typography variant="h5" onClick={(() => {handleUsed()})}>Completed</Typography>
                                 </Grid>
                                 <Grid item>
                                     <br /><br /><br /><br /><br /><br /><br /><br />
                                 </Grid>
-                                <Grid item>
+                                <Grid item style={{cursor: 'pointer'}}>
                                     <Typography variant="h4" onClick={(() => {history.push('/help')})}>Help Center</Typography>
                                 </Grid>
                             </Grid>
@@ -106,17 +110,9 @@ function Activities() {
                     </Grid>
                 </Grid>
                 <Grid item xs={8} sx={{marginTop: '25px'}}>
-                    {all? 
-                        <TicketActivities />
-                    :
-                        <>
-                            {setFiltered?
-                                <BoardingTickets />
-                            :
-                                <CompletedTickets />
-                            }
-                        </>
-                    }
+                    {all && <TicketActivities status="all"/>}
+                    {boarding && <TicketActivities status="board"/>}
+                    {completed && <TicketActivities status="completed"/>}
                 </Grid>
             </Grid>
         </Box>
