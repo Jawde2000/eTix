@@ -62,9 +62,7 @@ function Landing() {
                         </Grid>
                         <Grid item className={`${classes.sect} ${classes.articles}`}>
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
-                                <Grid item>
-                                    <Typography variant="h4">Articles</Typography>
-                                </Grid>
+                                <Grid item></Grid>
                                 <Grid item>
                                     <Typography variant="h5" onClick={(() => {set1(true); set2(false); set3(false); set4(false); setShow(false)})}>How to purchase?</Typography>
                                 </Grid>
@@ -77,6 +75,7 @@ function Landing() {
                                 <Grid item>
                                     <Typography variant="h5" onClick={(() => {set1(false); set2(false); set3(false); set4(true); setShow(false)})}>Digital tickets</Typography>
                                 </Grid>
+                                <Grid item></Grid>
                                 <Grid item>
                                     <Typography variant="h4" onClick={(() => {history.push('/help')})}>Messaging System</Typography>
                                 </Grid>

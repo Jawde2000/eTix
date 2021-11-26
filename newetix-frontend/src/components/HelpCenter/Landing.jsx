@@ -73,9 +73,6 @@ function Landing() {
                                 <Grid item>
                                     <Typography variant="h4" onClick={(() => {history.push('/help/articles')})}>Articles</Typography>
                                 </Grid>
-                                <Grid item>
-                                    <Typography variant="h4">Messaging System</Typography>
-                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>

@@ -15,8 +15,8 @@ function Footer() {
                                 </Link>
                             </Box>
                             <Box>
-                                <Link href="/" color="inherit" underline={'none'}>
-                                    How to Purchase
+                                <Link href="/help/articles" color="inherit" underline={'none'}>
+                                    Articles
                                 </Link>
                             </Box>
                         </Grid>
