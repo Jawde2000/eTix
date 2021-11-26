@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import {useHistory} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import Alert from '@mui/material/Alert'
 import { login } from '../../state/actions/actions'
@@ -129,6 +129,9 @@ function LoginForm() {
             }
             />
         </FormControl>
+        </Grid>
+        <Grid item xs={12} style={{textAlign:'center', }}>
+            <Link to="/forgotpass" style={{color: 'black', fontWeight: 'bold', backgroundColor: 'white'}}>Forget Password? Click here</Link>
         </Grid>
         <Grid item xs={12} className={defaultStyle.loginButton}>
             <Button 

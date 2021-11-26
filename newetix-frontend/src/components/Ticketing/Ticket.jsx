@@ -80,13 +80,18 @@ export const Ticket = ({props}) => {
                             setServiceName(ticketData.routes[j].serviceName)
                             setDate(ticketData.routes[j].serviceStartDate)
                             setTime(ticketData.routes[j].serviceTime)
-                            setvendorName(ticketData.vendorD[j].vendorName)
 
                             for (var l in ticketData.locations) {
                                 if (ticketData.locations[l].locationID == ticketData.routes[j].locationTo) {
                                     setToLocation(ticketData.locations[l].locationName)
                                 } else if (ticketData.locations[l].locationID == ticketData.routes[j].locationFrom) {
                                     setFromLocation(ticketData.locations[l].locationName)
+                                }
+                            }
+
+                            for (var k in ticketData.vendorD) {
+                                if (ticketData.routes[j].vendor == ticketData.vendorD[k].vendorID){
+                                    setvendorName(ticketData.vendorD[k].vendorName)
                                 }
                             }
                         }

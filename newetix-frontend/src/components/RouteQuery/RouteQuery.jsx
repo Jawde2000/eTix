@@ -6,7 +6,7 @@ import {useHistory} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { findRoute } from '../../state/actions/actions';
+import { findRoute, viewCartData } from '../../state/actions/actions';
 import Query from './Query';
 import {getLocationName} from '../globalAssets/scripts/getLocationName';
 import SearchIcon from '@mui/icons-material/Search';
@@ -31,6 +31,8 @@ import Alert from '@mui/material/Alert';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams } from 'react-router';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { getLocations, vendorList, getAllRoutes } from '../../state/actions/actions';
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -55,7 +57,7 @@ export default function RouteQuery() {
     const dispatch = useDispatch();
 
     const classes = useStyles()
-
+    const [i, seti] = useState(0);
     const routeLookup = useSelector(state => state.routeLookup)
     const {route, loading: loadingRoute, error: routeError} = routeLookup
 
@@ -71,7 +73,7 @@ export default function RouteQuery() {
     const locationSearch = useSelector(state => state.locationSearch)
     const {loading: locationLoading, data} = locationSearch
 
-    const {fromm, too} = useParams();
+    const {fromm, too, datee} = useParams();
 
     const [to, setTo] = useState(too);
     const [from, setFrom] = useState(fromm);
@@ -87,12 +89,75 @@ export default function RouteQuery() {
     const [selectedItem,setSelectedItem] = useState();
     const [filteredList, setFilteredList] = useState(null);
 
+    const [latTo, setLatTo] = useState(0);
+    const [longTo, setLongTo] = useState(0);
+    const [latF, setLatF] = useState(0);
+    const [longF, setLongF] = useState(0);
+    
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
     }
 
     useEffect(() => {
-        if(route){
+        if(data){
+            var axios = require("axios").default;
+            var options = {
+                method: 'GET',
+                url: 'https://forward-reverse-geocoding.p.rapidapi.com/v1/search',
+                params: {q: locationSearch.data.locationFrom, 'accept-language': 'en', polygon_threshold: '0.0'},
+                headers: {
+                    'x-rapidapi-host': 'forward-reverse-geocoding.p.rapidapi.com',
+                    'x-rapidapi-key': 'c0b1414666msh7239510d4240d30p1b7581jsn27d673214b95'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                setLatF(response.data[0].lat);
+                setLongF(response.data[0].lon);
+                console.log(latF);
+                console.log(longF);
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+    }, [locationSearch, data])
+
+    useEffect(() => {
+        if(data){
+            var axios = require("axios").default;
+
+            var options = {
+                method: 'GET',
+                url: 'https://forward-reverse-geocoding.p.rapidapi.com/v1/search',
+                params: {q: locationSearch.data.locationTo, 'accept-language': 'en', polygon_threshold: '0.0'},
+                headers: {
+                    'x-rapidapi-host': 'forward-reverse-geocoding.p.rapidapi.com',
+                    'x-rapidapi-key': 'c0b1414666msh7239510d4240d30p1b7581jsn27d673214b95'
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                setLatTo(response.data[0].lat);
+                setLongTo(response.data[0].lon);
+                console.log(latTo);
+                console.log(longTo);
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }
+    }, [locationSearch, data])
+
+    
+    useEffect(() => {
+        if(i === 0 && route.length===0){
+            dispatch(getLocations())
+            dispatch(vendorList())
+            dispatch(getAllRoutes())
+            dispatch(findRoute(fromm, too, datee));
+            seti(1);
+        }
+
+        if(route.length!==0){
             setServiceList(route)
             setFilteredList(route)
         }
@@ -104,7 +169,7 @@ export default function RouteQuery() {
             setFrom(data.locationFrom)
             setTo(data.locationTo)
             setDepartureDate(data.departureDate)
-        }
+        } 
     }, [locationSearch])
 
     useEffect(() => {
@@ -140,17 +205,18 @@ export default function RouteQuery() {
         setMaxPrice()
         setPriceFlt("")
         setTerminalFilter("")
-        history.push(`/routes/${from}/${to}`)
+        history.push(`/routes/${from}/${to}/${departureDate}`)
     }
 
     function handleSubmit(e) {
       e.preventDefault();
-      if(to === null){
+      console.log(from, to)
+      if(!to){
         alert("Please pick a location of arrival");
         return;
       }
 
-      if(from === null){
+      if(!from){
         alert("Please pick a location of departure");
         return;
       }
@@ -173,8 +239,8 @@ export default function RouteQuery() {
             setSelectedItem(null);
             setSelectedSeat("");
             alert(`added to cart Successfully`);
-            history.push('/')
-            history.go(0)
+            dispatch({type: CART_ADD_RESET})
+            history.push('/cart')
         }
     }, [addSuccess])
 
@@ -210,16 +276,16 @@ export default function RouteQuery() {
         
         let min = 0;
         if(Number(economy) !== 0){
-            min = Number(economy);
+            min = Number(economy).toFixed(2);
         }
         else if(Number(business) !== 0){
-            min = Number(business);
+            min = Number(business).toFixed(2);
         }
         else if(Number(first) !== 0){
-            min = Number(first);
+            min = Number(first).toFixed(2);
         }
         else {
-            return 0;
+            return 0.00;
         }
         
 
@@ -235,6 +301,12 @@ export default function RouteQuery() {
 
         return min;
     }
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    const todayDate = yyyy + '-' + mm + '-' + dd;
 
   return (
       <Container className={classes.whole} maxWidth="Fixed">
@@ -288,8 +360,9 @@ export default function RouteQuery() {
                             type="date"
                             required
                             size="small"
-                            InputProps={{
-                              style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white'}                        
+                            inputProps={{
+                                min: todayDate,
+                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white'}                        
                             }}                                             
                           /> 
                         </Grid>
@@ -303,7 +376,9 @@ export default function RouteQuery() {
                     <Grid item xs={12} container>
                         <Grid item xs={4} container style={{backgroundColor: "grey", minHeight: 50, padding: 20}}>
                             <Grid item xs={12} style={{backgroundColor: "green", maxHeight: "Fixed", maxWidth: "Fixed"}}>
-                                eg google map
+                                <iframe width="345" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                                src={"https://www.openstreetmap.org/export/embed.html?bbox="+longF+"%2C"+latF+"%2C"+longTo+"%2C"+latTo+"&amp;layer=mapnik"}
+                                ></iframe>
                             </Grid>
                         </Grid>
                         <Grid item xs={8} container style={{backgroundColor: 'grey', minHeight: 50, padding: 20}}>

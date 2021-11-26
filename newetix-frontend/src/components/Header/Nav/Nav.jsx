@@ -3,6 +3,7 @@ import { AppBar, Grid, IconButton, Link, Typography, Badge } from '@mui/material
 import { makeStyles } from '@mui/styles';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
+import { cartDispatch, viewCartData } from '../../../state/actions/actions';
 
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -46,17 +47,26 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: '75px'
     },
     auxContainer: {
-        paddingTop: '25px'
-    }
+        paddingTop: '25px',
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent:'center',
+    },
 }));
 
 function Nav() {
     const defaultStyle = useStyles();
     let history = useHistory()
+    const dispatch = useDispatch()
     const cartD = useSelector(state => state.viewCartData)
     const {cartData} = cartD
     const [cartItemPax, setcartItemPax] = useState("");
     let cartpax = 0;
+
+    useEffect(() => {
+        dispatch(cartDispatch())
+        dispatch(viewCartData())
+    }, [dispatch])
 
     useEffect(() => {
         for (let i in cartData){
@@ -71,8 +81,8 @@ function Nav() {
     }
 
     return (
-        <Grid className={defaultStyle.customizeAppbar} container justify="center" direction="row" alignItems="center">
-            <Grid item xs={1}>
+        <Grid className={defaultStyle.customizeAppbar} container justify="center" direction="row" alignItems="center" display="flex">
+            <Grid item>
                 <Link href='http://localhost:3000/'         
                     style={{ textDecorationLine: 'none', display: "flex",}}>        
                     <img src={etixLogo} className={defaultStyle.resizePic} alt="eTix Logo"/>
@@ -81,15 +91,12 @@ function Nav() {
                     </Typography>
                 </Link>
             </Grid>
-            <Grid item className={defaultStyle.menuContainer} xs={10}>
-                <Grid container justify="center" direction="row" alignItems="center">
-                    <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-                    <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-                    <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
-                </Grid>
-            </Grid>
+   
+            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
+            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
             {cartItemPax? 
-                <Grid item className={defaultStyle.auxContainer} xs={1}>
+                <Grid item className={defaultStyle.auxContainer} justify="space-between">
                     <IconButton><Badge badgeContent={cartItemPax} color="primary">
                         <ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick} />
                     </Badge></IconButton>

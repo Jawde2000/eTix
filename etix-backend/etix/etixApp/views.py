@@ -200,6 +200,7 @@ def paymentProcess(request, pk):
         cart = Cart.objects.get(cartID=data['cartID'])
         cartobj = CartItems.objects.filter(cart=cart)
         user = User.objects.get(userID=pk)
+        em = user.email
 
         payment = Payment.objects.create(
             cart=cart,
@@ -226,6 +227,11 @@ def paymentProcess(request, pk):
             obj.service.seat.save()
 
             ticket.save()
+            subject = 'Thank you for your purchase from ' + obj.service.vendor.vendorName
+            message = 'Dear ' + user.username + ', your payment for a bus ticket from ' + obj.service.vendor.vendorName + ' has been completed!\n\n' + 'Please login in to view your ticket or click this link;\nhttp://localhost:3000/ticket/' + ticket.ticketID + '\n\n From the friendly folks at eTix and ' + obj.service.vendor.vendorName 
+            recepient = str(em)
+            send_mail(subject, message, EMAIL_HOST_USER,
+                        [recepient], fail_silently=False)
 
         serializer = PaymentSerializer(payment, many=False)
         return Response(serializer.data)

@@ -193,7 +193,7 @@ function LoginForm() {
           </Button>
           </Grid>
           <Grid item xs={12} >
-            <Link className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 20}} href="/forgotpassword">
+            <Link className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 20}} href="/forgetpass">
               Forgot Password?
             </Link>
           </Grid>

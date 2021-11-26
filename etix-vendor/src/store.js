@@ -1,12 +1,12 @@
 import { createStore, combineReducers, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
-import { userLoginReducer, userDetailReducer, userUpdateReducer, vendorUpdateReducer} from './reducers/userReducers'
+import { userLoginReducer, userDetailReducer, userUpdateReducer, vendorUpdateReducer,  passwordResetReducer, verifyUserWithEmail} from './reducers/userReducers'
 import { registerReducer } from './reducers/registerReducers'
 import { helpListReducer, helpDeleteReducer, helpDetailReducer, helpSaveReducer, helpSendReducer, helpSendAddReducer} from './reducers/helpReducers'
 import { serviceReducer, serviceDetailReducer, serviceDeleteReducer, serviceSaveReducer, locationDetailReducer, serviceAddReducer } from './reducers/servicesReducers'
 import { paymentListReducer, serviceListDataReducer } from './reducers/salesReducer';
-import { ticketReducer } from './reducers/ticketReducers';
+import { ticketReducer, UsedticketReducer, scanReducer, DeleteticketReducer } from './reducers/ticketReducers';
 
 const reducer = combineReducers({
     userLogin: userLoginReducer,
@@ -29,6 +29,11 @@ const reducer = combineReducers({
     paymentList: paymentListReducer,
     servicesData: serviceListDataReducer,
     ticketList: ticketReducer,
+    useTicket: UsedticketReducer,
+    scanResult: scanReducer,
+    deleteTicket: DeleteticketReducer,
+    verifyUser: verifyUserWithEmail,
+    passwordReset: passwordResetReducer,
 })
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?JSON.parse(localStorage.getItem('userInfo')) : null
