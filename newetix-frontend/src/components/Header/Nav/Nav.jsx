@@ -3,10 +3,9 @@ import { AppBar, Grid, IconButton, Link, Typography, Badge } from '@mui/material
 import { makeStyles } from '@mui/styles';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { cartDispatch, viewCartData } from '../../../state/actions/actions';
-
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { viewCartData } from '../../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
@@ -44,7 +43,12 @@ const useStyles = makeStyles((theme) => ({
     menuItems: {
         fontSize: '20px',
         paddingLeft: '125px',
-        paddingRight: '75px'
+        paddingRight: '75px',
+        alignItems: 'center',
+        alignContent: 'center',
+        textAlign: 'center',
+        justifyContent: 'center',
+        justify: 'center',
     },
     auxContainer: {
         paddingTop: '25px',
@@ -56,33 +60,62 @@ const useStyles = makeStyles((theme) => ({
 
 function Nav() {
     const defaultStyle = useStyles();
-    let history = useHistory()
-    const dispatch = useDispatch()
-    const cartD = useSelector(state => state.viewCartData)
-    const {cartData} = cartD
+    let history = useHistory();
+    const dispatch = useDispatch();
+    const userLogin = useSelector(state => state.userLogin);
+    const {userInfo} = userLogin;
+    const cartD = useSelector(state => state.viewCartData);
+    const {cartData} = cartD;
+    const removeItem = useSelector(state => state.removeItem);
+    const {success: removeSuccess} = removeItem;
+    const cartAdd = useSelector(state => state.cartAdd);
+    const {success: addcartSuccess} = cartAdd;
     const [cartItemPax, setcartItemPax] = useState("");
-    let cartpax = 0;
+    const [isHome, setHome] = useState(true);
+    const [isAttract, setAttract] = useState(false);
+    const [isServ, setServ] = useState(false);
+    const [isCart, setCart] = useState(true);
 
     useEffect(() => {
-        dispatch(cartDispatch())
-        dispatch(viewCartData())
-    }, [dispatch])
+        if(userInfo){
+            dispatch(viewCartData());
+        }
+    }, [userInfo, addcartSuccess, removeSuccess])
 
     useEffect(() => {
-        for (let i in cartData){
-            cartpax = cartpax + 1
+        if(typeof(cartData) !== 'undefined' && cartData !== null){
+            console.log(cartData);
+            if(cartData || addcartSuccess || removeSuccess){
+                let cartpax = Object.keys(cartData).length;
+                if(cartpax > 0){
+                    setcartItemPax(cartpax);
+                }else {
+                    setcartItemPax('0');
+                }
+            }   
         }
         
-        setcartItemPax(cartpax)
-    }, [cartData])
+        console.log(cartItemPax);
+    }, [addcartSuccess, removeSuccess, cartData])
 
     function cartOnClick() {
+        setCart(true);
+        setHome(false);
+        setServ(false);
+        setAttract(false);
         history.push('/cart')
+    }
+
+    const handleHome = () => {
+        setHome(true);
+        setServ(false);
+        setCart(false);
+        setAttract(false);
     }
 
     return (
         <Grid className={defaultStyle.customizeAppbar} container justify="center" direction="row" alignItems="center" display="flex">
-            <Grid item>
+            <Grid item xs={2}>
                 <Link href='http://localhost:3000/'         
                     style={{ textDecorationLine: 'none', display: "flex",}}>        
                     <img src={etixLogo} className={defaultStyle.resizePic} alt="eTix Logo"/>
@@ -92,18 +125,15 @@ function Nav() {
                 </Link>
             </Grid>
    
-            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-            <Grid item className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link></Grid>
-            {cartItemPax? 
-                <Grid item className={defaultStyle.auxContainer} justify="space-between">
-                    <IconButton><Badge badgeContent={cartItemPax} color="primary">
-                        <ShoppingCartIcon sx={{color: 'white', fontSize: '35px'}} color="inherit" onClick={cartOnClick} />
-                    </Badge></IconButton>
-                </Grid>
-                :
-                ''
-            }
+            <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: 'yellow', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
+            <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+            <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
+            </Grid>     
+            <Grid item xs={1} className={defaultStyle.auxContainer} justify="space-between">
+                {userInfo?<IconButton><Badge badgeContent={cartItemPax} color="primary">
+                    <ShoppingCartIcon sx={!isCart?{color: 'white', fontSize: '35px'}:{color: 'yellow', fontSize: '35px'}} onClick={cartOnClick} />
+                </Badge></IconButton>:null}
+             </Grid>
         </Grid>
     );
 

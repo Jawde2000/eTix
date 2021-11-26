@@ -1,16 +1,16 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button, Alert, CircularProgress, Tooltip, InputLabel, Select, MenuItem, FormControl, FormLabel, FormControlLabel, RadioGroup, Radio } from '@mui/material'
+import { Grid, Box, Typography, TextField, Button, Alert, CircularProgress, Tooltip, Divider,InputLabel, Select, MenuItem, FormControl, FormLabel, FormControlLabel, RadioGroup, Radio } from '@mui/material'
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { paymentSuccess, removeItem, viewCartData } from '../../state/actions/actions'
+import { customerDetails, paymentSuccess, removeItem, viewCartData, getAllRoutes } from '../../state/actions/actions'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { routeLookupReducer } from '../../state/reducers/routeReducers';
 import {DELETE_CART_RESET, CART_VIEW_RESET} from '../../state/actions/actionConstants';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-
+import StoreIcon from '@mui/icons-material/Store';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
     },
     inside: {
       paddingTop: '2.5%',
-      paddingBottom: '2.5%'
+      paddingBottom: '2.5%',
+      paddingLeft: 40,
     },
     sect: {
         backgroundColor: 'rgba(31,40,51,0.75)',
@@ -59,12 +60,14 @@ function CartLanding() {
     const cuslist = useSelector(state => state.customerDetails)
     const allr = useSelector(state => state.getAllRoutes)
     const RemoveItem = useSelector(state => state.removeItem);
+    const userLogin = useSelector(state => state.userLogin);
     const {success: successDelete} = RemoveItem;
     const cartAdd = useSelector(state => state.cartAdd)
     const {loading: addLoading, success: addSuccess} = cartAdd
     const {cartData} = clist
     const {customerInfo} = cuslist
     const {route, loading: loadingRoute} = allr
+    const {userInfo} = userLogin
     const [cartItems, setcartItems] = useState()
     const [filteredcartData, setfilteredcartData] = useState()
     const [address, setAddress] = useState(null)
@@ -75,16 +78,19 @@ function CartLanding() {
     const [ready, setReady] = useState(false)
 
     useEffect(() => {
-        if(cartData) {
+        if(userInfo) {
+            dispatch(viewCartData());
+            dispatch(customerDetails());
+            dispatch(getAllRoutes());
             dispatch(viewCartData());
         }       
-    }, [successDelete])
+    }, [userInfo, successDelete, addSuccess, route])
 
     useEffect(() => {
-        if(addSuccess){
-            dispatch(viewCartData());
+        if(cartData === 0){
+            setcartItems(0);
         }
-    }, [addSuccess])
+    }, [cartData])
 
     useEffect(() => {
         if(successDelete) {
@@ -93,30 +99,36 @@ function CartLanding() {
         }
     }, [successDelete])
     
-    useEffect(async () => {
+    useEffect(() => {
         let totaltemp = 0
-        let taxtemp = 0
-        let etixtemp = 0
-        let cd = []
+
+        let cd = [];
         if (cartData){
             setcartItems(cartData)
             for (let i in cartData){
                 totaltemp = parseFloat(cartData[i].seat_price) + parseFloat(totaltemp)
             }
             setTotal((parseFloat(totaltemp)).toFixed(2))
+
+            console.log(cartData);
             
-            if (!cartData){
+            if (!cartItems){
                 setReady(false)
             } else {
-                setCartID(cartData[0].cart)
-                setReady(true)
+                if (cartItems === 0){                  
+                    setCartID(cartItems[0].cart);
+                    console.log(cartItems[0].cart);
+                }
+                setReady(true);
             }
 
             if (route) {
                 for (let i in cartData){
                     for (let j in route) {
                         if (cartData[i].service == route[j].serviceID){
-                            cd.push(route[j])
+                            let r = route[j];
+                            r = {...r, seat_Type: cartData[i].seat_Type};
+                            cd.push(r);
                         }
                     }
                 }
@@ -128,9 +140,9 @@ function CartLanding() {
             setAddress(customerInfo.customerAddress)
         }
         
-        if (!cuslist.loading && !(customerInfo)) {
-            history.push('/')
-        }
+        // if (!cuslist.loading && !(customerInfo)) {
+        //     history.push('/')
+        // }
 
         if (route) {
             setServiceList(route)
@@ -153,31 +165,31 @@ function CartLanding() {
     }
 
     useEffect(() => {
-        if (ready){
-            window.paypal.Buttons({
-                createOrder: (data, actions) => {
-                  return actions.order.create({
-                    intent: "CAPTURE",
-                    purchase_units: [
-                      {
-                        description: "eTix Ticket",
-                        amount: {
-                          currency_code: "MYR",
-                          value: (total),
-                        },
-                      },
-                    ],
-                  });
-                },
-                onApprove: async (data, actions) => {
-                    handleSuccess()
-                },
-                onError: (err) => {
-                    handleFailure(err)
-                },
-              })
-              .render(paypal.current);
-        }
+    if (ready){
+        window.paypal.Buttons({
+            createOrder: (data, actions) => {
+              return actions.order.create({
+                intent: "CAPTURE",
+                purchase_units: [
+                  {
+                    description: "eTix Ticket",
+                    amount: {
+                      currency_code: "MYR",
+                      value: (total),
+                    },
+                  },
+                ],
+              });
+            },
+            onApprove: async (data, actions) => {
+                handleSuccess()
+            },
+            onError: (err) => {
+                handleFailure(err)
+            },
+        }).render(paypal.current);
+    }
+
     }, [ready]);
 
     return (
@@ -188,7 +200,7 @@ function CartLanding() {
                         <Grid item>
                             <Grid container direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                                 <Grid item>
-                                    <ShoppingCartIcon fontSize='large' sx={{fontSize: '75px'}} />
+                                    <ShoppingCartIcon fontSize='large' sx={{fontSize: '55px'}} />
                                 </Grid>
                                 <Grid item>
                                     <Typography variant="h4">Cart</Typography>
@@ -198,7 +210,7 @@ function CartLanding() {
                         <Grid item className={`${classes.sect} ${classes.cartItems}`}>
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
                                 <Grid item>
-                                    <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>Items</Typography>
+                                    <Typography variant="h5" sx={{color: 'rgb(245, 203, 92)'}}>Items</Typography>
                                 </Grid>
                                     {cartItems? 
                                         cartItems.map((item, index) => {
@@ -211,17 +223,19 @@ function CartLanding() {
                                                             <Typography variant="h6">RM {item.seat_price}</Typography>
                                                         </Grid>
                                                         <Grid item>
-                                                            <Tooltip title="Remove">
-                                                                <HighlightOffIcon onClick={() => {handleRemove(item.cartItemsID)}} />
+                                                            <Tooltip title="Remove Cart">
+                                                                <HighlightOffIcon onClick={() => {handleRemove(item.cartItemsID)}} style={{cursor: 'pointer'}}/>
                                                             </Tooltip>
                                                         </Grid>
                                                     </Grid>
+                                                    <Divider style={{backgroundColor: 'white'}}/>
                                                 </Grid>
+                                                
                                             )
                                         })
                                     :
                                     <Grid item>
-                                        <Typography variant="h6">Add items to your cart!</Typography>
+                                        <Typography variant="h6">The cart is empty...</Typography>
                                     </Grid>
                                     }
                                 <Grid item>
@@ -235,8 +249,8 @@ function CartLanding() {
                                 
                                         {address?
                                             <Grid item sx={{marginLeft: '15px', paddingRight: '150px'}}>
-                                                <Typography align="left" variant="h5">Address: </Typography>
-                                                <Typography align="left" variant="h5">{address}</Typography>
+                                                <Typography align="left" variant="h6">Address: </Typography>
+                                                <Typography align="left" variant="h6">{address}</Typography>
                                             </Grid>
 
                                         :
@@ -256,7 +270,7 @@ function CartLanding() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={8} paddingLeft={10}>
                     {
                         filteredcartData?
                         (
@@ -273,13 +287,16 @@ function CartLanding() {
                                         <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
                                             <Grid item xs={12} >
                                                 <Typography style={{fontSize: 30}}>
-                                                    {item.vendorD.vendorName}
+                                                    <StoreIcon spacingRight={10}/>{item.vendorD.vendorName}
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={12} >
                                                 <Typography style={{fontSize: 20}}>
                                                     {`${item.servicedepartureTerminal} - ${item.servicearrivalTerminal}`}
                                                 </Typography>
+                                                <Typography style={{fontSize: 20}}>
+                                                Class: {seatIdentifier(item.seat_Type)}
+                                                </Typography>       
                                             </Grid>
                                             <Grid item xs={12} container>
                                                 <Grid item xs={12} style={{textAlign: 'right'}} >
@@ -294,6 +311,7 @@ function CartLanding() {
                                                     <Grid item xs={8}>
                                                         <Typography style={{fontSize: 20}}>
                                                             {`Depart Time : ${item.serviceTime}`}
+
                                                         </Typography>
                                                     </Grid> 
                                                 </Grid>
@@ -305,9 +323,7 @@ function CartLanding() {
                         )
                         :
                         (
-                            <Box sx={{ display: 'flex' }}>
-                                <CircularProgress />
-                            </Box>
+                            null
                         )
                     }
                 </Grid>

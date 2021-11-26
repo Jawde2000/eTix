@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useReducer, useCallback} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Input, Alert, Typography} from '@mui/material';
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Toolbar, Alert, Typography} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -22,7 +22,13 @@ import S3 from 'react-aws-s3';
 import Avatar from '@mui/material/Avatar';
 import moment from "moment";
 import Backdrop from '@mui/material/Backdrop';
-import JumpingDot from '../Profile/loadingdotJumping.gif';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import SecurityTwoToneIcon from '@mui/icons-material/SecurityTwoTone';
+import PersonTwoToneIcon from '@mui/icons-material/PersonTwoTone';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,13 +62,17 @@ const useStyles = makeStyles((theme) => ({
 function UserDetail() {
     const classes = useStyles();
     const dispatch = useDispatch();    
-    const history = useHistory()
-    const ulist = useSelector(state => state.userLogin)
-    const clist = useSelector(state => state.customerDetails)
+    const history = useHistory();
+    const ulist = useSelector(state => state.userLogin);
+    const clist = useSelector(state => state.customerDetails);
     const cEdit = useSelector(state => state.customerEdit);
-    const {userInfo} = ulist
-    const {customerInfo} = clist
-    const {success: editSuccess} = cEdit
+    const passwordChanges = useSelector(state => state.passwordChanges)
+    const userUpdate = useSelector(state => state.userUpdate);
+    const {userInfo} = ulist;
+    const {customerInfo, loading: cusDetailLoading} = clist;
+    const {success: editSuccess, loading: editLoading} = cEdit;
+    const {success: updateSuccess, loading: updateLoading} = userUpdate;
+    const {success:  changeSuccess, loading: changeLoading} = passwordChanges;
     
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -81,6 +91,12 @@ function UserDetail() {
     const [found, setFound] = useState(true);
     const [picloading, setPloading] = useState(false);
     const [file, setFile] = useState('');
+    const [openUp, setOpenUp] = useState(false);
+    const [openPasWar, setOpenPasWar] = useState(false);
+    const [openEmpty, setEmpty] = useState(false);
+    const [openPasNot, setOpenPasNot] = useState(false);
+    const [openPas, setOpenPas] = useState(false);
+    const [openPer, setOpenPer] = useState(false);
     
     const config = {
         bucketName: 'etixbucket',
@@ -106,7 +122,37 @@ function UserDetail() {
         if(userInfo){
             dispatch(customerDetails())
         }
+    }, [userInfo, editSuccess, updateSuccess, changeSuccess])
+
+    useEffect(() => {
+        if(editSuccess){
+            setOpenUp(true);
+            setEditing(false);
+        }
     }, [editSuccess])
+
+    useEffect(() => {
+        if(picloading){
+            if(openPer === true){
+                setOpenPasWar(!openPasWar);
+                setOpenPer(!openPasWar);
+            }
+        }
+    }, [picloading])
+
+    // useEffect(() => {
+    //     if(!editing){
+    //         setOpenPasWar(false);
+    //         setOpenPer(true);
+    //     }
+    // }, [editing])
+
+    useEffect(() => {
+        if(changeSuccess){
+            setOpenPas(true);
+            setEditing(false);
+        }
+    }, [changeSuccess])
 
     useEffect(async () => {
         PicExist()
@@ -192,23 +238,39 @@ function UserDetail() {
     }
 
     const handleSubmit = () => {
-        if (fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){
-            console.log(fname, lname, contact, address, birthdate, gender)
+        if (!openPer && fname != '' && lname != '' && gender != '' && contact != '' && address != '' && birthdate != null){          
             dispatch(customerEdit(fname, lname, contact, address, birthdate, gender))
-            if (password != '' && confirmPass != '' && password == confirmPass) {
-                dispatch(passwordChange(password))
-            }
-            history.go(0)
-        } else if (password != '' && confirmPass != '' && password == confirmPass) {
-            dispatch(passwordChange(password))
-            console.log("password changed")
-        } else {
-            alert("Please fill in all of the fields!")
-            console.log(fname, lname, contact, address, birthdate, gender)
+            // history.go(0)
         }
 
-        if (userInfo.username != username){
-            dispatch(updateUser(username, userInfo.userID))
+        if (openPasWar && password != '' && confirmPass != ''){
+            console.log("pass");
+            dispatch(passwordChange(password));
+        } else if (openPasWar && password == '' && confirmPass == '') {
+            setEmpty(true);
+        }
+    }
+
+    const handleEdit = () => {
+        if(editing){
+            if(userInfo) {
+                setFile(userInfo.userID)
+                setUsername(userInfo.username)
+                setEmail(userInfo.email)
+            } 
+    
+            if(customerInfo) {
+                setFname(customerInfo.customerFirstName)
+                setLname(customerInfo.customerLastName)
+                setGender(customerInfo.customerGender)
+                setContact(customerInfo.customerContact_Number)
+                setAddress(customerInfo.customerAddress)
+                setBirthDate(customerInfo.customerBirthday)
+                setID(customerInfo.customerID)
+            }
+            setEditing(!editing);
+        } else {
+            setEditing(!editing);
         }
     }
 
@@ -236,6 +298,127 @@ function UserDetail() {
         iiMissing = true
     }
 
+    const DialogEmpty = () => {
+        const handleClose = () => {
+          setEmpty(false);
+          setEditing(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openEmpty}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Password is empty</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogUpdate = () => {
+        const handleClose = () => {
+          history.go(0);
+          setOpenUp(false);
+          
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openUp}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Profile Updated</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogPas = () => {
+        const handleClose = () => {
+          setOpenPas(false);
+          history.go(0);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openPas}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Password Updated</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogPasNotMat = () => {
+        const handleClose = () => {
+          setOpenPasNot(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openPasNot}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Password Not Match</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const handleSecurity = () => {
+        setOpenPasWar(!openPasWar);
+        setOpenPer(!openPasWar);
+    }
+
     return (
         <Container className={classes.root} maxWidth="Fixed">
         <Container >
@@ -249,11 +432,11 @@ function UserDetail() {
                 :
                 <>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
-                        <Typography paddingRight="12" textAlign="center" style={{fontSize:20, fontWeight: 'bolder'}}>My Profile</Typography>
+                        <Typography paddingRight="12" textAlign="center" style={{fontSize:25, fontWeight: 'bolder'}}>My Profile</Typography>
                     </Grid>
                     <Grid container spacing={3} direction="column" style={{marginTop: 10}}>
                         <Grid item xs={12} className={classes.action} container>
-                            <Grid item xs={4} textAlign="center" style={{fontSize:20, fontWeight: 'bolder'}}>
+                            <Grid item xs={4} textAlign="center" style={{fontSize:25, fontWeight: 'bolder'}}>
                                 User ID: {customerID}
                             </Grid>
                             {iiMissing? 
@@ -263,8 +446,8 @@ function UserDetail() {
                             : ''
                             }
                             <Grid item xs={iiMissing? 3 : 7} textAlign="right">
-                                <Tooltip title="Edit User">
-                                    <IconButton onClick={() => setEditing(!editing)} style={{bottom: '15px'}}>
+                                <Tooltip title="Edit profile">
+                                    <IconButton onClick={handleEdit} style={{bottom: '15px'}}>
                                         <EditIcon className={classes.functionicon} fontSize="large" />
                                     </IconButton>
                                 </Tooltip>
@@ -349,6 +532,7 @@ function UserDetail() {
                                                             defaultValue={username}
                                                             margin="dense"
                                                             fullWidth
+                                                            disabled
                                                             size="small"
                                                             InputProps={{
                                                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
@@ -392,12 +576,23 @@ function UserDetail() {
                                         </Grid>
                                         {customerInfo?
                                             (
-                                                <>
-                                                    <Grid item xs={12} style={{fontWeight:'bold', marginTop: 20}}>
+                                                <>  {
+                                                    !editing?
+                                                    <Grid item xs={5} style={{fontWeight:'bold', marginTop: 20}}>                                               
+                                                        Personal Information   
+                                                    </Grid>    
+                                                    :
+                                                    <Grid item xs={5} color={openPer?'black':'red'} style={{fontWeight:'bold', marginTop: 20}}>                                               
                                                         Personal Information
-                                                    </Grid>
+                                                    <Tooltip title="Click here to change personal information" placement="right-start">
+                                                    <IconButton onClick={handleSecurity}>
+                                                        <PersonTwoToneIcon /> 
+                                                    </IconButton>
+                                                    </Tooltip>                       
+                                                    </Grid>    
+                                                    }
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item xs={3} color={!openPer?'black':'gray'} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             First Name : 
                                                         </Grid>
                                                         {!editing ?
@@ -415,6 +610,7 @@ function UserDetail() {
                                                                         onChange={handleChangefname}
                                                                         defaultValue={fname}
                                                                         margin="dense"
+                                                                        disabled={openPer}
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
@@ -426,7 +622,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Last Name : 
                                                         </Grid>
                                                         {!editing ?
@@ -444,6 +640,7 @@ function UserDetail() {
                                                                         onChange={handleChangelname}
                                                                         defaultValue={lname}
                                                                         margin="dense"
+                                                                        disabled={openPer}
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
@@ -455,7 +652,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Phone Number : 
                                                         </Grid>
                                                         {!editing ?
@@ -473,6 +670,7 @@ function UserDetail() {
                                                                         onChange={handleChangeUserPhone}
                                                                         defaultValue={contact}
                                                                         margin="dense"
+                                                                        disabled={openPer}
                                                                         fullWidth
                                                                         size="small"
                                                                         InputProps={{
@@ -484,7 +682,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30 , marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Birth Date: 
                                                         </Grid>
                                                         {!editing ?
@@ -507,6 +705,7 @@ function UserDetail() {
                                                                         margin="dense"
                                                                         type="date"
                                                                         fullWidth
+                                                                        disabled={openPer}
                                                                         size="small"
                                                                         InputProps={{
                                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
@@ -517,7 +716,7 @@ function UserDetail() {
                                                         }  
                                                     </Grid>
                                                     <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
-                                                        <Grid item xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                        <Grid item color={!openPer?'black':'gray'} xs={3} style={!editing ? ({fontWeight: 'bold'}) : ({fontWeight: 'bold', marginTop: 13}) }>
                                                             Address : 
                                                         </Grid>
                                                         {!editing ?
@@ -536,6 +735,7 @@ function UserDetail() {
                                                                         defaultValue={address}
                                                                         margin="dense"
                                                                         fullWidth
+                                                                        disabled={openPer}
                                                                         size="small"
                                                                         InputProps={{
                                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
@@ -545,7 +745,7 @@ function UserDetail() {
                                                             )
                                                         }  
                                                     </Grid>
-                                                    <Grid item xs={12} container container style={{marginLeft: 30, marginTop:10}}>
+                                                    <Grid item color={!openPer?'black':'gray'} xs={12} container container style={{marginLeft: 30, marginTop:10}}>
                                                         
                                                         {!editing ?
                                                             (
@@ -564,7 +764,7 @@ function UserDetail() {
                                                                     </RadioGroup>
                                                                 </FormControl>
                                                             )
-                                                            :
+                                                            :!openPer?
                                                             (
                                                                 <FormControl component="fieldset">
                                                                     <FormLabel component="legend">Gender</FormLabel>
@@ -580,7 +780,21 @@ function UserDetail() {
                                                                         <FormControlLabel value="P" control={<Radio />} label="Others" />
                                                                     </RadioGroup>
                                                                 </FormControl> 
-                                                            )
+                                                            ):
+                                                            <FormControl component="fieldset">
+                                                                    <FormLabel component="legend" style={{fontFamily: ['rubik', 'sans-serif'].join(','), fontWeight: 'bold'}}>Gender</FormLabel>
+                                                                    <RadioGroup
+                                                                        row
+                                                                        aria-label="gender"
+                                                                        name="gender-radio-buttons-group"
+                                                                        value={gender}
+                                                                        disabled
+                                                                    >
+                                                                        <FormControlLabel value="M" control={<Radio />} label="Male" />
+                                                                        <FormControlLabel value="F" control={<Radio />} label="Female" />
+                                                                        <FormControlLabel value="P" control={<Radio />} label="Others" />
+                                                                    </RadioGroup>
+                                                                </FormControl>
                                                         }  
                                                     </Grid>
                                                 </>
@@ -593,28 +807,42 @@ function UserDetail() {
                                         {editing?
                                             (
                                                 <>
+                                                
+                                                <Grid item xs={5} color={!openPasWar?'black':'red'} style={{fontWeight:'bold', marginTop: 20}}>                                               
+                                                    Change Password
+                                                    <Tooltip title="Click here to change password" placement="right-start">
+                                                    <IconButton onClick={handleSecurity}>
+                                                        <SecurityTwoToneIcon /> 
+                                                    </IconButton>
+                                                    </Tooltip>                       
+                                                </Grid>      
                                                 <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
-                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
-                                                        Password: 
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) } color={!openPasWar?'gray':'black'}>
+                                                        New Password: 
                                                     </Grid>
                                                     <Grid item xs={9} textAlign="left">
                                                         <TextField 
                                                             id="password" 
                                                             variant="outlined"
                                                             onChange={hadleChangePassword}
-                                                            defaultValue={password}
                                                             margin="dense"
-                                                            type='password'
                                                             fullWidth
+                                                            autoComplete='off'
+                                                            disabled={!openPasWar}
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"},
+                                                                autoComplete: 'new-password',
+                                                                form: {
+                                                                    autocomplete: 'off',
+                                                                },
+                                                                type: 'password',
                                                             }} 
                                                         />
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item xs={12} container style={{marginLeft: 30, marginTop:10}}>
-                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) }>
+                                                    <Grid item xs={3} style={!editing ? ({fontWeight: 'bold',}) : ({fontWeight: 'bold', marginTop: 13}) } color={!openPasWar?'gray':'black'}>
                                                         Confirm Password: 
                                                     </Grid>
                                                     <Grid item xs={9} textAlign="left">
@@ -622,13 +850,18 @@ function UserDetail() {
                                                             id="confirmPass" 
                                                             variant="outlined"
                                                             onChange={handleChangeConfirmPassword}
-                                                            defaultValue={confirmPass}
                                                             type='password'
                                                             margin="dense"
                                                             fullWidth
+                                                            disabled={!openPasWar}
                                                             size="small"
                                                             InputProps={{
-                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"}
+                                                                style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: "white"},
+                                                                autoComplete: 'new-password',
+                                                                form: {
+                                                                    autocomplete: 'off',
+                                                                },
+                                                                type: 'password',
                                                             }} 
                                                         />
                                                     </Grid>
@@ -640,7 +873,7 @@ function UserDetail() {
                                                                 <Button 
                                                                     variant="outlined"
                                                                     startIcon={<AddIcon />}
-                                                                    onClick={()=> alert("Password Not Match")}
+                                                                    onClick={()=> setOpenPasNot(true)}
                                                                     style={{cursor: 'pointer', backgroundColor: '#F5CB5C', color: 'black', fontWeight: 'bolder', fontFamily: ['rubik', 'sans-serif'].join(',') , marginTop: 20, marginBottom: 20}}
                                                                 >
                                                                     Save
@@ -676,6 +909,51 @@ function UserDetail() {
                     }
                     </Box>
                 </>
+            }
+            {
+                openPas?<DialogPas />:null
+            }
+            {
+                openUp?<DialogUpdate />:null
+            }
+            {
+                openEmpty?<DialogEmpty />:null
+            }
+            {
+                openPasNot?<DialogPasNotMat />:null
+            }
+            {
+                editLoading?
+                <Box sx={{ display: 'flex' }}>
+                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                <CircularProgress  style={{color: '#F5CB5C'}}/>
+                {/* <img src={JumpingDot}/> */}
+                </Backdrop>
+                </Box>
+                :
+                null
+            }
+            {
+                updateLoading?
+                <Box sx={{ display: 'flex' }}>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                    <CircularProgress  style={{color: '#F5CB5C'}}/>
+                    {/* <img src={JumpingDot}/> */}
+                    </Backdrop>
+                </Box>
+                :
+                null
+            }
+            {
+                cusDetailLoading?
+                <Box sx={{ display: 'flex' }}>
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                    <CircularProgress  style={{color: '#F5CB5C'}}/>
+                    {/* <img src={JumpingDot}/> */}
+                    </Backdrop>
+                </Box>
+                :
+                null
             }
         </Container>
         </Container>

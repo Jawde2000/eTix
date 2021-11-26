@@ -303,6 +303,8 @@ export const customerDetails = () => async(dispatch, getState) => {
             userLogin: {userInfo},
         } = getState()
 
+        console.log(userInfo);
+
         const config = {
             headers: {
                 'Content-type' : 'application/json',
@@ -364,7 +366,6 @@ export const customerEdit = (firstname, lastname, phonenumber, address, birthday
         
         dispatch({
             type: actions.CUSTOMER_EDIT_SUCCESS,
-            payload: data
         })
 
     } catch (error) {
@@ -681,7 +682,7 @@ export const viewCartData = () => async(dispatch, getState) => {
     }
 }
 
-export const updateUser = (user, id) => async (dispatch, getState) => {
+export const updateUser = (user, password) => async (dispatch, getState) => {
     try{
         dispatch({
             type: actions.USER_UPDATE_REQUEST
@@ -701,10 +702,26 @@ export const updateUser = (user, id) => async (dispatch, getState) => {
         }
         
         var { data } = await axios.put(
-            `http://127.0.0.1:8000/api/user/update/${id}/`,
-            user,
+            `http://127.0.0.1:8000/api/user/update/${userInfo.userID}/`,
+            {
+                username: user,
+                email: userInfo.email,
+                is_active: userInfo.is_active,
+                password: password
+            },
             config
         )
+
+        // data = {...data, ...userInfo.token};
+        // data = {...data, ...userInfo.access};
+        // data = {...data, ...userInfo.refresh};
+        var token = { token: userInfo.token};
+        var access = { access: userInfo.access};
+        var refresh = { refresh: userInfo.refresh};
+
+        let merged = {...data, ...token};
+        merged = {...merged, ...access};
+        merged = {...merged, ...refresh};
 
         dispatch({
             type: actions.USER_UPDATE_SUCCESS,
@@ -712,9 +729,10 @@ export const updateUser = (user, id) => async (dispatch, getState) => {
 
         dispatch({
             type: actions.USER_LOGIN_SUCCESS,
-            payload: data,
+            payload: merged,
         })
 
+        localStorage.setItem('userInfo', JSON.stringify(merged))
 
     }catch(error){
         dispatch({
