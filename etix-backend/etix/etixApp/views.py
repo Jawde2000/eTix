@@ -178,6 +178,13 @@ def getAllVendors(reqeust):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+def getAllVendorDetails(request):
+    users = User.objects.all().filter(is_vendor=True)
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
 @api_view(['POST'])
 def getVendorName(request):
     data = request.data
@@ -228,10 +235,13 @@ def paymentProcess(request, pk):
 
             ticket.save()
             subject = 'Thank you for your purchase from ' + obj.service.vendor.vendorName
-            message = 'Dear ' + user.username + ', your payment for a bus ticket from ' + obj.service.vendor.vendorName + ' has been completed!\n\n' + 'Please login in to view your ticket or click this link;\nhttp://localhost:3000/ticket/' + ticket.ticketID + '\n\n From the friendly folks at eTix and ' + obj.service.vendor.vendorName 
+            message = 'Dear ' + user.username + ', your payment for a bus ticket from ' + obj.service.vendor.vendorName + ' has been completed!\n\n' + \
+                'Please login in to view your ticket or click this link;\nhttp://localhost:3000/ticket/' + \
+                ticket.ticketID + '\n\n From the friendly folks at eTix and ' + \
+                obj.service.vendor.vendorName
             recepient = str(em)
             send_mail(subject, message, EMAIL_HOST_USER,
-                        [recepient], fail_silently=False)
+                      [recepient], fail_silently=False)
 
         serializer = PaymentSerializer(payment, many=False)
         return Response(serializer.data)
@@ -442,6 +452,7 @@ def getServiceByVendorID(request, pk):
         message = {'detail': 'service not exist'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def getServicebyID(pk):
     try:
@@ -451,7 +462,6 @@ def getServicebyID(pk):
     except:
         message = {'detail': 'serviceID invalid'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
-        
 
 
 @api_view(['GET'])
@@ -474,7 +484,8 @@ def getVendorDByVID(request, pk):
     except:
         message = {'detail': 'vendor not found'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 @api_view(['GET'])
 def getCartitemByCID(request, pk):
     try:

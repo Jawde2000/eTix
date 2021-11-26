@@ -1193,3 +1193,38 @@ export const cartDispatch = () => async (dispatch, getState) => {
         })
     }
 }
+
+export const listService = () => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.LIST_SERVICE_REQUEST
+        })
+    
+        var { data } = await axios.get('http://127.0.0.1:8000/api/user/vendordetails')
+
+        var serviceName = [];
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/user/vendor/${i.userID}/`);
+            serviceName.push(rst.data.vendorName);
+        }
+
+        data = data.map((item, index) => ({
+            ...item,
+            serviceName: serviceName[index],
+        }))
+
+        dispatch({
+            type: actions.LIST_SERVICE_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.LIST_SERVICE_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
