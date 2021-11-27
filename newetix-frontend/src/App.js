@@ -10,6 +10,8 @@ import HomeQuery from './components/HomeServices/HomeQuery';
 import Stepper from './components/HomeServices/Stepper';
 // Popular Attractions
 import Attractions from './components/Static/Attractions';
+// Services
+import Services from './components/Services/Services';
 // Passport & Retrieval
 import Passport from './components/Passport/Passport';
 // Routes
@@ -32,6 +34,7 @@ import ForgetPass from './components/ForgetPassword/ForgetPass';
 // Footer Pages
 import Privacy from './components/Static/Privacy';
 import About from './components/Static/About'
+
 
 const theme = createTheme({
     palette: {
@@ -101,6 +104,9 @@ function Router() {
                 </Route>
                 <Route path="/about" exact>
                     <About />
+                </Route>
+                <Route path="/services" exact>
+                    <Services/>
                 </Route>
             </Switch>
             <Footer />

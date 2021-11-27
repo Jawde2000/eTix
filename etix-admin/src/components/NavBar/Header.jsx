@@ -115,7 +115,7 @@ const Header = () => {
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 >
-                   {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)}
+                   {/* {userInfo? (<Avatar style={{ height: '30px', width: '30px' }} src={"https://etixbucket.s3.amazonaws.com/etix/" + userInfo.userID + ".jpg"} />):(<AccountCircle htmlColor="#F5CB5C" className={defaultStyle.iconUser}/>)} */}
                    <Typography className={defaultStyle.customizeText}>
                       {userInfo? username:"User"}
                    </Typography>

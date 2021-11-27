@@ -7,6 +7,7 @@ import { vendorListReducer, helpdeskReducer, helpResponseReducer } from './reduc
 import { cartAddReducer, cartViewReducer, deleteReducer, paymentReducer  } from './reducers/cartReducers';
 import { ticketReducer } from './reducers/ticketReducer';
 import { passwordResetReducer, verifyUserWithEmail } from './reducers/forgetPassReducers';
+import { serviceListReducer } from './reducers/serviceReducers';
 
 const reducer = combineReducers({
     register: userRegisterReducer,
@@ -32,6 +33,7 @@ const reducer = combineReducers({
     verifyUser: verifyUserWithEmail,
     passwordReset: passwordResetReducer,
     passwordChanges: PasswordChangeReducer,
+    servicesList: serviceListReducer
 });
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ?

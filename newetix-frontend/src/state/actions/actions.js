@@ -78,14 +78,14 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
         let minprice = [];
 
         for(let i of data) {
-            let min = i.seatD.economyPrice;
+            let min = Number(i.seatD.economyPrice);
 
-            if(min > i.seatD.businessPrice){
-                min = i.seatD.businessPrice;
+            if(min > Number(i.seatD.businessPrice)){
+                min = Number(i.seatD.businessPrice);
             }
 
-            if(min > i.seatD.firstPrice){
-                min = i.seatD.firstPrice;
+            if(min > Number(i.seatD.firstPrice)){
+                min = Number(i.seatD.firstPrice);
             }
 
             minprice.push(min);
@@ -1187,6 +1187,41 @@ export const cartDispatch = () => async (dispatch, getState) => {
     } catch(error) {
         dispatch({
             type: actions.CART_DISPATCH_FAILURE,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        })
+    }
+}
+
+export const listService = () => async (dispatch) => {
+    try {
+        dispatch({
+            type: actions.LIST_SERVICE_REQUEST
+        })
+    
+        var { data } = await axios.get('http://127.0.0.1:8000/api/user/vendordetails')
+
+        var serviceName = [];
+
+        for(let i of data){
+            let rst = await axios.get(`http://127.0.0.1:8000/api/user/vendor/${i.userID}/`);
+            serviceName.push(rst.data.vendorName);
+        }
+
+        data = data.map((item, index) => ({
+            ...item,
+            serviceName: serviceName[index],
+        }))
+
+        dispatch({
+            type: actions.LIST_SERVICE_SUCCESS,
+            payload: data
+        })
+
+    } catch(error) {
+        dispatch({
+            type: actions.LIST_SERVICE_FAIL,
             payload: error.response && error.response.data.detail
                 ? error.response.data.detail
                 : error.message,

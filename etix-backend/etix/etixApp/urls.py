@@ -65,13 +65,13 @@ urlpatterns = [
     path('api/user/service/<str:pk>/',
          views.getServiceByVendorID, name='service-vendorid'),
 
-     path('api/service/<str:pk>/',
-          views.getServicebyID, name='service-serviceid'),
+    path('api/service/<str:pk>/',
+         views.getServicebyID, name='service-serviceid'),
 
     # get vendor helplist by vendorID
     path('api/user/vendorhelp/<str:pk>/',
          views.getVendorHelpByID, name='help-vendorid'),
-    
+
     # get vendor helplist by vendorID
     path('api/user/cartitems/<str:pk>/',
          views.getCartitemByCID, name='cartItem-cartid'),
@@ -137,5 +137,9 @@ urlpatterns = [
     # api path to reset password and send email to user
     path('api/user/resetpass/<str:pk>/',
          views.resetPassword, name='user-reset-pass'),
+
+    # api path to get all user vendor details
+    path('api/user/vendordetails',
+         views.getAllVendorDetails, name='get-all-vendorss'),
 
 ]
