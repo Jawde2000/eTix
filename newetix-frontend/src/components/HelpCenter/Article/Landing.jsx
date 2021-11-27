@@ -2,11 +2,13 @@ import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
 import { Grid, Box, Typography, TextField, Button } from '@mui/material'
 import HelpIcon from '@mui/icons-material/Help';
-import ComposeForm from './ComposeForm'
-import images from '../globalAssets/scripts/bgchange';
+import images from '../../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux'
-import { vendorList } from '../../state/actions/actions'
+import Art1 from './Art1'
+import Art2 from './Art2'
+import Art3 from './Art3'
+import Art4 from './Art4'
+import ArtLanding from './ArtLanding'
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -36,21 +38,13 @@ const useStyles = makeStyles((theme) => ({
 
 function Landing() {
     const classes = useStyles();
-
-    const userLogin = useSelector(state => state.userLogin)
-    const {error,  userInfo} = userLogin
-
-    const dispatch = useDispatch()
-    
     let history = useHistory()
+    const [artShow, setShow] = React.useState(true)
+    const [art1, set1] = React.useState(false)
+    const [art2, set2] = React.useState(false)
+    const [art3, set3] = React.useState(false)
+    const [art4, set4] = React.useState(false)
 
-    useEffect(() => {
-        if(userInfo == null) {
-            history.push('/')
-        }
-        dispatch(vendorList())
-    },[userInfo])
-    
     return (
         <Box className={classes.whole}>
             <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start" className={classes.inside}>
@@ -68,17 +62,38 @@ function Landing() {
                         </Grid>
                         <Grid item className={`${classes.sect} ${classes.articles}`}>
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
+                                <Grid item></Grid>
                                 <Grid item>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(true); set2(false); set3(false); set4(false); setShow(false)})}>How to purchase?</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h4" style={{cursor: 'pointer'}}  onClick={(() => {history.push('/help/articles')})}>Articles</Typography>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(false); set2(true); set3(false); set4(false); setShow(false)})}>How to find routes?</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(false); set2(false); set3(true); set4(false); setShow(false)})}>Payments</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="h5" style={{cursor: 'pointer'}} onClick={(() => {set1(false); set2(false); set3(false); set4(true); setShow(false)})}>Digital tickets</Typography>
+                                </Grid>
+                                <Grid item></Grid>
+                                <Grid item>
+                                    <Typography variant="h4" style={{cursor: 'pointer'}} onClick={(() => {history.push('/help')})}>Messaging System</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={8}>
-                    <ComposeForm />
+                    {artShow?
+                        <ArtLanding />
+                    :
+                        <>
+                            {art1? <Art1 /> : <></>}
+                            {art2? <Art2 /> : <></>}
+                            {art3? <Art3 /> : <></>}
+                            {art4? <Art4 /> : <></>}
+                        </>
+                    }
                 </Grid>
             </Grid>
         </Box>

@@ -7,9 +7,11 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 // Homepage
 import HomeQuery from './components/HomeServices/HomeQuery';
-import HomeOperators from './components/HomeServices/Operators';
+import Stepper from './components/HomeServices/Stepper';
 // Popular Attractions
 import Attractions from './components/Static/Attractions';
+// Services
+import Services from './components/Services/Services';
 // Passport & Retrieval
 import Passport from './components/Passport/Passport';
 // Routes
@@ -18,6 +20,7 @@ import RouteQuery from './components/RouteQuery/RouteQuery';
 import HelpLanding from './components/HelpCenter/Landing'
 import HelpMessaging from './components/HelpCenter/Messaging'
 import HelpDetail from './components/HelpCenter/Detail'
+import HelpArticles from './components/HelpCenter/Article/Landing'
 // Profile
 import Profile from './components/Profile/Profile'
 // Cart
@@ -28,6 +31,9 @@ import NewCart from './components/Cart/newCart'
 import Activities from './components/Activities/Activities'
 import Ticket from './components/Ticketing/Ticket'
 import ForgetPass from './components/ForgetPassword/ForgetPass';
+// Footer Pages
+import Privacy from './components/Static/Privacy';
+import About from './components/Static/About'
 
 
 const theme = createTheme({
@@ -52,7 +58,7 @@ function Router() {
             <Switch>
                 <Route path="/" exact>
                     <HomeQuery />
-                    <HomeOperators />
+                    <Stepper />
                 </Route>
                 <Route path="/attractions" exact>
                     <Attractions />
@@ -72,8 +78,8 @@ function Router() {
                 <Route path="/help/message/:id" exact>
                     <HelpDetail />
                 </Route>
-                <Route path="/help/articles/:id" exact>
-                    <RouteQuery />
+                <Route path="/help/articles/" exact>
+                    <HelpArticles />
                 </Route>
                 <Route path="/profile" exact>
                     <Profile />
@@ -92,6 +98,15 @@ function Router() {
                 </Route>
                 <Route path="/forgotpass" exact>
                     <ForgetPass />
+                </Route>
+                <Route path="/privacy" exact>
+                    <Privacy />
+                </Route>
+                <Route path="/about" exact>
+                    <About />
+                </Route>
+                <Route path="/services" exact>
+                    <Services/>
                 </Route>
             </Switch>
             <Footer />

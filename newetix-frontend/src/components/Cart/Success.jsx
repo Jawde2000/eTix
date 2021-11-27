@@ -18,24 +18,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Success() {
-
     const classes = useStyles();
-    let history = useHistory();
-    const dispatch = useDispatch();
-    const cD = useSelector(state => state.customerDetails)
-    const {customerInfo} = cD
-    const [fn, setFN] = useState('name')
-
-    useEffect(() => {
-        if (cD) {
-            setFN(customerInfo.customerFirstName)
-        }
-
-        if (!cD) {
-            history.push('/')
-        }
-    })
-
+    
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
             <Grid item>
@@ -51,7 +35,7 @@ function Success() {
                 </Grid>
             </Grid>
             <Grid item>
-                <Typography variant="h3">Thank you {fn}!</Typography>
+                <Typography variant="h3">Thank you!</Typography>
                 <Typography variant="h5">The ticket will be credited to your account shortly, please check your Activities page</Typography>
             </Grid>
         </Grid>
