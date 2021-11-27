@@ -6,8 +6,6 @@ import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import TicketActivities from './TicketActivities'
-import CompletedTickets from './CompletedTickets'
-import BoardingTickets from './BoardingTickets'
 import { getTickets } from '../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({

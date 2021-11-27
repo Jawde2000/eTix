@@ -529,9 +529,9 @@ export default function RouteQuery() {
                                                 <Grid item xs={12} container style={{background: 'linear-gradient(to right, rgb(15, 12, 41), rgb(48, 43, 99), rgb(36, 36, 62))', margin: 10}}>
                                                     <Grid item xs={3}>
                                                         <img 
-                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.serviceID}.png`}
+                                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendorD.created_by}.jpg`}
                                                             alt={`serviceLogo${item.vendor}`}
-                                                            style={{margin: 10, maxHeight: 170, maxWidth:250,}}
+                                                            style={{margin: 10, width: '95%', height:'85%', paddingTop: '5px'}}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={9} container style={{color: 'white', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
