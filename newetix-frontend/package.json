@@ -11,6 +11,7 @@
     "@mui/material": "^5.2.0",
     "@mui/styles": "^5.2.0",
     "@mui/x-data-grid": "^5.0.1",
+    "@paypal/react-paypal-js": "^7.4.2",
     "aws-sdk": "^2.1034.0",
     "axios": "^0.24.0",
     "date-fns": "^2.25.0",

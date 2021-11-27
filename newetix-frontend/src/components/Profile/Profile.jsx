@@ -162,10 +162,10 @@ function UserDetail() {
         }
     })
 
-    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file + ".jpeg"));
+    const [imgSrc, setImgSrc] = useState(("https://etixbucket.s3.amazonaws.com/etix/" + file + ".jpg"));
 
     async function PicExist() {
-        let url = "https://etixbucket.s3.amazonaws.com/etix/" + file + '.jpeg'
+        let url = "https://etixbucket.s3.amazonaws.com/etix/" + file + ".jpg";
         await fetch(url).then((res) => {
             if (res.status == 404) {
                 setFound(false)

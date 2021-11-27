@@ -125,13 +125,13 @@ function Nav() {
                 </Link>
             </Grid>
    
-            <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: 'yellow', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
+            <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
             <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
             <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
             </Grid>     
             <Grid item xs={1} className={defaultStyle.auxContainer} justify="space-between">
                 {userInfo?<IconButton><Badge badgeContent={cartItemPax} color="primary">
-                    <ShoppingCartIcon sx={!isCart?{color: 'white', fontSize: '35px'}:{color: 'yellow', fontSize: '35px'}} onClick={cartOnClick} />
+                    <ShoppingCartIcon sx={!isCart?{color: 'white', fontSize: '35px'}:{color: '#f5cb5c', fontSize: '35px'}} onClick={cartOnClick} />
                 </Badge></IconButton>:null}
              </Grid>
         </Grid>

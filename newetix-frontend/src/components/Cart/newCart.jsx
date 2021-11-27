@@ -1,10 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { makeStyles, withStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Toolbar, Button, Alert, Paper, Avatar, CircularProgress, Tooltip, Divider,InputLabel, Select, MenuItem, FormControl, FormLabel, FormControlLabel, RadioGroup, Radio, IconButton } from '@mui/material'
+import { Grid, Box, Typography, TextField, Toolbar, 
+    Button, Alert, Paper, Avatar, CircularProgress, 
+    Tooltip, Divider,InputLabel, Select, MenuItem,
+    FormControl, FormLabel, FormGroup, FormControlLabel, RadioGroup, Radio, IconButton } from '@mui/material'
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { customerDetails, paymentSuccess, removeItem, viewCartData, getAllRoutes } from '../../state/actions/actions'
+import { customerDetails, paymentSuccess, removeItem, viewCartData, getAllRoutes, cartDispatch } from '../../state/actions/actions'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { routeLookupReducer } from '../../state/reducers/routeReducers';
@@ -26,7 +29,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Backdrop from '@mui/material/Backdrop';
 import ufoCartoon from './nothing_here.png';
-import night from './night.jpg';
+import {
+    PayPalScriptProvider,
+    PayPalButtons,
+    usePayPalScriptReducer
+} from "@paypal/react-paypal-js";
+
+const currency = "USD";
+const style = {"layout":"vertical"};
+
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -88,6 +99,7 @@ function NewCart() {
     const allr = useSelector(state => state.getAllRoutes);
     const RemoveItem = useSelector(state => state.removeItem);
     const userLogin = useSelector(state => state.userLogin);
+    const Payment = useSelector(state => state.payment);
     const {success: successDelete} = RemoveItem;
     const cartAdd = useSelector(state => state.cartAdd);
     const {loading: addLoading, success: addSuccess} = cartAdd;
@@ -95,6 +107,7 @@ function NewCart() {
     const {customerInfo} = cuslist;
     const {route, loading: loadingRoute} = allr;
     const {userInfo} = userLogin;
+    const {success: paySuccess} = Payment;
     const [cartItems, setcartItems] = useState();
     const [filteredcartData, setfilteredcartData] = useState();
     const [address, setAddress] = useState(null);
@@ -102,19 +115,26 @@ function NewCart() {
     const [total, setTotal] = useState(0);
     const [payment, setPayment] = useState(0);
     const [cartID, setCartID] = useState('');
+    const [seatPrice, setSeatPrice] = useState();
     const [ready, setReady] = useState(false);
     const [selected, setSelect] = useState(false);
     const [deleteAll, setDeleteAll] = useState();
     const [openDia, setOpenDia] = useState(false);
     const [open, setOpen] = useState(false);
     const [back, setBack] = useState(false);
+    const [select, setSelects] = useState([]);
+    const [id, setID] = useState([]);
+    const [checked, setChecked] = useState(false);
+    const [buy, setBuy] = useState([]);
+    const [currChecked, setcurrChecked] = useState(false);
 
     useEffect(() => {
         if(userInfo) {
             dispatch(getAllRoutes());
             dispatch(customerDetails());
+            dispatch(viewCartData());
         }       
-    }, [successDelete, addSuccess])
+    }, [successDelete, addSuccess, paySuccess])
 
     useEffect(() => {
         setDeleteAll(cartItems);
@@ -123,6 +143,12 @@ function NewCart() {
 
     useEffect(() => {
         if(cartData){
+            let cartIDs = [];
+            cartData.map((cart) => {
+                cartIDs.push(cart.cartItemsID);
+            })
+            setID(cartIDs);
+
             if(filteredcartData){
                 if(Object.keys(filteredcartData).length > 0){
                     setBack(true);
@@ -132,6 +158,13 @@ function NewCart() {
             }
         }
     }, [cartData, filteredcartData])
+
+    useEffect(() => {
+        if(paySuccess){
+            dispatch(cartDispatch(filteredcartData));
+            history.push('/cart/payment/success')
+        }
+    }, [paySuccess])
 
     // useEffect(() => {
     //     if(cartData === 0){
@@ -148,29 +181,35 @@ function NewCart() {
             dispatch({type: CART_VIEW_RESET})
         }
     }, [successDelete])
+
+    useEffect(() => {
+        setBuy(select);
+        console.log(buy);  
+        let totaltemp = 0;
+     
+        for (let i in filteredcartData){
+            totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp)
+        }
+        setTotal((parseFloat(totaltemp)).toFixed(2));
+        console.log(total);
+        if(cartItems){
+            setCartID(cartItems[0].cart);
+        }
+        setReady(true);
+    }, [select, buy, checked, selected])
+
+    useEffect(() => {
+        if(!selected){
+            setTotal('0.00')
+            setSelects([]);
+            setSelect(false);
+        }
+    }, [!selected])
     
     useEffect(() => {
-        let totaltemp = 0
-
         let cd = [];
         if (cartData){
-            setcartItems(cartData)
-            for (let i in cartData){
-                totaltemp = parseFloat(cartData[i].seat_price) + parseFloat(totaltemp)
-            }
-            setTotal((parseFloat(totaltemp)).toFixed(2))
-
-            // console.log(cartData);
-            
-            if (!cartItems){
-                setReady(false)
-            } else {
-                if (cartItems === 0){                  
-                    setCartID(cartItems[0].cart);
-                    console.log(cartItems[0].cart);
-                }
-                setReady(true);
-            }
+            setcartItems(cartData);
 
             if (route) {
                 for (let i in cartData){
@@ -182,11 +221,12 @@ function NewCart() {
                             r = {...r, serviceStartDate: route[j].serviceStartDate};
                             r = {...r, cartID: cartData[i].cartItemsID};
                             r = {...r, vendor: route[j].vendor};
+                            r = {...r, vendor: route[j].serviceName};
                             cd.push(r);
                         }
                     }
                 }
-                setfilteredcartData(cd)
+                setfilteredcartData(cd);
             }
         }
 
@@ -201,7 +241,7 @@ function NewCart() {
         if (route) {
             setServiceList(route)
         }
-    }, [cartData, route, customerInfo])
+    }, [cartData, route, customerInfo, checked])
 
     const handleRemove = (itemID) => {
         dispatch(removeItem(itemID));
@@ -209,7 +249,7 @@ function NewCart() {
 
     const handleSuccess = () => {
         dispatch(paymentSuccess(cartID,total))
-        history.push('/cart/payment/success')
+        // history.push('/cart/payment/success')
     }
 
     const handleFailure = (err) => {
@@ -217,33 +257,67 @@ function NewCart() {
         console.log(err)
     }
 
-    // useEffect(() => {
-    // if (ready){
-    //     window.paypal.Buttons({
-    //         createOrder: (data, actions) => {
-    //           return actions.order.create({
-    //             intent: "CAPTURE",
-    //             purchase_units: [
-    //               {
-    //                 description: "eTix Ticket",
-    //                 amount: {
-    //                   currency_code: "MYR",
-    //                   value: (total),
-    //                 },
-    //               },
-    //             ],
-    //           });
-    //         },
-    //         onApprove: async (data, actions) => {
-    //             handleSuccess()
-    //         },
-    //         onError: (err) => {
-    //             handleFailure(err)
-    //         },
-    //     }).render(paypal.current);
-    // }
+    useEffect(() => {
+        if(window.myButton) window.myButton.close();
+        window.myButton = window.paypal.Buttons({
+            createOrder: (data, actions) => {
+              return actions.order.create({
+                intent: "CAPTURE",
+                purchase_units: [
+                  {
+                    description: "eTix Ticket",
+                    amount: {
+                      currency_code: "MYR",
+                      value: (total),
+                    },
+                  },
+                ],
+              });
+            },
+            onApprove: async (data, actions) => {
+                handleSuccess()
+            },
+            onError: (err) => {
+                handleFailure(err)
+            },
+        })
+        window.myButton.render(paypal.current);
+    }, [ready, selected, checked, total]);
 
-    // }, []);
+    const handleSelects = async (event, i) => {
+        // console.log(event.target.value);
+        // console.log(id[event.target.value]);
+        // console.log(event.target.checked);
+        // if(event.target.checked){
+        //     setSelects((selects) => ({
+        //         ...selects,
+        //         [event.target.value]: id[event.target.value]
+        //     }));
+        // }else{
+        //     let {selecs} = select;
+        //     let {selec} = selecs.filter(s => s !== id[event.target.value]);
+        //     setSelects(selec);
+        // }
+        // console.log(select);
+        // console.log(event.target.checked);
+        // console.log(event.target.value);
+        console.log(id);
+        let ids = filteredcartData[event.target.value];
+        let c = {...checked};
+        console.log(c);
+        c[i] = !c[i];
+        setChecked(c[i]);
+        setcurrChecked(c[i]);
+        setSelects((s) => {return s.includes(ids)? s.filter((f) => f !== ids):[...s, ids]});
+        console.log(select);
+        if(!c[i]){
+            setTotal(total - filteredcartData[i].price);
+            setSelects([]);
+            setChecked(false);
+            setcurrChecked(false);
+        }
+        // setBuy(select);
+    };
 
     const getTime = (time) => {
         if(userInfo){
@@ -273,10 +347,10 @@ function NewCart() {
         };
       
         const handleDelete = () => {
-            for(var i = 0;i < Object.keys(deleteAll).length; i++){
-                dispatch(removeItem(deleteAll[i].cartItemsID));
+            for(var i = 0;i < Object.keys(select).length; i++){
+                dispatch(removeItem(select[i].cartItemsID));
             }
-            setDeleteAll([]);
+            setSelects([]);
             setOpen(false);
         }
       
@@ -304,7 +378,58 @@ function NewCart() {
             </Dialog>
           </Toolbar>
         );
-      }
+    }
+
+    const ButtonWrapper = ({ currency, showSpinner}) => {
+        // usePayPalScriptReducer can be use only inside children of PayPalScriptProviders
+        // This is the main reason to wrap the PayPalButtons in a new component
+        const [{ options, isPending }, dispatch] = usePayPalScriptReducer();
+    
+        useEffect(() => {
+            dispatch({
+                type: "resetOptions",
+                value: {
+                    ...options,
+                    currency: 'MYR',
+                },
+            });
+        }, [currency, showSpinner]);
+    
+    
+        return (<>
+                { (showSpinner && isPending) && <div className="spinner" /> }
+                <PayPalButtons
+                    style={style}
+                    forceReRender={[total, currency, style]}
+                    fundingSource={undefined}
+                    createOrder={(data, actions) => {
+                        return actions.order
+                            .create({
+                                purchase_units: [
+                                    {
+                                        description: "eTix Ticket",
+                                        amount: {
+                                          currency_code: "MYR",
+                                          value: (total),
+                                        },
+                                    },
+                                ],
+                            })
+                            .then((orderId) => {
+                                // Your code here after create the order
+                                return orderId;
+                            });
+                    }}
+                    onApprove={function (data, actions) {
+                        return actions.order.capture().then(function () {
+                            // Your code here after capture the order
+                        });
+                    }}
+                />
+            </>
+        );
+    }
+    
 
     return (
         <Box className={!back?classes.nightNothing:classes.whole}>
@@ -325,16 +450,16 @@ function NewCart() {
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
                                 <Grid item>
                                     <Grid container direction='column' justifyContent="center" alignItems="center" spacing={4}>
-                                        <Grid item>
+                                        {selected?<Grid item>
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>Total</Typography>
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>RM {total}</Typography>
                                             <Typography variant="h8" sx={{color: 'rgb(245, 203, 92)'}}>Total includes 6% SST <br /> and 1% eTix Charge</Typography>
-                                        </Grid>
+                                        </Grid>:null}
                                     
                                 
                                         {address?
                                             <Grid item sx={{marginLeft: '15px', paddingRight: '150px'}}>
-                                                <Typography align="left" variant="h6">Address: </Typography>
+                                                <Typography align="left" variant="h6">Billing Address: </Typography>
                                                 <Typography align="left" variant="h6">{address}</Typography>
                                             </Grid>
 
@@ -345,10 +470,24 @@ function NewCart() {
                                 </Grid>
                                 {address?
                                     <Grid item>
-                                        <div ref={paypal} sx={{width: '90%'}}/>
+                                        {selected?<div ref={paypal} sx={{width: '90%'}}/>:null}
+                                        {/* {checked.length !== 0?<div style={{ maxWidth: "750px", minHeight: "200px" }}>
+                                            <PayPalScriptProvider
+                                            options={{
+                                                "client-id": "test",
+                                                components: "buttons",
+                                                currency: "MYR"
+                                            }}
+                                            >
+                                                <ButtonWrapper
+                                                currency={currency}
+                                                showSpinner={false}
+                                                />
+                                            </PayPalScriptProvider>
+                                        </div>:null} */}
                                     </Grid>
                                 :
-                                    ''
+                                    null
                                 }
                                 
                             </Grid>
@@ -368,12 +507,12 @@ function NewCart() {
                             <Tooltip title="Select all ticket?">
                             <Checkbox
                             checked={selected}
-                            onChange={handleSelected}
+                            onClick={handleSelected}
                             />
                             </Tooltip>
                             </TableCell>
                             {selected?<TableCell padding="Delete">
-                            <Tooltip title="Delete all ticket?">
+                            <Tooltip title="Delete ticket?">
                             <IconButton>
                             <DeleteOutlineSharpIcon onClick={() => {setOpen(true)}} style={{cursor: 'pointer'}} onMouseOver={MouseOver} onMouseOut={MouseOut}/>
                             </IconButton>
@@ -411,9 +550,17 @@ function NewCart() {
                                                 <TableRow>
                                                     <TableCell />
                                                     <TableCell padding="checkbox">
-                                                        <Checkbox 
-                                                        checked={selected}
-                                                        />
+                                                    <FormControl component="fieldset">
+                                                    <FormGroup>
+                                                        {/* <Checkbox
+                                                            checked={checked[index]}
+                                                            disabled={selected}
+                                                            onClick={(e) => handleSelects(e, index)}
+                                                            value={index}
+                                                            inputProps={{ 'aria-label': 'controlled' }}
+                                                        /> */}
+                                                    </FormGroup>
+                                                    </FormControl>
                                                     </TableCell>
                                                 <TableCell>
                                                 <Typography style={{fontSize: 16, display: 'flex'}}>
@@ -436,9 +583,8 @@ function NewCart() {
                                             <Avatar variant="square"
                                             src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendor}.png`}
                                             alt={`serviceLogo${item.vendor}`}
-                                            style={{margin: 5, height: 125, width:180,}}
+                                            style={{margin: 5, height: "95%", width:"95%",}}
                                             >
-
                                             </Avatar>
                                         </Grid>
                                         <Grid item xs={7} container style={{color: 'black', fontFamily: ['rubik', 'sans-serif'].join(','), padding: 10}}>
@@ -449,6 +595,9 @@ function NewCart() {
                                                 <Typography style={item.serviceStatus === 'O'?{color: 'green', fontWeight: 'bolder'}:{color: 'red', fontWeight: 'bolder'}} display="flex">
                                                 Status : {item.serviceStatus==='O'?"Active":"Not Available"}
                                                 </Typography>   
+                                                <Typography style={{fontSize: 15}}>
+                                                Service: {item.serviceName}
+                                                </Typography> 
                                                 <Typography style={{fontSize: 15}}>
                                                 Class: {seatIdentifier(item.seat_Type)}
                                                 </Typography>  

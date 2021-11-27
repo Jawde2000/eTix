@@ -37,7 +37,7 @@ export const paymentReducer = (state = {}, action) => {
         case constants.PROCESSING_PAYMENT_APPROVAL:
             return {loading: true}
         case constants.PROCESSED_PAYMENT_APPROVAL:
-            return {loading: false, approvalDetails: action.payload}
+            return {loading: false, success: true}
         case constants.FAILURE_PAYMENT_APPROVAL:
             return {loading: false, error: action.payload}
         default:

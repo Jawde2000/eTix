@@ -170,6 +170,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3001",
     'https://etixbucket.s3.amazonaws.com',
     'https://etixbucket.s3.ap-southeast-1.amazonaws.com',
+    'https://c.sandbox.paypal.com',
 ]
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

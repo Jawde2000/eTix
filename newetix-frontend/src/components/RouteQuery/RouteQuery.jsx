@@ -1,4 +1,4 @@
-import {  Grid, Box,  Link, Typography, Autocomplete, Container } from '@mui/material';
+import {  Grid, Box,  Link, Typography, Autocomplete, Container, Toolbar } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, {useEffect, useState} from 'react';
 import images from '../globalAssets/scripts/bgchange';
@@ -93,6 +93,7 @@ export default function RouteQuery() {
     const [longTo, setLongTo] = useState(0);
     const [latF, setLatF] = useState(0);
     const [longF, setLongF] = useState(0);
+    const [openCartSuccess, setBuySuccess] = useState(false);
     
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
@@ -238,13 +239,41 @@ export default function RouteQuery() {
             setOpenDialog(false);
             setSelectedItem(null);
             setSelectedSeat("");
-            alert(`added to cart Successfully`);
-            dispatch({type: CART_ADD_RESET})
+            setBuySuccess(true);
+            dispatch({type: CART_ADD_RESET});
             dispatch({type: ROUTE_RESET});
             history.push('/cart')
         }
     }, [addSuccess])
 
+    const DialogCart = () => {
+        const handleCloseCart = () => {
+          setBuySuccess(false);
+          history.push('/cart');
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openCartSuccess}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Add to cart success</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseCart} autoFocus style={{color: 'black'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
 
     const handleAddToCart = (item) => {
         dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
@@ -692,6 +721,9 @@ export default function RouteQuery() {
                         </Box>
                         :
                         null
+                        }
+                        {
+                            openCartSuccess?<DialogCart />:null
                         }
                     </Grid>
                 </Grid>

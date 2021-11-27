@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {makeStyles} from '@mui/styles';
-import { Container, Grid, Box, Tooltip, TextField, Button} from '@mui/material';
+import { Container, Grid, Box, Tooltip, TextField, Button, Toolbar, Typography} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSelector, useDispatch } from 'react-redux';
@@ -19,7 +19,11 @@ import { useEffect } from 'react';
 import { LOCATION_DETAIL_RESET, SERVICE_ADD_RESET} from '../../constants/serviceConstants/serviceConstants';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 import "../Font/fonts.css"
 import { minWidth } from '@mui/system';
 
@@ -65,19 +69,20 @@ const AddService = () => {
     let history = useHistory();
     const dispatch = useDispatch();
 
-    const userLogin = useSelector(state => state.userLogin)
-    const {userInfo} = userLogin
+    const userLogin = useSelector(state => state.userLogin);
+    const {userInfo} = userLogin;
 
-    const locationDetail = useSelector(state => state.locationDetail)
-    const {locationD} = locationDetail
+    const locationDetail = useSelector(state => state.locationDetail);
+    const {locationD} = locationDetail;
 
-    const serviceAdd = useSelector(state => state.serviceAdd)
-    const {success: addSuccess} = serviceAdd
+    const serviceAdd = useSelector(state => state.serviceAdd);
+    const {success: addSuccess} = serviceAdd;
 
-    const [locations, setLocations] = useState()
+    const [locations, setLocations] = useState();
 
-    const [seat, setSeat] = useState()
-    const [service, setService] = useState()
+    const [seat, setSeat] = useState();
+    const [service, setService] = useState();
+    const [fillAll, setFillAll] = useState(false);
 
     useEffect(() => {
         if(!userInfo){
@@ -93,11 +98,9 @@ const AddService = () => {
         }
     }, [locationDetail])
 
-    
-
     const handleSubmit = () =>{
-        if(!serviceName && !serviceDesc && !fQty && !fPrice && !bPrice && !bQty && !ePrice && !eQty && !departure && !arrival && !time && !locationTo && !locationFrom){
-            alert("Fill in all the required field before submitting");
+        if(!serviceName || !serviceDesc || !fQty || !fPrice || !bPrice || !bQty || !ePrice || !eQty || !departure || !arrival || !time || !locationTo || !locationFrom){
+            setFillAll(true);
             return;
         }
         if(!startDate || !endDate){
@@ -225,6 +228,34 @@ const AddService = () => {
         else{
             setStartDate("");
         }
+    }
+
+    const DialogNotFillAll = () => {
+        const handleClose = () => {
+          setFillAll(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={fillAll}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Fill in all the required field before submitting</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
     }
     
     return (
@@ -643,6 +674,9 @@ const AddService = () => {
                     </Grid>
                 </Grid>
             </Box>
+            {
+                fillAll?<DialogNotFillAll />:null
+            }
             </Container>
         </Container>
     )
