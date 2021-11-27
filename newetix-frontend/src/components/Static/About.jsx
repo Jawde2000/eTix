@@ -1,19 +1,27 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
 import { Grid, Box, Typography, TextField, Button, Autocomplete } from '@mui/material'
+import { Card, CardActions, CardContent, CardMedia } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
 import { borderRadius } from '@mui/system';
+import eTixLogo from '../globalAssets/eTixLogo.png'
 
+import images from '../globalAssets/scripts/bgchange';
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        backgroundImage: `url(${images()})`,
+    },
     whole: {
-        backgroundColor: 'rgba(245, 203, 92, 0.75)',
         color: 'black',
         padding: '5px',
         borderRadius: '25px',
         fontFamily: ['rubik', 'sans-serif'].join(','),
+        backgroundColor: 'rgba(247, 213, 124, 0.75)',
+        paddingTop: '50px',
+        paddingBottom: '50px',
     },
     tf: {
         width: '550px'
@@ -24,92 +32,117 @@ function Privacy() {
     const classes = useStyles();
 
     return (
-        <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
-            <Grid item>
-                <Typography variant="h3" style={{paddingTop: '15px'}}>Privacy Policy</Typography>
+        <Box className={classes.root}>
+            <Grid container direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
+                <Grid item>
+                    <img src={eTixLogo} alt="logo" width="250px"/>
+                    <Typography variant="h3" style={{paddingTop: '25px'}}>About eTix</Typography>
+                </Grid>
+                <Grid item sx={{width: '75%'}}>
+                    <Typography variant="h6">
+                        <Box textAlign ='left' m={1} style={{textAlign: 'center'}}>
+                            <Typography variant="h4" style={{paddingTop: '15px'}}>
+                                One Smooth Ticket for your Ultimate Journey<br />
+                            </Typography>
+                            <Typography variant="h5" style={{paddingTop: '15px'}}>
+                                Satu Tiket yang Lancar untuk Perjalanan Utama Anda<br />
+                                一張暢通無阻的車票，開啟您的終極旅程<br />
+                                ஒரு மென்மையான பயணம் வேண்டும்<br /><br />
+                            </Typography>
+                        </Box>
+                        <Box textAlign ='left' m={1}>
+                            eTix is a bus ticket purchasing system developed by Pengeema Technologies made with convenience in mind. Our goal is we will always find a way to 
+                            help the people all around the world with innovation.
+                        </Box>
+                        <Box textAlign ='left' m={1}>
+                            Many problems faces by the transportation industry in this 21st century especially Covid-19 Pandemic in the current global. At eTix, 
+                            We are promoting contactless services in order to achieve good hygiene among the people involved in the transportation industry in 
+                            the new normal environment.
+                        </Box>
+                        <Box textAlign ='left' m={1}>
+                            With good faith, eTix is made by Pengeema Technologies to boost tourism post-Covid and to boost economy of Malaysia. 
+                            The team consists of Chew Zhi Peng, Ho Ko Ee, Matthew Labial John and of course CEO Ms. Rubiah binti Mohd Yunus.
+                        </Box>
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <Card sx={{ width: 300 }}>
+                        <CardMedia
+                            component="img"
+                            height="300"
+                            src="https://mmuexpert.mmu.edu.my/images/staff/1001080221.jpg"
+                            alt="img"
+                        />
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="div">
+                                Rubiah binti Mohd Yunus 
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                CEO
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item>
+                    <Grid container direction="row" spacing={2}>
+                        <Grid item>
+                            <Card sx={{ width: 300 }}>
+                                <CardMedia
+                                    component="img"
+                                    height="300"
+                                    image="https://media.discordapp.net/attachments/886595341829419018/891298876387106856/PicsArt_09-25-08.23.05.jpg?width=612&height=827"
+                                    alt="img"
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Ho Ko Ee
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Full Stack Developer
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item>
+                            <Card sx={{ width: 300 }}>
+                                <CardMedia
+                                    component="img"
+                                    height="300"
+                                    image="https://media.discordapp.net/attachments/886595341829419018/890280686513172480/IMG_20210923_005418.jpg?width=598&height=827"
+                                    alt="img"
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Chew Zhi Peng
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Full Stack Developer & Team Leader
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item>
+                            <Card sx={{ width: 300 }}>
+                                <CardMedia
+                                    component="img"
+                                    height="300"
+                                    image="https://media.discordapp.net/attachments/886595341829419018/892061532408659998/unknown.png?width=742&height=827"
+                                    alt="img"
+                                />
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="div">
+                                        Matthew Labial John
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Front End Developer
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid item sx={{width: '75%'}}>
-                <Typography variant="h6">
-                    <Box textAlign ='left' m={1}>
-                        At eTix, accessible from etix.io, one of our main prioritites is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by eTix and how we use it.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Log Files
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        eTix follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider(ISP), date and time stamp, referring/exit pages, and possily the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for anlyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information. Out Privacy Policy was created with the help of the Privacy Policy Generator.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Cookies and Web Beacons
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        Like any other website, eTix uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        For more general information on cookies, please read "Cookies" article from the Privacy Policy Generator.
-                    </Box>
-                    <Box textAlign ='left' m={1} >
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Privacy Policies
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        You may consult this list to find the Privacy Policy for each of the advertising partners of eTix.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on eTix, which are sent directly to uses' browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        Note that eTix has no access to or control over these cookies that are used by third-party advertisers.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Third Party Privacy Policies
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        eTix's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        You can choose to disable cookies through your individual browser options. To know more detailed information about cookie management with specific web browsers, it can be found at the browsers' respective websites.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Children's Information
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        Another part of our priority is adding protectin for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        eTix does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Online Privacy Policy Only
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        This Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in eTix. This policy is not applicable to any information collected offline or via channels other than this websites.
-                    </Box>
-                    <Box textAlign ='left' m={1}>
-                        <Typography variant="h4" style={{paddingTop: '15px'}}>
-                            Consent
-                        </Typography>
-                    </Box>
-                    <Box textAlign ='left' m={1} style={{paddingBottom: '15px'}}>
-                        By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.
-                    </Box>
-                </Typography>
-            </Grid>
-        </Grid>
+        </Box>
     );
 }
 
