@@ -136,6 +136,11 @@ function NewCart() {
         }       
     }, [successDelete, addSuccess, paySuccess])
 
+
+    useEffect(() => {
+        setSelect(false)
+    }, [successDelete])
+
     useEffect(() => {
         setDeleteAll(cartItems);
         // console.log(deleteAll);
@@ -193,10 +198,12 @@ function NewCart() {
         setTotal((parseFloat(totaltemp)).toFixed(2));
         console.log(total);
         if(cartItems){
-            setCartID(cartItems[0].cart);
+            if(cartItems.length !==0){
+                setCartID(cartItems[0].cart);
+            } 
         }
         setReady(true);
-    }, [select, buy, checked, selected])
+    }, [select, buy, checked, selected, cartItems])
 
     useEffect(() => {
         if(!selected){
@@ -581,7 +588,7 @@ function NewCart() {
                                     <Grid item xs={12} container style={{background: 'white', borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                                         <Grid item xs={3}>
                                             <Avatar variant="square"
-                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendor}.png`}
+                                            src={`https://etixbucket.s3.amazonaws.com/etix/${item.vendorD.created_by}.jpg`}
                                             alt={`serviceLogo${item.vendor}`}
                                             style={{margin: 5, height: "95%", width:"95%",}}
                                             >

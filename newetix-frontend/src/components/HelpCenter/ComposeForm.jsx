@@ -89,7 +89,7 @@ function Compose() {
                             options={vendorlistName(vendorInfo)}
                             id="receiverCombo"
                             sx={{ width: 300 }}
-                            renderInput={(params) => <TextField {...params} label="From" />}
+                            renderInput={(params) => <TextField {...params} label="Receiver" />}
                         />
                     </Grid>
                 </Grid>
