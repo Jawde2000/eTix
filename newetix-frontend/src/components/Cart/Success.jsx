@@ -18,6 +18,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Success() {
+    const classes = useStyles();
+    
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
             <Grid item>
