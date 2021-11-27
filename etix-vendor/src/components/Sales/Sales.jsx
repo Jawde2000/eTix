@@ -115,7 +115,9 @@ function Sales() {
         if(filterData){
             let totalAM = 0.00;
             for(let i of filterData){
-                totalAM +=parseFloat(i.cartDetails.cartTotal);
+                i.cartItems.map((d) => {
+                    totalAM += parseFloat(d.seat_price)
+                });
             }
             setTotal(totalAM.toFixed(2));
         }
