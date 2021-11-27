@@ -16,7 +16,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AddIcon from '@mui/icons-material/Add';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
+import { USER_CUSTOMER_UPDATE_RESET, USER_UPDATE_RESET, USER_LOGIN_SUCCESS,USER_VENDOR_UPDATE_RESET, USER_DETAIL_RESET } from '../../constants/userConstants';
 import { updateUser, updateCustomer, updateVendor, deleteUsers } from '../../actions/userActions';
 import moscow from '../globalAssets/moscow.jpg';
 import S3 from 'react-aws-s3';
@@ -170,6 +170,7 @@ const UserDetail = ({props}) => {
             alert("Successfully Updated User");
             dispatch({type: USER_UPDATE_RESET});
             setEditing(!editing);
+            history.push(`/user/${id}`);
             return;
         }
         else if(successCustomer){
