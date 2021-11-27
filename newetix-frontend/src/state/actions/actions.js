@@ -228,6 +228,7 @@ export const logout = () => (dispatch) => {
     dispatch({type: actions.HELP_RESPONSE_RESET})
     dispatch({type: actions.CART_VIEW_RESET})
     dispatch({type: actions.CART_ADD_RESET})
+    dispatch({type: actions.CART_ADD_RESET})
     dispatch({type: actions.CUSTOMER_DETAILS_RESET})
     dispatch({type: actions.USER_REGISTER_RESET})
 }
@@ -888,7 +889,8 @@ export const paymentSuccess = (cartID, total) =>  async (dispatch, getState) => 
         const { data } = await axios.put(
             `http://localhost:8000/api/payment/success/${userInfo.userID}/`,
             {
-                'cartID': cartID
+                'cartID': cartID,
+                'paymentStatus': 'CP'
             },
             config
         )
@@ -898,7 +900,6 @@ export const paymentSuccess = (cartID, total) =>  async (dispatch, getState) => 
 
         dispatch({
             type: actions.PROCESSED_PAYMENT_APPROVAL,
-            payload: data
         })
 
     } catch(error) {
@@ -1145,6 +1146,8 @@ export const cartDispatch = () => async (dispatch, getState) => {
             `http://localhost:8000/api/cart/`,
             config
         )
+
+        console.log(data);
 
         let cart = ""
 
