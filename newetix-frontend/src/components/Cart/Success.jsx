@@ -19,7 +19,26 @@ const useStyles = makeStyles((theme) => ({
 
 function Success() {
     const classes = useStyles();
-    
+    let history = useHistory();
+    const dispatch = useDispatch();
+    const cD = useSelector(state => state.customerDetails)
+    const {customerInfo} = cD
+    const userLogin = useSelector(state => state.userLogin);
+    const {userInfo} = userLogin;
+    const [fn, setFN] = useState('name')
+
+    useEffect(() => {
+        if(typeof(cD) !== 'undefined' && cD !== null){
+        if (cD) {
+            setFN(userInfo.username);
+        }
+
+        if (!cD) {
+            history.push('/')
+        }
+        }
+    })
+
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
             <Grid item>

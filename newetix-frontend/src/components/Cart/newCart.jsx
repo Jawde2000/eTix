@@ -193,10 +193,12 @@ function NewCart() {
         setTotal((parseFloat(totaltemp)).toFixed(2));
         console.log(total);
         if(cartItems){
-            setCartID(cartItems[0].cart);
+            if(cartItems.length !==0){
+                setCartID(cartItems[0].cart);
+            } 
         }
         setReady(true);
-    }, [select, buy, checked, selected])
+    }, [select, buy, checked, selected, cartItems])
 
     useEffect(() => {
         if(!selected){

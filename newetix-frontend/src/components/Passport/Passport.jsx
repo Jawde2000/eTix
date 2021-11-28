@@ -1,6 +1,6 @@
 import {  Grid, Box,  Link, Typography, } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React from 'react';
+import React, {useState} from 'react';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Passport() {
   const defaultStyle = useStyles();
+  const [transition, setTransition] = useState(false);
 
   return (
       <div>
@@ -63,7 +64,7 @@ function Passport() {
           <Grid xs={12} direction="column" container justify="center" alignItems="center" alignContent="center">
             <Grid xs={12} sm={2} item>
               <Typography variant="h2" className={defaultStyle.welcome} style={{fontFamily: ['rubik', 'sans-serif'].join(',')}}>
-                welcome, or welcome back
+                {transition?<div>Welcome to eTix</div>:<div>Welcome Back</div>}
               </Typography>
             </Grid>
             <Grid xs={12} sm={2} item>
@@ -79,14 +80,9 @@ function Passport() {
               </Box>
             </Grid>
             <Grid container direction="row" justifyContent="center" alignItems="center">
-                <Grid item>
-                    <LoginForm />
-                </Grid>
-                <Grid item sm={2}>
-                </Grid>
-                <Grid item>
-                    <RegisterForm />
-                </Grid>
+              <Grid xs={12} sm={3} item>
+                {transition?<RegisterForm />:<LoginForm />}
+              </Grid>
             </Grid>
             
           </Grid>
