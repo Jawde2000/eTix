@@ -163,7 +163,6 @@ const Header = (props) => {
                 TransitionComponent={Fade}
                 >
                 <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>)
                 :

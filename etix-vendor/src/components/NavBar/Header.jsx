@@ -130,7 +130,6 @@ function Header() {
                 TransitionComponent={Fade}
                 >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>
                 </div>

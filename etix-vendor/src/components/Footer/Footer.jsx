@@ -11,26 +11,8 @@ function Footer() {
                         <Grid item xs={12} sm={3}>
                             <Box borderBottom={1} >Customer Service</Box>
                             <Box style={{paddingTop: 10, paddingBottom: 5}}>
-                                <Link href="/helpcentre" color="inherit" underline={'none'}>
+                                <Link href="/menu/helpmanage/" color="inherit" underline={'none'}>
                                     Help Center
-                                </Link>
-                            </Box>
-                            <Box>
-                                <Link href="/" color="inherit" underline={'none'}>
-                                    How to Purchase
-                                </Link>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={3}>
-                            <Box borderBottom={1}>About eTix</Box>
-                            <Box style={{paddingTop: 10, paddingBottom: 5}}>
-                                <Link href="/aboutUs" color="inherit" underline={'none'}>
-                                    About Us
-                                </Link>
-                            </Box>
-                            <Box>
-                                <Link href="/privacyPolicy" color="inherit" underline={'none'}>
-                                    Privacy Policy
                                 </Link>
                             </Box>
                         </Grid>
