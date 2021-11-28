@@ -101,7 +101,7 @@ export const userRegisterReducer = (state = { }, action) => {
             return {loading: true}
         
         case actions.USER_REGISTER_SUCCESS:
-           return {loading: false, customerInfo: action.payload}
+           return {loading: false, customerInfo: action.payload, success: true}
         
         case actions.USER_REGISTER_FAIL:
            return {loading: false, errorRegister: action.payload}

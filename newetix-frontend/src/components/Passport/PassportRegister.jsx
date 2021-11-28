@@ -6,14 +6,13 @@ import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import images from '../globalAssets/scripts/bgchange';
 
-
 const useStyles = makeStyles((theme) => ({
     whole: {
       backgroundImage: `url(${images()})`,
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
       backgroundBlendMode: "lighten",
-      minHeight: 700
+      minHeight: 800
     },
     welcome: {
       padding: 60,
@@ -54,9 +53,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Passport() {
+function PassportRegister() {
   const defaultStyle = useStyles();
-  const [transition, setTransition] = useState(false);
+  const [transition, setTransition] = useState(true);
 
   return (
       <div>
@@ -89,4 +88,4 @@ function Passport() {
 
 }
 
-export default Passport;
+export default PassportRegister;

@@ -228,7 +228,6 @@ export const logout = () => (dispatch) => {
     dispatch({type: actions.HELP_RESPONSE_RESET})
     dispatch({type: actions.CART_VIEW_RESET})
     dispatch({type: actions.CART_ADD_RESET})
-    dispatch({type: actions.CART_ADD_RESET})
     dispatch({type: actions.CUSTOMER_DETAILS_RESET})
     dispatch({type: actions.USER_REGISTER_RESET})
 }
@@ -992,6 +991,8 @@ export const getTickets = () => async (dispatch, getState) => {
         let locations = loc.data
         let routes = []
 
+        console.log(tickets)
+
         for (var i in tickets) {
             let serviceq = await axios.get(
                 `http://127.0.0.1:8000/api/service/${tickets[i].service}/`,
@@ -1116,7 +1117,6 @@ export const resetPassword = (email) => async (dispatch) => {
 
         dispatch({
             type: actions.RESET_USER_SUCCESS,
-            payload: data
         })
 
     } catch(error) {
