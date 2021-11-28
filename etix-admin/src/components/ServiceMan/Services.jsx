@@ -280,6 +280,13 @@ const Services = () =>{
         else{
             history.push('/')
         }
+
+        if(successDelete){
+            alert("Sucessfully Deleted");
+            setSelected([]);
+            dispatch({type: SERVICE_DELETE_RESET})
+            history.push("/menu/servicemanagement");
+        }
     }, [dispatch, successDelete])
 
     const [rows, setRows] = useState([]);
@@ -400,11 +407,6 @@ const Services = () =>{
         ids.map((id) => {
             dispatch(deleteService(id));
         })
-
-        alert("Sucessfully Deleted");
-        setSelected([]);
-        dispatch({type: SERVICE_DELETE_RESET})
-        history.push("/menu/servicemanagement");
     }
     
     return (

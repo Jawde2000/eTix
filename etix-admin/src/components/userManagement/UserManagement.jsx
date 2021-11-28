@@ -19,6 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { listUsers, deleteUsers } from '../../actions/userActions';
 import { useHistory } from 'react-router';
+import {USER_DELETE_RESET} from '../../constants/userConstants';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -250,6 +251,13 @@ const UserManagement = () =>{
         else{
             history.push('/')
         }
+
+        if(successDelete){
+            alert("Sucessfully Deleted");
+            setSelected([]);
+            dispatch({type: USER_DELETE_RESET})
+            history.push("/menu/users");
+        }
     }, [dispatch, successDelete])
 
     const [rows, setRows] = useState([]);
@@ -392,10 +400,6 @@ const UserManagement = () =>{
                 i+=1;
             }
         })
-
-        alert("Sucessfully Deleted");
-        setSelected([]);
-        history.push("/menu/users");
     }
     
     return (

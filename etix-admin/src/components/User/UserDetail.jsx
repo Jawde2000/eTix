@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: "cover",
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
-        minHeight: 500,
+        minHeight: 600,
         fontFamily: ['rubik', 'sans-serif'].join(','),
         padding: 20
     },
