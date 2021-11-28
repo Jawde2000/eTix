@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
       backgroundBlendMode: "lighten",
-      minHeight: 700
+      minHeight: 700,
+      fontFamily: ['rubik', 'sans-serif'].join(',')
     },
     breadcrumbgrid: {
         paddingTop: '25px'
@@ -201,7 +202,7 @@ export default function ForgetPass() {
                                     /> 
                                 </Grid>
                                 <Grid item xs={12} style={{textAlign: 'center', fontFamily: ['rubik', 'sans-serif'].join(','), fontStyle: 'italic', paddingTop: 20}}>
-                                        <p style={{color: 'red'}}>*Please note that the email containing your new temperory password will be sent in 60 seconds.</p>
+                                        <p style={{color: 'red'}}>*Please note that the email containing your new temporary password will be sent in 60 seconds.</p>
                                         <p>Please try again if you have not received the email after that period.</p>
                                 </Grid>
                                 <Grid item xs={12} container style={{margin: 'auto', paddingTop: 50}}>
