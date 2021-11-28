@@ -305,39 +305,42 @@ export default function RouteQuery() {
     const handleAddToCart = (item, selectedSeat) => {
         if(loggedIn){
             console.log(cartItems);
-            if(cartItems.length>0){
-                let total = 0;
-
-                let tempCartItems = cartItems;
-
-                let qty = 0;
-
-                if(selectedSeat === 'F'){
-                    qty = item.seatD.firstQuantity;
-                }
-                else if(selectedSeat === 'B') {
-                    qty = item.seatD.businessQuantity;
-                }
-                else {
-                    qty = item.seatD.economyQuantity;
-                }
-
-                tempCartItems = tempCartItems.filter((items) => {
-                    return items.seat_Type === selectedSeat && items.service === item.serviceID
-                })
-
-                tempCartItems.map((items) => {
-                    total +=1;
-                })
-
-                if((total+1) <= Number(qty)){
-                    dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
-                    return;
-                }
-                else {
-                    alert("Maximum Quantity Reached");
+            if(cartItems){
+                if(cartItems.length>0){
+                    let total = 0;
+    
+                    let tempCartItems = cartItems;
+    
+                    let qty = 0;
+    
+                    if(selectedSeat === 'F'){
+                        qty = item.seatD.firstQuantity;
+                    }
+                    else if(selectedSeat === 'B') {
+                        qty = item.seatD.businessQuantity;
+                    }
+                    else {
+                        qty = item.seatD.economyQuantity;
+                    }
+    
+                    tempCartItems = tempCartItems.filter((items) => {
+                        return items.seat_Type === selectedSeat && items.service === item.serviceID
+                    })
+    
+                    tempCartItems.map((items) => {
+                        total +=1;
+                    })
+    
+                    if((total+1) <= Number(qty)){
+                        dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
+                        return;
+                    }
+                    else {
+                        alert("Maximum Quantity Reached");
+                    }
                 }
             }
+            
             else {
                 dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
             }
