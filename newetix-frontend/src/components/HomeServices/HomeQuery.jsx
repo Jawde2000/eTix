@@ -17,6 +17,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import moment from 'moment';
 
 
 const homeStyles = makeStyles((theme) => ({
@@ -64,6 +65,7 @@ function HomeQuery() {
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, '0');
   var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var tomorrow = moment().add(1, 'days').format(moment.HTML5_FMT.DATE);
   var yyyy = today.getFullYear();
   const todayDate = yyyy + '-' + mm + '-' + dd;
 
@@ -244,7 +246,7 @@ function HomeQuery() {
                             required
                             size="small"
                             inputProps={{
-                              min: todayDate,
+                              min: tomorrow,
                               style: {fontFamily: ['rubik', 'sans-serif'].join(','),}                        
                             }}                                             
                           />                       

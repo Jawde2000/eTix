@@ -40,6 +40,8 @@ export const paymentReducer = (state = {}, action) => {
             return {loading: false, success: true}
         case constants.FAILURE_PAYMENT_APPROVAL:
             return {loading: false, error: action.payload}
+        case constants.RESET_PAYMENT_APPROVAL:
+            return {}
         default:
             return state
     }

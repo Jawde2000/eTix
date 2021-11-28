@@ -774,6 +774,8 @@ export const getAllRoutes = () => async (dispatch, getState) => {
             seatD.push(rst.data);
         }
 
+        console.log(seatD);
+
         let vendorD = []
 
         for(let i of data){

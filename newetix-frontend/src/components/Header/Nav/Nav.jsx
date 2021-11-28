@@ -5,7 +5,7 @@ import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { viewCartData } from '../../../state/actions/actions';
+import { viewCartData, cartDispatch } from '../../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
@@ -70,7 +70,9 @@ function Nav() {
     const {success: removeSuccess} = removeItem;
     const cartAdd = useSelector(state => state.cartAdd);
     const {success: addcartSuccess} = cartAdd;
-    const [cartItemPax, setcartItemPax] = useState("");
+    const payment = useSelector(state => state.payment);
+    const {success: paymentSuccess} = payment;
+    const [cartItemPax, setcartItemPax] = useState("0");
     const [isHome, setHome] = useState(true);
     const [isAttract, setAttract] = useState(false);
     const [isServ, setServ] = useState(false);
@@ -80,23 +82,32 @@ function Nav() {
         if(userInfo){
             dispatch(viewCartData());
         }
-    }, [userInfo, addcartSuccess, removeSuccess])
+    }, [userInfo, addcartSuccess, removeSuccess, paymentSuccess])
 
     useEffect(() => {
         if(typeof(cartData) !== 'undefined' && cartData !== null){
             console.log(cartData);
-            if(cartData || addcartSuccess || removeSuccess){
+            if(cartData || addcartSuccess || removeSuccess || paymentSuccess){
                 let cartpax = Object.keys(cartData).length;
                 if(cartpax > 0){
                     setcartItemPax(cartpax);
-                }else {
+                }else if (cartpax < 0){
+                    setcartItemPax('0');
+                }else{
                     setcartItemPax('0');
                 }
             }   
         }
         
         console.log(cartItemPax);
-    }, [addcartSuccess, removeSuccess, cartData])
+    }, [addcartSuccess, removeSuccess, cartData, paymentSuccess])
+
+    useEffect(() => {
+        if(paymentSuccess){
+            setcartItemPax('0');
+            dispatch(cartDispatch());
+        }
+    }, [paymentSuccess])
 
     function cartOnClick() {
         setCart(true);

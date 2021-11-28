@@ -11,7 +11,7 @@ import { customerDetails, paymentSuccess, removeItem, viewCartData, getAllRoutes
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { routeLookupReducer } from '../../state/reducers/routeReducers';
-import {DELETE_CART_RESET, CART_VIEW_RESET} from '../../state/actions/actionConstants';
+import {DELETE_CART_RESET, CART_VIEW_RESET, RESET_PAYMENT_APPROVAL} from '../../state/actions/actionConstants';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import StoreIcon from '@mui/icons-material/Store';
 import Table from '@mui/material/Table';
@@ -109,7 +109,7 @@ function NewCart() {
     const {customerInfo} = cuslist;
     const {route, loading: loadingRoute} = allr;
     const {userInfo} = userLogin;
-    const {success: paySuccess} = Payment;
+    const {success: paySuccess, loading: payLoading} = Payment;
     const [cartItems, setcartItems] = useState();
     const [filteredcartData, setfilteredcartData] = useState();
     const [address, setAddress] = useState(null);
@@ -131,6 +131,7 @@ function NewCart() {
     const [currChecked, setcurrChecked] = useState(false);
     const [totalStat, setTotalStat] = useState(false)
     const [warnTotal, setWarnTotal] = useState(false)
+    const [paymentFailure, setPaymentFail] = useState(false);
 
     useEffect(() => {
         if(!selected){
@@ -185,8 +186,8 @@ function NewCart() {
 
     useEffect(() => {
         if(paySuccess){
-            dispatch(cartDispatch(filteredcartData));
-            history.push('/cart/payment/success')
+            dispatch(cartDispatch());
+            history.push('/cart/payment/success');
         }
     }, [paySuccess])
 
@@ -200,11 +201,23 @@ function NewCart() {
     // }, [cartData])
 
     useEffect(() => {
-        if(successDelete) {
             dispatch({type: DELETE_CART_RESET})
             dispatch({type: CART_VIEW_RESET})
+            dispatch({type: RESET_PAYMENT_APPROVAL})
+    }, [successDelete, paySuccess])
+
+    useEffect(() => {
+        for(let i in filteredcartData){
+            var today = moment().format(moment.HTML5_FMT.DATE);
+            var departDate = filteredcartData[i].serviceStartDate;
+            console.log(today);
+            console.log(departDate);
+
+            if(today >= departDate){
+                filteredcartData[i].serviceStatus = 'X';
+            }
         }
-    }, [successDelete])
+    }, [filteredcartData])
 
     useEffect(() => {
         setBuy(select);
@@ -218,6 +231,9 @@ function NewCart() {
                 setWarnTotal(true)
             } else if (filteredcartData[i].serviceStatus == "O") {
                 totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp)
+            }
+            if(filteredcartData[i].serviceStatus !== 'X'){
+                totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp);
             }
         }
         setTotal((parseFloat(totaltemp)).toFixed(2));
@@ -322,8 +338,8 @@ function NewCart() {
     }
 
     const handleFailure = (err) => {
-        alert("Payment failure, this is most likely to be a problem with your banking details, please check with PayPal")
-        console.log(err)
+        setPaymentFail(true);
+        // console.log(err)
     }
 
     useEffect(() => {
@@ -376,14 +392,12 @@ function NewCart() {
         console.log(c);
         c[i] = !c[i];
         setChecked(c[i]);
-        setcurrChecked(c[i]);
         setSelects((s) => {return s.includes(ids)? s.filter((f) => f !== ids):[...s, ids]});
         console.log(select);
         if(!c[i]){
             setTotal(total - filteredcartData[i].price);
             setSelects([]);
             setChecked(false);
-            setcurrChecked(false);
         }
         // setBuy(select);
     };
@@ -416,10 +430,9 @@ function NewCart() {
         };
       
         const handleDelete = () => {
-            for(var i = 0;i < Object.keys(select).length; i++){
-                dispatch(removeItem(select[i].cartItemsID));
+            for(var i = 0;i < Object.keys(cartData).length; i++){
+                dispatch(removeItem(cartData[i].cartItemsID));
             }
-            setSelects([]);
             setOpen(false);
         }
       
@@ -442,6 +455,38 @@ function NewCart() {
                 <Button style={{color: "red"}} onClick={handleDelete}>Yes</Button>
                 <Button onClick={handleClose} autoFocus>
                   No
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
+    const DialogPaymentError = () => {
+        const handleClose = () => {
+          setPaymentFail(false);
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={paymentFailure}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {total <= 0?<Typography>You didn't have anything in the cart yet/Your cart is expired</Typography>:
+                  <Typography>
+                      Payment failure, this is most likely to be a problem with your banking details, kindly check with PayPal
+                  </Typography>
+                  }
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
                 </Button>
               </DialogActions>
             </Dialog>
@@ -718,6 +763,9 @@ function NewCart() {
                         open?<DialogDelete />:null
                     }
                     {
+                        paymentFailure?<DialogPaymentError />:null
+                    }
+                    {
                         successDelete?
                         <Box sx={{ display: 'flex' }}>
                         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
@@ -729,6 +777,16 @@ function NewCart() {
                     }
                     {
                         loadingRoute?
+                        <Box sx={{ display: 'flex' }}>
+                        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                        <CircularProgress  style={{color: '#F5CB5C'}}/>    
+                        </Backdrop>
+                        </Box>
+                        :
+                        null
+                    }
+                    {
+                        payLoading?
                         <Box sx={{ display: 'flex' }}>
                         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
                         <CircularProgress  style={{color: '#F5CB5C'}}/>    
