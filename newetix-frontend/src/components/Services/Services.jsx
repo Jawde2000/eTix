@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundBlendMode: "lighten",
         paddingTop: theme.spacing(3),
         paddingBottom: theme.spacing(6),
-        minHeight: 500
+        minHeight: 600
     },
     title: {
         fontWeight: 800,
