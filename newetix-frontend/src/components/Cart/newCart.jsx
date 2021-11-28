@@ -153,9 +153,14 @@ function NewCart() {
             dispatch(getAllRoutes());
             dispatch(customerDetails());
             dispatch(viewCartData());
-        }       
+        }    
     }, [successDelete, addSuccess, paySuccess])
 
+    useEffect(() => {
+        if(!userInfo){
+            history.push("/");
+        }
+    }, [!userInfo])
 
     useEffect(() => {
         setSelect(false)
@@ -231,8 +236,7 @@ function NewCart() {
                 setWarnTotal(true)
             } else if (filteredcartData[i].serviceStatus == "O") {
                 totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp)
-            }
-            if(filteredcartData[i].serviceStatus !== 'X'){
+            } else{
                 totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp);
             }
         }
@@ -434,6 +438,7 @@ function NewCart() {
                 dispatch(removeItem(cartData[i].cartItemsID));
                 setWarnTotal(false);
             }
+            
             setOpen(false);
         }
       

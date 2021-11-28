@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         justifyContent: 'center',
         justify: 'center',
+        cursor: 'pointer',
     },
     auxContainer: {
         paddingTop: '25px',
@@ -76,7 +77,7 @@ function Nav() {
     const [isHome, setHome] = useState(true);
     const [isAttract, setAttract] = useState(false);
     const [isServ, setServ] = useState(false);
-    const [isCart, setCart] = useState(true);
+    const [isCart, setCart] = useState(false);
 
     useEffect(() => {
         if(userInfo){
@@ -124,6 +125,22 @@ function Nav() {
         setAttract(false);
     }
 
+    const handleService = () => {
+        setHome(false);
+        setServ(true);
+        setCart(false);
+        setAttract(false);
+        history.push('/services');
+    }
+
+    const handleAttract = () => {
+        setHome(false);
+        setServ(false);
+        setCart(false);
+        setAttract(true);
+        history.push('/attractions');
+    }
+
     return (
         <Grid className={defaultStyle.customizeAppbar} container justify="center" direction="row" alignItems="center" display="flex">
             <Grid item xs={2}>
@@ -137,8 +154,8 @@ function Nav() {
             </Grid>
    
             <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-            <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-            <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
+            <Grid onClick={handleAttract} item xs={3} className={defaultStyle.menuItems}><Link style={isAttract?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+            <Grid onClick={handleService} item xs={3} className={defaultStyle.menuItems}><Link style={isServ?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
             </Grid>     
             <Grid item xs={1} className={defaultStyle.auxContainer} justify="space-between">
                 {userInfo?<IconButton><Badge badgeContent={cartItemPax} color="primary">
