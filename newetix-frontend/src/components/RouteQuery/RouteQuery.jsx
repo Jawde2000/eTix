@@ -6,7 +6,7 @@ import {useHistory} from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { findRoute, viewCartData } from '../../state/actions/actions';
+import { findRoute } from '../../state/actions/actions';
 import Query from './Query';
 import {getLocationName} from '../globalAssets/scripts/getLocationName';
 import SearchIcon from '@mui/icons-material/Search';
@@ -33,6 +33,7 @@ import { useParams } from 'react-router';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Backdrop from '@mui/material/Backdrop';
 import { getLocations, vendorList, getAllRoutes } from '../../state/actions/actions';
+import * as actions from '../../state/actions/actions'; 
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -58,8 +59,15 @@ export default function RouteQuery() {
 
     const classes = useStyles()
     const [i, seti] = useState(0);
+
+    const userLogin = useSelector(state => state.userLogin)
+    const {userInfo} = userLogin
+
     const routeLookup = useSelector(state => state.routeLookup)
     const {route, loading: loadingRoute, error: routeError} = routeLookup
+
+    const viewCartData = useSelector(state => state.viewCartData)
+    const {cartData} = viewCartData
 
     const locationList = useSelector(state => state.locationList)
     const {locations} = locationList
@@ -94,10 +102,18 @@ export default function RouteQuery() {
     const [latF, setLatF] = useState(0);
     const [longF, setLongF] = useState(0);
     const [openCartSuccess, setBuySuccess] = useState(false);
-    
+    const [loggedIn, SetLoggedIn] = useState(false);
+    const [cartItems, setCartItems] = useState();
+
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
     }
+
+    useEffect(() => {
+        if(userInfo){
+            SetLoggedIn(true);
+        }
+    }, [userLogin])
 
     useEffect(() => {
         if(data){
@@ -155,6 +171,9 @@ export default function RouteQuery() {
             dispatch(vendorList())
             dispatch(getAllRoutes())
             dispatch(findRoute(fromm, too, datee));
+            if(loggedIn){
+                dispatch(actions.viewCartData);
+            }
             seti(1);
         }
 
@@ -163,6 +182,14 @@ export default function RouteQuery() {
             setFilteredList(route)
         }
     }, [routeLookup])
+
+    useEffect(() => {
+        if(cartData){
+            if(cartData.length!==0){
+                setCartItems(cartData);
+            }
+        }
+    }, [viewCartData])
 
     useEffect(() => {
         if(data){
@@ -275,8 +302,55 @@ export default function RouteQuery() {
         );
     }
 
-    const handleAddToCart = (item) => {
-        dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
+    const handleAddToCart = (item, selectedSeat) => {
+        if(loggedIn){
+            console.log(cartItems);
+            if(cartItems.length>0){
+                let total = 0;
+
+                let tempCartItems = cartItems;
+
+                let qty = 0;
+
+                if(selectedSeat === 'F'){
+                    qty = item.seatD.firstQuantity;
+                }
+                else if(selectedSeat === 'B') {
+                    qty = item.seatD.businessQuantity;
+                }
+                else {
+                    qty = item.seatD.economyQuantity;
+                }
+
+                tempCartItems = tempCartItems.filter((items) => {
+                    return items.seat_Type === selectedSeat && items.service === item.serviceID
+                })
+
+                tempCartItems.map((items) => {
+                    total +=1;
+                })
+
+                if((total+1) <= Number(qty)){
+                    dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
+                    return;
+                }
+                else {
+                    alert("Maximum Quantity Reached");
+                }
+            }
+            else {
+                dispatch(addToCart(item, selectedSeat, selectedSeat === "F" ? item.seatD.firstPrice : (selectedSeat === "B" ? item.seatD.businessPrice : item.seatD.economyPrice)))
+            }
+            
+            
+            
+
+            
+            return;
+        }
+
+        alert("Login or Register an account in order to add to cart!");
+        
     }
 
     const handleClose = () => {
@@ -571,7 +645,7 @@ export default function RouteQuery() {
                                                         </Grid>
                                                         <Grid item xs={12} container>
                                                             <Grid item xs={8} style={{paddingLeft: 20}}>
-                                                                {item.seatD.firstQuantity>0 && Number(item.seatD.firstPrice) != 0.00?
+                                                                {Number(item.seatD.firstQuantity)>0 && Number(item.seatD.firstPrice) != 0.00?
                                                                     (
                                                                         <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
                                                                             {`First Class : RM ${item.seatD.firstPrice}`}
@@ -582,7 +656,7 @@ export default function RouteQuery() {
                                                                         null
                                                                     )
                                                                 }
-                                                                {item.seatD.businessQuantity>0 && Number(item.seatD.businessPrice) !==0?
+                                                                {Number(item.seatD.businessQuantity)>0 && Number(item.seatD.businessPrice) !==0?
                                                                     (
                                                                         <Typography style={{fontSize: 20 , fontStyle: 'italic'}}>
                                                                             {`Business Class : RM ${item.seatD.businessPrice}`}
@@ -591,7 +665,7 @@ export default function RouteQuery() {
                                                                     : 
                                                                     null
                                                                 }
-                                                                {item.seatD.economyQuantity>0 && Number(item.seatD.economyPrice) !==0?
+                                                                {Number(item.seatD.economyQuantity)>0 && Number(item.seatD.economyPrice) !==0?
                                                                     (
                                                                         <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
                                                                             {`Economy Class : RM ${item.seatD.economyPrice}`}
@@ -653,7 +727,7 @@ export default function RouteQuery() {
                                                                                                         null
                                                                                                     )
                                                                                                 }
-                                                                                                {selectedItem.seatD.businessPrice!==0 && Number(selectedItem.seatD.businessQuantity)!==0 ?
+                                                                                                {Number(selectedItem.seatD.businessPrice)!==0 && Number(selectedItem.seatD.businessQuantity)!==0 ?
                                                                                                     (
                                                                                                         <FormControlLabel value="B" control={<Radio />} label={`Business Class - RM ${selectedItem.seatD.businessPrice}`} />
                                                                                                     )
@@ -662,7 +736,7 @@ export default function RouteQuery() {
                                                                                                         null
                                                                                                     )
                                                                                                 }
-                                                                                                 {selectedItem.seatD.economy !== 0 && Number(selectedItem.seatD.economyQuantity)!==0?
+                                                                                                 {Number(selectedItem.seatD.economy) !== 0 && Number(selectedItem.seatD.economyQuantity)!==0?
                                                                                                     (
                                                                                                         <FormControlLabel value="E" control={<Radio />} label={`Economy Class - RM ${selectedItem.seatD.economyPrice}`} />
                                                                                                     )
@@ -678,7 +752,7 @@ export default function RouteQuery() {
                                                                                 <Button autoFocus onClick={handleClose}>
                                                                                     Cancel
                                                                                 </Button>
-                                                                                <Button onClick={() => handleAddToCart(selectedItem)}>Add</Button>
+                                                                                <Button onClick={() => handleAddToCart(selectedItem, selectedSeat)}>Add</Button>
                                                                                 </DialogActions>
                                                                             </Dialog>
                                                                         )

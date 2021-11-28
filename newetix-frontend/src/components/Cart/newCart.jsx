@@ -47,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
       backgroundSize: "cover",
       backgroundColor: "rgba(255,255,255,0.5)",
     //   backgroundBlendMode: "lighten",
-      fontFamily: ['rubik', 'sans-serif'].join(',')
+      fontFamily: ['rubik', 'sans-serif'].join(','),
+      minHeight: 600
     },
     nightNothing: {
         backgroundColor: 'white',
