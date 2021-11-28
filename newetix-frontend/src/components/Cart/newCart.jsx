@@ -29,6 +29,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Backdrop from '@mui/material/Backdrop';
 import ufoCartoon from './nothing_here.png';
+import moment from "moment";
 import {
     PayPalScriptProvider,
     PayPalButtons,
@@ -127,6 +128,23 @@ function NewCart() {
     const [checked, setChecked] = useState(false);
     const [buy, setBuy] = useState([]);
     const [currChecked, setcurrChecked] = useState(false);
+    const [totalStat, setTotalStat] = useState(false)
+    const [warnTotal, setWarnTotal] = useState(false)
+
+    useEffect(() => {
+        if(!selected){
+            setTotal('0.00')
+            setSelects([]);
+            setSelect(false);
+        }
+
+        if (total == '0.00'){
+            setTotalStat(false)
+        } else {
+            setTotalStat(true)
+        }
+    }, [!selected])
+
 
     useEffect(() => {
         if(userInfo) {
@@ -192,11 +210,16 @@ function NewCart() {
         console.log(buy);  
         let totaltemp = 0;
      
+        console.log(filteredcartData)
         for (let i in filteredcartData){
-            totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp)
+            if (filteredcartData[i].serviceStatus == "X") {
+                totaltemp = parseFloat(totaltemp)
+                setWarnTotal(true)
+            } else if (filteredcartData[i].serviceStatus == "O") {
+                totaltemp = parseFloat(filteredcartData[i].price) + parseFloat(totaltemp)
+            }
         }
         setTotal((parseFloat(totaltemp)).toFixed(2));
-        console.log(total);
         if(cartItems){
             if(cartItems.length !==0){
                 setCartID(cartItems[0].cart);
@@ -229,6 +252,19 @@ function NewCart() {
                             r = {...r, cartID: cartData[i].cartItemsID};
                             r = {...r, vendor: route[j].vendor};
                             r = {...r, vendor: route[j].serviceName};
+                            if (cartData[i].seat_Type == 'F') {
+                                if (route[j].seatD.firstQuantity <= 0) {
+                                    r = {...r, serviceStatus: route[j].serviceStatus = "X"}
+                                }
+                            } else if (cartData[i].seat_Type == 'B') {
+                                if (route[j].seatD.businessQuantity <= 0) {
+                                    r = {...r, serviceStatus: route[j].serviceStatus = "X"}
+                                }
+                            } else if (cartData[i].seat_Type == 'E') {
+                                if (route[j].seatD.economyQuantity <= 0) {
+                                    r = {...r, serviceStatus: route[j].serviceStatus = "X"}
+                                }
+                            }
                             cd.push(r);
                         }
                     }
@@ -249,6 +285,31 @@ function NewCart() {
             setServiceList(route)
         }
     }, [cartData, route, customerInfo, checked])
+
+    useEffect(() => {
+        for(let i in filteredcartData){
+            var today = moment().format(moment.HTML5_FMT.DATE);
+            var departDate = filteredcartData[i].serviceStartDate;
+            console.log(today);
+            console.log(departDate);
+
+            if(today >= departDate){
+                filteredcartData[i].serviceStatus = 'X';
+            }
+        }
+    }, [filteredcartData]) 
+
+    useEffect(() => {
+        if (warnTotal) {
+            for(let i in filteredcartData){
+                if (filteredcartData[i].serviceStatus == "O") {
+                    setWarnTotal(false)
+                } else if (filteredcartData[i].serviceStatus == "X") {
+                    setWarnTotal(true)
+                }
+            }
+        }   
+    }) 
 
     const handleRemove = (itemID) => {
         dispatch(removeItem(itemID));
@@ -461,9 +522,7 @@ function NewCart() {
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>Total</Typography>
                                             <Typography variant="h4" sx={{color: 'rgb(245, 203, 92)'}}>RM {total}</Typography>
                                             <Typography variant="h8" sx={{color: 'rgb(245, 203, 92)'}}>Total includes 6% SST <br /> and 1% eTix Charge</Typography>
-                                        </Grid>:null}
-                                    
-                                
+                                        </Grid>:null}                 
                                         {address?
                                             <Grid item sx={{marginLeft: '15px', paddingRight: '150px'}}>
                                                 <Typography align="left" variant="h6">Billing Address: </Typography>
@@ -477,7 +536,7 @@ function NewCart() {
                                 </Grid>
                                 {address?
                                     <Grid item>
-                                        {selected?<div ref={paypal} sx={{width: '90%'}}/>:null}
+                                        {selected? !warnTotal? <div ref={paypal} sx={{width: '90%'}}/>: null :null}
                                         {/* {checked.length !== 0?<div style={{ maxWidth: "750px", minHeight: "200px" }}>
                                             <PayPalScriptProvider
                                             options={{
@@ -502,6 +561,7 @@ function NewCart() {
                     </Grid>
                 </Grid>
                 <Grid item xs={8} paddingLeft={10}>
+                    {warnTotal? <Alert severity="error" sx={{marginBottom: '25px'}}>Certain routes are not available, please check your cart!</Alert>:null}
                     {
                     filteredcartData?
                     Object.keys(filteredcartData).length > 0?
@@ -600,7 +660,7 @@ function NewCart() {
                                                     {`${item.servicedepartureTerminal} - ${item.servicearrivalTerminal}`}
                                                 </Typography>
                                                 <Typography style={item.serviceStatus === 'O'?{color: 'green', fontWeight: 'bolder'}:{color: 'red', fontWeight: 'bolder'}} display="flex">
-                                                Status : {item.serviceStatus==='O'?"Active":"Not Available"}
+                                                Status : {item.serviceStatus==='O'? "Active":"Not Available"}
                                                 </Typography>   
                                                 <Typography style={{fontSize: 15}}>
                                                 Service: {item.serviceName}
