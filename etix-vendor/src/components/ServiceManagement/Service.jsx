@@ -418,29 +418,6 @@ const Service = ({props}) => {
                             <Grid item xs={12} >
                                 Service Profile
                             </Grid>
-                            <Grid item xs={12} spacing={5} style={{display:'flex', justifyContent:'center', alignItems:'center', paddingBottom:10}} direction="column">
-                            <Grid>
-                            <Avatar
-                                style={{ height: '150px', width: '150px' }}
-                                src={imgSrc}
-                                alt={serviceD? serviceD.servicedepartureTerminal:'No Picture Found'}        
-                            />
-                            </Grid>
-                            <Grid>
-                            {!editing? "":(
-                                <div>
-                                <label htmlFor="contained-button-file">
-                                <input type="file"  accept="image/*" id="contained-button-file" onChange={upload}
-                                style={{justifyContent:'center', alignItems:'center', display: 'none'}}
-                                />
-                                {picloading? (<Box sx={{ display: 'flex' }}
-                                style={{justifyContent:'center', alignItems:'center'}}
-                                ><CircularProgress /></Box>):(<Button variant="contained" component="span" >Upload</Button>)}
-                                </label>                            
-                                </div>
-                            )}
-                            </Grid>
-                            </Grid>
                             <Grid item xs={12} style={{marginTop: 10}}>
                                 Status
                             </Grid>
