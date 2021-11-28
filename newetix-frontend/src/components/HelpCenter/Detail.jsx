@@ -118,22 +118,9 @@ const Messaging = ({props}) => {
                         <Grid item className={`${classes.sect} ${classes.articles}`}>
                             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={6}>
                                 <Grid item>
-                                    <Typography variant="h4">Articles</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h5">How to purchase?</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">How to use eTix?</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">Card payments</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">Crypto payments</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h5">Digital tickets</Typography>
+                                    <Typography variant="h4" style={{cursor: 'pointer'}}  onClick={(() => {history.push('/help/articles')})}>Articles</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>

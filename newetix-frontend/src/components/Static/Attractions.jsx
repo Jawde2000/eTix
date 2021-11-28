@@ -16,10 +16,6 @@ import WPKL from '../globalAssets/images/attractions/wpkl.jpg';
 import SG from '../globalAssets/images/attractions/sg.jpg';
 import THHY from '../globalAssets/images/attractions/thhy.jpg';
 import MLK from '../globalAssets/images/attractions/mlk.jpg';
-import MON from '../globalAssets/images/attractions/mon.jpg';
-import LIY from '../globalAssets/images/attractions/liy.png';
-import DRA from '../globalAssets/images/attractions/dra.jpg';
-import INA from '../globalAssets/images/attractions/ina.png';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Repeat(classes) {
-    const stateCodes = [JDT, KDN, NSDK, PDR, PIK, PP, SDE, THBK, WPKL, SG, THHY, MLK, MON, LIY, DRA, INA];
-    const stateNames = ['Johor', 'Kelantan', 'Negeri Sembilan', 'Perak', 'Perlis', 'Penang', 'Selangor', 'Bangkok, TH', 'Kuala Lumpur', 'Singapore', 'Hat Yai, TH', 'Malacca', 'Mondstadt', 'Liyue', 'Dragonspine', 'Inazuma'];
+    const stateCodes = [JDT, KDN, NSDK, PDR, PIK, PP, SDE, THBK, WPKL, SG, THHY, MLK];
+    const stateNames = ['Johor', 'Kelantan', 'Negeri Sembilan', 'Perak', 'Perlis', 'Penang', 'Selangor', 'Bangkok, TH', 'Kuala Lumpur', 'Singapore', 'Hat Yai, TH', 'Malacca'];
 
     return stateCodes.map((e, i) =>
         <Grid item xs={12} sm={4} lg={3}>
