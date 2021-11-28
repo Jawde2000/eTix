@@ -138,7 +138,7 @@ function Top() {
                 <Grid xs={12}>
                     <Grid item className={defaultStyle.rightItem} direction="row" display="flex">   
                         <Grid item className={defaultStyle.rightItem}>
-                            <Link href='' style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
+                            <Link href='http://localhost:3500' style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
                         </Grid>    
                         <Grid item className={defaultStyle.rightItem}>
                             <div>

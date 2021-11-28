@@ -178,12 +178,16 @@ export const ticketUsed = (info) => async (dispatch, getState) => {
         // console.log(ticket);
 
         var isTicketExist;
+        
+        
 
         isTicketExist = ticket.data.filter((tk) => {
-            if (tk.used === false && tk.ticketID === ticketid) {
+            if (tk.used === false && tk.ticketID === ticketid && tk.vendor == userInfo.vendorInfo.vendorID) {
                 return true;
-            }
+            }    
         })
+        console.log(userInfo.vendorInfo.vendorID)
+        console.log(ticket.data.vendor)
 
         console.log(isTicketExist[0].used);
         console.log(isTicketExist[0].ticketID);
