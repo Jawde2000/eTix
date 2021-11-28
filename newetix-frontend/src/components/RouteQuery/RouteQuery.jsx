@@ -571,7 +571,7 @@ export default function RouteQuery() {
                                                         </Grid>
                                                         <Grid item xs={12} container>
                                                             <Grid item xs={8} style={{paddingLeft: 20}}>
-                                                                {item.seatD.firstQuantity>0 && Number(item.seatD.firstPrice) != 0.00?
+                                                                {Number(item.seatD.firstQuantity)>0 && Number(item.seatD.firstPrice) != 0.00?
                                                                     (
                                                                         <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
                                                                             {`First Class : RM ${item.seatD.firstPrice}`}
@@ -582,7 +582,7 @@ export default function RouteQuery() {
                                                                         null
                                                                     )
                                                                 }
-                                                                {item.seatD.businessQuantity>0 && Number(item.seatD.businessPrice) !==0?
+                                                                {Number(item.seatD.businessQuantity)>0 && Number(item.seatD.businessPrice) !==0?
                                                                     (
                                                                         <Typography style={{fontSize: 20 , fontStyle: 'italic'}}>
                                                                             {`Business Class : RM ${item.seatD.businessPrice}`}
@@ -591,7 +591,7 @@ export default function RouteQuery() {
                                                                     : 
                                                                     null
                                                                 }
-                                                                {item.seatD.economyQuantity>0 && Number(item.seatD.economyPrice) !==0?
+                                                                {Number(item.seatD.economyQuantity)>0 && Number(item.seatD.economyPrice) !==0?
                                                                     (
                                                                         <Typography style={{fontSize: 20, fontStyle: 'italic'}}>
                                                                             {`Economy Class : RM ${item.seatD.economyPrice}`}
@@ -653,7 +653,7 @@ export default function RouteQuery() {
                                                                                                         null
                                                                                                     )
                                                                                                 }
-                                                                                                {selectedItem.seatD.businessPrice!==0 && Number(selectedItem.seatD.businessQuantity)!==0 ?
+                                                                                                {Number(selectedItem.seatD.businessPrice)!==0 && Number(selectedItem.seatD.businessQuantity)!==0 ?
                                                                                                     (
                                                                                                         <FormControlLabel value="B" control={<Radio />} label={`Business Class - RM ${selectedItem.seatD.businessPrice}`} />
                                                                                                     )
@@ -662,7 +662,7 @@ export default function RouteQuery() {
                                                                                                         null
                                                                                                     )
                                                                                                 }
-                                                                                                 {selectedItem.seatD.economy !== 0 && Number(selectedItem.seatD.economyQuantity)!==0?
+                                                                                                 {Number(selectedItem.seatD.economy) !== 0 && Number(selectedItem.seatD.economyQuantity)!==0?
                                                                                                     (
                                                                                                         <FormControlLabel value="E" control={<Radio />} label={`Economy Class - RM ${selectedItem.seatD.economyPrice}`} />
                                                                                                     )
