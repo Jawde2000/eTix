@@ -432,6 +432,7 @@ function NewCart() {
         const handleDelete = () => {
             for(var i = 0;i < Object.keys(cartData).length; i++){
                 dispatch(removeItem(cartData[i].cartItemsID));
+                setWarnTotal(false);
             }
             setOpen(false);
         }

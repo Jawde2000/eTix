@@ -227,7 +227,7 @@ function ServicesManagement() {
           return {
             id: servicel.serviceID,
             service: servicel.serviceName,
-            departure: servicel.serviceEndDate,
+            departure: servicel.serviceStartDate,
             time: t,
             status: s
           }
