@@ -75,6 +75,15 @@ export const ticketlist = () => async (dispatch, getState) => {
             let carts = await axios.get(`http://127.0.0.1:8000/api/cart/${item.cart}/`, config);
             cart.push(carts.data);
         } 
+
+        function uniq(a) {
+            var seen = {};
+            return a.filter(function(item) {
+                return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+            });
+        }
+
+        var cartFilter = uniq(cart)
         
         //console.log(cart);
 
@@ -294,4 +303,3 @@ export const deleteTicket = (id) => async (dispatch, getState) => {
         })
     }
 }
-
