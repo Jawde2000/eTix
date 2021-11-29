@@ -132,7 +132,7 @@ function TicketManagement() {
         field: 'route',
         headerName: 'Route',
         headerAlign: 'center',
-        width: 150,
+        width: 300,
         editable: false,
       },
       {
@@ -146,7 +146,7 @@ function TicketManagement() {
         field: 'username',
         headerName: 'Username',
         headerAlign: 'center',
-        width: 250,
+        width: 200,
         editable: false,
       },
       {
@@ -174,7 +174,7 @@ function TicketManagement() {
       {
         field: 'actions',
         headerName: 'Actions',
-        width: 250, 
+        width: 150, 
         headerAlign: 'center',
         editable: false,
         sortable: false,
@@ -438,12 +438,9 @@ function TicketManagement() {
               {"Ticket Result"}
             </DialogTitle>
             <DialogContent>
-              {successUse?<DialogContentText id="alert-dialog-description">
-                The ticket is valid. Have a safe ride
-              </DialogContentText> : 
               <DialogContentText id="alert-dialog-description">
-                The ticket is used / Qrcode is not available. Please scan again.
-              </DialogContentText>}
+                {successUse?'The ticket is valid. Have a safe ride':"The ticket is used / Qrcode is not available. Please scan again."}
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
               {successUse?<Button style={{color: "green"}} onClick={handleClose}>OK</Button>:<Button style={{color: "red"}} onClick={handleClose}>OK</Button>}
@@ -620,6 +617,12 @@ function TicketManagement() {
               <Grid>
               {
                   loadticket? 
+                  <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                  <CircularProgress  style={{color: '#F5CB5C'}}/>
+                  </Backdrop>:null
+              }
+              {
+                  loadUse? 
                   <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
                   <CircularProgress  style={{color: '#F5CB5C'}}/>
                   </Backdrop>:null
