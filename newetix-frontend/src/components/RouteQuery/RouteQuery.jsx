@@ -702,17 +702,22 @@ export default function RouteQuery() {
                                                                     </Tooltip>
                                                                     {selectedItem?
                                                                         (
+                                                                            
                                                                             <Dialog
                                                                                 open={openDialog}
                                                                                 onClose={handleClose}
                                                                                 aria-labelledby="draggable-dialog-title"
                                                                             >
+                                                                                {console.log(selectedItem)}
                                                                                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
                                                                                 Add to Cart
                                                                                 </DialogTitle>
                                                                                     <DialogContent>
                                                                                         <DialogContentText>
-                                                                                            Please Choose Seat Type You Want.
+                                                                                            <p>Service Name: {selectedItem.vendorD.vendorName}</p>
+                                                                                            <p>Description: {selectedItem.serviceDesc}</p>
+                                                                                            
+                                                                                            <p>Please Choose Seat Type You Want.</p>
                                                                                         </DialogContentText>
                                                                                         <FormControl component="fieldset">
                                                                                             <RadioGroup
