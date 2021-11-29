@@ -150,7 +150,7 @@ export default function ForgetPass() {
             <Container>
                 <Grid container spacing={3} direction={'column'}>
                     <Grid item xs={12} container style={{marginTop: 100}}>
-                        <Grid item xs={8} style={{margin: 'auto', backgroundColor: 'white', minHeight: 500, minWidth: 100, borderRadius: 10}}>
+                        <Grid item xs={10} style={{margin: 'auto', backgroundColor: 'white', minHeight: 500, minWidth: 100, borderRadius: 10}}>
                             <h2 style={{textAlign: 'center', fontWeight: 'bold', color: '#F5CB5C', }}>Reset Your Password</h2>
                             {
                                 emailFormatError?
