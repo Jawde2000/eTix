@@ -9,14 +9,6 @@ function Footer() {
                 <Container maxWidth="lg">
                     <Grid container spacing={5}>
                         <Grid item xs={12} sm={3}>
-                            <Box borderBottom={1} >Customer Service</Box>
-                            <Box style={{paddingTop: 10, paddingBottom: 5}}>
-                                <Link href="/menu/helpmanage/" color="inherit" underline={'none'}>
-                                    Help Center
-                                </Link>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={3}>
                             <Box borderBottom={1}>Follow Us</Box>
                             <Box style={{paddingTop: 10, paddingBottom: 5}}>
                                 <Link href="/" color="inherit" underline={'none'}>

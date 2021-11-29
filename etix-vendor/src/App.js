@@ -24,8 +24,11 @@ import AddComment from './components/Helpdesk/AddComment';
 import AddService from './components/ServiceManagement/AddService';
 import TicketManagement from './components/TicketManagement/TicketManagement';
 import ForgetPass from './components/ForgetPassword/ForgetPass';
+import {useSelector} from 'react-redux';
 
 function App() {
+  const userLogin = useSelector(state => state.userLogin);
+  const {userInfo} = userLogin;
 
   return (
     <div> 

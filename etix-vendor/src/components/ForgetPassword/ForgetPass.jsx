@@ -1,4 +1,4 @@
-import {  Grid, Box,  Link, Typography, Autocomplete, Container } from '@mui/material';
+import {  Grid, Box,  Link, Typography, Autocomplete, Container, Toolbar, CircularProgress, Button } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React, {useEffect, useState} from 'react';
 import images from '../globalAssets/bangkok.jpg';
@@ -10,14 +10,20 @@ import SendIcon from '@mui/icons-material/Send';
 import { resetPassword, validateUser } from '../../actions/userActions/userActions';
 import { useHistory } from 'react-router';
 import { VERIFY_USER_RESET, RESET_USER_RESET } from '../../constants/userConstants/userConstants';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
-      backgroundImage: `images`,
+      backgroundImage: `url(${images})`,
       backgroundRepeat: "no-repeat",
       backgroundSize: "cover",
       backgroundBlendMode: "lighten",
-      minHeight: 700
+      minHeight: 700, fontFamily: ['rubik', 'sans-serif'].join(',')
     },
     breadcrumbgrid: {
         paddingTop: '25px'
@@ -39,12 +45,13 @@ export default function ForgetPass() {
     const {error: verifyError, UserExist: verifySuccess} = verifyUser
 
     const passwordReset = useSelector(state => state.passwordReset)
-    const {error: resetError, success: resetSuccess} = passwordReset 
+    const {error: resetError, success: resetSuccess, loading: resetLoading} = passwordReset 
 
     const [email, setEmail] = useState("");
     const [emailFormatError, setEmailFormatError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [userExistError, setUserExistError] = useState("");
+    const [resetR, setResetR] = useState(false);
 
     let history = useHistory()
 
@@ -62,13 +69,8 @@ export default function ForgetPass() {
 
     useEffect(() => {
         if(resetSuccess){
-            alert("Successfully Reseted Password. Please check you email.");
-            dispatch({type: VERIFY_USER_RESET});
-            dispatch({type: RESET_USER_RESET});
-            history.push('/');
-        } else {
-            console.log("Fail to reset");
-        }
+            setResetR(true);
+        } 
     }, [passwordReset])
 
     const handleSubmit = (e) => {
@@ -92,17 +94,68 @@ export default function ForgetPass() {
         setEmail(e.target.value);
     }
 
+    const DialogResetSuccess = () => {
+        const handleClose = () => {
+          setResetR(false);
+          dispatch({type: VERIFY_USER_RESET});
+          dispatch({type: RESET_USER_RESET});
+          history.push('/');
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={resetR}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              {resetSuccess?
+              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Successful Password Reset</div>:
+              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Fail to Password Reset</div>
+              }
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {resetSuccess?
+                  <div>    
+                  <Typography>Please check your email to get your temporary generated password</Typography>
+                  </div>
+                  :
+                  <Typography>
+                      Password Reset Fail...
+                  </Typography>
+                  }
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                {resetSuccess?
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+                :
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+                }
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
     return(
         <Container className={classes.whole} maxWidth="Fixed">
             <Container>
                 <Grid container spacing={3} direction={'column'}>
                     <Grid item xs={12} container style={{marginTop: 100}}>
-                        <Grid item xs={12} style={{margin: 'auto', backgroundColor: 'grey', minHeight: 500, minWidth: 100}}>
-                            <h2 style={{textAlign: 'center'}}>Forget Password</h2>
+                        <Grid item xs={10} style={{margin: 'auto', backgroundColor: 'white', minHeight: 500, minWidth: 100, borderRadius: 10}}>
+                            <h2 style={{textAlign: 'center', fontWeight: 'bold', color: '#F5CB5C', }}>Reset Your Password</h2>
                             {
                                 emailFormatError?
                                 (
-                                    <Alert severity="error">Please enter a valid email!</Alert>
+                                    <Grid container>
+                                    <Alert style={{textAlign: 'center'}} severity="error">Please enter a valid email!</Alert>
+                                    </Grid>
                                 )
                                 :
                                 (
@@ -112,7 +165,7 @@ export default function ForgetPass() {
                             {
                                 userExistError?
                                 (
-                                    <Alert severity="error">User does not exist</Alert>
+                                    <Alert severity="error">Email does not exist</Alert>
                                 )
                                 :
                                 (
@@ -121,30 +174,34 @@ export default function ForgetPass() {
                             }
                             <Grid item xs={12} container>
 
-                                <Grid item xs={12} style={{textAlign: 'center', fontFamily: ['rubik', 'sans-serif'].join(','),}}>
+                                <Grid item xs={12} style={{textAlign: 'center', fontFamily: ['rubik', 'sans-serif'].join(','), }}>
                                     <h3>
-                                     Enter Email Address:
+                                     Enter Your eTix Email Address:
                                     </h3>
                                 </Grid>
-                                <Grid item xs={12} style={{ textAlign: 'center',paddingLeft: 150, paddingRight: 150}}>
+                                <Grid container item xs={12} style={{ textAlign: 'center',paddingLeft: 220, paddingRight: 220}}>
                                     <TextField 
                                         id="Email" 
                                         variant="outlined"
                                         onChange={handleChangeEmail}
                                         value={email}
+                                        textAlign="center"
                                         margin="dense"
                                         fullWidth
                                         type="email"
                                         required
                                         size="small"
                                         InputProps={{
-                                        style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white', textAlign: 'center'}                        
+                                        style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white',},
+                                        inputProps: {
+                                            style: { textAlign: "center" },
+                                        }                        
                                         }}                                             
                                     /> 
                                 </Grid>
                                 <Grid item xs={12} style={{textAlign: 'center', fontFamily: ['rubik', 'sans-serif'].join(','), fontStyle: 'italic', paddingTop: 20}}>
-                                        <p>*Please note that the email containing your new temperory password will be sent in 60 seconds.</p>
-                                        <p>Please Try again if you have not received the email after that period.</p>
+                                        <p style={{color: 'red'}}>*Please note that the email containing your new temporary password will be sent in 60 seconds.</p>
+                                        <p>Please try again if you have not received the email after that period.</p>
                                 </Grid>
                                 <Grid item xs={12} container style={{margin: 'auto', paddingTop: 50}}>
                                     <Grid item xs={12} style={{textAlign: 'center'}}>
@@ -165,6 +222,19 @@ export default function ForgetPass() {
                     </Grid>
                 </Grid>
             </Container>
+            {
+            resetLoading?
+            <Box sx={{ display: 'flex' }}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress  style={{color: '#F5CB5C'}}/>    
+            </Backdrop>
+            </Box>
+            :
+            null
+            }
+            {
+                resetR?<DialogResetSuccess />:null
+            }
         </Container>
     )
 }

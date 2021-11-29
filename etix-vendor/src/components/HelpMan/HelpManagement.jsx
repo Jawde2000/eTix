@@ -24,6 +24,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { alpha } from '@mui/material/styles';
+import ReplyIcon from '@mui/icons-material/Reply';
+import SendIcon from '@mui/icons-material/Send';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -130,9 +132,9 @@ function HelpManagement() {
               <Grid xs={12} display="flex">
                 <Grid xs={6} item>
                   <Toolbar>
-                  <Tooltip title="Edit">
+                  <Tooltip title="reply">
                   <IconButton href={`/menu/helpmanage/${params.row.id}`}>
-                    <EditIcon />
+                    <ReplyIcon />
                   </IconButton>
                   </Tooltip>
                   </Toolbar>
@@ -373,7 +375,7 @@ function HelpManagement() {
                           <Grid xs={6} item md={1}>
                           <Tooltip title="Message Admin?">  
                           <IconButton href={`/menu/helpmanage/comment/${userInfo.userID}`}> 
-                          <AddCommentIcon style={{fontSize: 40, color: "#25D366"}}/>
+                          <SendIcon style={{fontSize: 40, color: "black", textShadow: '0px 0px 1px gray'}}/>
                           </IconButton>
                           </Tooltip> 
                           </Grid>
