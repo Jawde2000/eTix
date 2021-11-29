@@ -187,7 +187,7 @@ function LoginForm() {
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black", textShadow: '1px 1px 2px white'}}/>}
            >
-          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black", textShadow: '1px 1px 2px black',}} >
+          <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black",}} >
             Login
           </Typography>
           </Button>

@@ -2,6 +2,7 @@ import {
     USER_REGISTER_REQUEST, 
     USER_REGISTER_SUCCESS,
     USER_REGISTER_FAIL,
+    USER_REGISTER_RESET
 } from '../constants/registerConstants/registerConstants'
 
 export const registerReducer = (state = { }, action) => {
@@ -14,6 +15,9 @@ export const registerReducer = (state = { }, action) => {
         
         case USER_REGISTER_FAIL:
            return {loading: false, success: false}
+
+        case USER_REGISTER_RESET:
+            return {}
 
         default:
             return state
