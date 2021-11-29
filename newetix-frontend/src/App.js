@@ -14,6 +14,7 @@ import Attractions from './components/Static/Attractions';
 import Services from './components/Services/Services';
 // Passport & Retrieval
 import Passport from './components/Passport/Passport';
+import PassportRegister from './components/Passport/PassportRegister';
 // Routes
 import RouteQuery from './components/RouteQuery/RouteQuery';
 // Help Center
@@ -107,6 +108,9 @@ function Router() {
                 </Route>
                 <Route path="/services" exact>
                     <Services/>
+                </Route>
+                <Route path="/register" exact>
+                    <PassportRegister />
                 </Route>
             </Switch>
             <Footer />

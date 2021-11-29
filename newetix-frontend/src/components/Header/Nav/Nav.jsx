@@ -5,7 +5,7 @@ import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import etixLogo from '../../globalAssets/eTixLogo.png'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { viewCartData } from '../../../state/actions/actions';
+import { viewCartData, cartDispatch } from '../../../state/actions/actions';
 
 const useStyles = makeStyles((theme) => ({
     customizeAppbar: {
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         justifyContent: 'center',
         justify: 'center',
+        cursor: 'pointer',
     },
     auxContainer: {
         paddingTop: '25px',
@@ -70,33 +71,44 @@ function Nav() {
     const {success: removeSuccess} = removeItem;
     const cartAdd = useSelector(state => state.cartAdd);
     const {success: addcartSuccess} = cartAdd;
-    const [cartItemPax, setcartItemPax] = useState("");
+    const payment = useSelector(state => state.payment);
+    const {success: paymentSuccess} = payment;
+    const [cartItemPax, setcartItemPax] = useState("0");
     const [isHome, setHome] = useState(true);
     const [isAttract, setAttract] = useState(false);
     const [isServ, setServ] = useState(false);
-    const [isCart, setCart] = useState(true);
+    const [isCart, setCart] = useState(false);
 
     useEffect(() => {
         if(userInfo){
             dispatch(viewCartData());
         }
-    }, [userInfo, addcartSuccess, removeSuccess])
+    }, [userInfo, addcartSuccess, removeSuccess, paymentSuccess])
 
     useEffect(() => {
         if(typeof(cartData) !== 'undefined' && cartData !== null){
             console.log(cartData);
-            if(cartData || addcartSuccess || removeSuccess){
+            if(cartData || addcartSuccess || removeSuccess || paymentSuccess){
                 let cartpax = Object.keys(cartData).length;
                 if(cartpax > 0){
                     setcartItemPax(cartpax);
-                }else {
+                }else if (cartpax < 0){
+                    setcartItemPax('0');
+                }else{
                     setcartItemPax('0');
                 }
             }   
         }
         
         console.log(cartItemPax);
-    }, [addcartSuccess, removeSuccess, cartData])
+    }, [addcartSuccess, removeSuccess, cartData, paymentSuccess])
+
+    useEffect(() => {
+        if(paymentSuccess){
+            setcartItemPax('0');
+            dispatch(cartDispatch());
+        }
+    }, [paymentSuccess])
 
     function cartOnClick() {
         setCart(true);
@@ -113,6 +125,22 @@ function Nav() {
         setAttract(false);
     }
 
+    const handleService = () => {
+        setHome(false);
+        setServ(true);
+        setCart(false);
+        setAttract(false);
+        history.push('/services');
+    }
+
+    const handleAttract = () => {
+        setHome(false);
+        setServ(false);
+        setCart(false);
+        setAttract(true);
+        history.push('/attractions');
+    }
+
     return (
         <Grid className={defaultStyle.customizeAppbar} container justify="center" direction="row" alignItems="center" display="flex">
             <Grid item xs={2}>
@@ -126,8 +154,8 @@ function Nav() {
             </Grid>
    
             <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-            <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/attractions' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-            <Grid item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/services' style={{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
+            <Grid onClick={handleAttract} item xs={3} className={defaultStyle.menuItems}><Link style={isAttract?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+            <Grid onClick={handleService} item xs={3} className={defaultStyle.menuItems}><Link style={isServ?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
             </Grid>     
             <Grid item xs={1} className={defaultStyle.auxContainer} justify="space-between">
                 {userInfo?<IconButton><Badge badgeContent={cartItemPax} color="primary">

@@ -7,6 +7,8 @@ import {useDispatch, useSelector} from 'react-redux'
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import { getTickets, getAllRoutes } from '../../state/actions/actions';
 import StoreIcon from '@mui/icons-material/Store';
+import ufoCartoon from '../Cart/nothing_here.png';
+import Backdrop from '@mui/material/Backdrop';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -30,7 +32,7 @@ const TicketActivities = ({ status }) => {
     const userLogin = useSelector(state => state.userLogin)
     const ticketList = useSelector(state => state.getTickets)
     const {userInfo} = userLogin
-    const {ticketData} = ticketList
+    const {ticketData, loading: ticketLoading} = ticketList
 
     const [listofTickets, setListofTickets] = useState([])
     const [loadStatus, setLoadStatus] = useState(true)
@@ -300,9 +302,28 @@ const TicketActivities = ({ status }) => {
                         )
                         :
                         (
-                            null
+                            <Grid item xs={12} container direction="column" spacing={2} alignItems={'center'} justify={'center' }style={{ width: "100%", height: "100%" }}>
+                            <Grid xs={12} justifyContent='center' alignItems="center" textAlign="center" container justify="center">
+                            <img src={ufoCartoon} />
+                            </Grid>
+                            <Grid xs={12} justifyContent='center' alignItems="center" textAlign="center" container justify="center">
+                            <Typography style={{fontSize: 30, color: 'black'}}>
+                                Your activities are empty
+                            </Typography>
+                            </Grid>
+                            </Grid>
                         )
                         
+                    }
+                    {
+                        ticketLoading?
+                        <Box sx={{ display: 'flex' }}>
+                        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                        <CircularProgress  style={{color: '#F5CB5C'}}/>    
+                        </Backdrop>
+                        </Box>
+                        :
+                        null
                     }
             </Grid>
         );

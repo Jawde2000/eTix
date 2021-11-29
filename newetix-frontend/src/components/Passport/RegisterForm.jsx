@@ -1,4 +1,4 @@
-import { Grid, Container, IconButton,  Typography, Button,} from '@mui/material';
+import { Grid, Container, IconButton,  Typography, Button} from '@mui/material';
 import { makeStyles} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -9,10 +9,17 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import {useHistory} from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux'
-import Alert from '@mui/material/Alert'
-import { register } from '../../state/actions/actions'
+import {useHistory, Link} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import Alert from '@mui/material/Alert';
+import { register, login } from '../../state/actions/actions';
+import Backdrop from '@mui/material/Backdrop';
+import DeleteOutlineSharpIcon from '@mui/icons-material/DeleteOutlineSharp';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -45,7 +52,19 @@ const useStyles = makeStyles((theme) => ({
   loginButton: {
     display: "flex",
     justifyContent: "flex-end"
-  }
+  }, 
+  forgot: {
+    display: "flex",
+    color: 'white',
+    fontFamily: ['rubik', 'sans-serif'].join(','),
+    padding: 10,
+    justifyContent: "flex-start",
+    '&:hover': {
+      textDecorationLine: 'underline',
+      color: '#F5CB5C'
+    },
+    cursor: "pointer"
+  },
 }));
 
 function RegisterForm() {
@@ -61,8 +80,9 @@ function RegisterForm() {
       password: '',
       showPassword: false,
     });
+    const [registerSucc, setRegisterSucc] = useState(false);
     const userLogin = useSelector(state => state.register)
-    const {errorRegister,  userInfo} = userLogin
+    const {errorRegister,  userInfo, loading: loadingRe, success: successRe} = userLogin
     const dispatch = useDispatch()
     let history = useHistory()
   
@@ -71,6 +91,13 @@ function RegisterForm() {
           history.push('/')
       }
     },[userInfo])
+
+    useEffect(() => {
+      if(successRe){
+        dispatch(login(email, password));
+        history.push('/');
+      }
+    }, [successRe])
   
     const handleChange = (prop) => (event) => {
       setValues({ ...values, [prop]: event.target.value });
@@ -102,8 +129,40 @@ function RegisterForm() {
     const handleLogin = (e) => {
         e.preventDefault()
         dispatch(register(email, password, username, phonenumber))
-        history.push('/')
     }  
+
+    // const DialogRegisterSuccess = () => {
+    //   const handleClose = () => {
+    //     setPaymentFail(false);
+    //   };
+
+    //   return (
+    //     <Toolbar>
+    //       <Dialog
+    //         open={paymentFailure}
+    //         onClose={handleClose}
+    //       >
+    //         <DialogTitle id="alert-dialog-title">
+    //         </DialogTitle>
+    //         <DialogContent>
+    //           <DialogContentText id="alert-dialog-description">
+    //             {successRe?
+    //             <Typography>Register Success</Typography>:
+    //             <Typography>
+    //                 Register Fail
+    //             </Typography>
+    //             }
+    //           </DialogContentText>
+    //         </DialogContent>
+    //         <DialogActions>
+    //           <Button onClick={handleClose} autoFocus style={success?{color: 'green'}:{color: 'red'}}>
+    //             OK
+    //           </Button>
+    //         </DialogActions>
+    //       </Dialog>
+    //     </Toolbar>
+    //   );
+    // }
 
     return (
         <Container>
@@ -151,6 +210,7 @@ function RegisterForm() {
             value={phonenumber} onChange={handleChangeHP}
             ></TextField>
         </Grid>
+        <Grid item xs={12}>
         <Grid item xs={12} className={defaultStyle.loginButton}>
             <Button 
             sx={{ m: 1 }}
@@ -168,6 +228,11 @@ function RegisterForm() {
             </Typography>
             </Button>
         </Grid>
+        <Grid item xs={12} >
+            <Link to="/passport" className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 18}}>Already have an Account?</Link>
+          </Grid>
+        </Grid>
+
         </Container>
     );
 

@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { useHistory } from 'react-router-dom';
-import { AppBar, Grid, Link, Typography, Button, Menu, MenuItem, Fade, Avatar} from '@mui/material';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Avatar, Link} from '@mui/material';
 import { makeStyles } from '@mui/styles';
-
+import {useHistory} from 'react-router-dom';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
@@ -138,7 +137,7 @@ function Top() {
                 <Grid xs={12}>
                     <Grid item className={defaultStyle.rightItem} direction="row" display="flex">   
                         <Grid item className={defaultStyle.rightItem}>
-                            <Link href='http://localhost:3500' style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
+                            <Link href="http://localhost:3500" style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
                         </Grid>    
                         <Grid item className={defaultStyle.rightItem}>
                             <div>
