@@ -489,8 +489,8 @@ def getVendorDByVID(request, pk):
 @api_view(['GET'])
 def getCartitemByCID(request, pk):
     try:
-        cartItem = CartItems.objects.get(cart=pk)
-        serializer = CartItemsSerializer(cartItem, many=False)
+        cartItem = CartItems.objects.filter(cart=pk)
+        serializer = CartItemsSerializer(cartItem, many=True)
         return Response(serializer.data)
     except:
         message = {'detail': 'cart items not found'}
