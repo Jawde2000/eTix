@@ -280,6 +280,13 @@ const Services = () =>{
         else{
             history.push('/')
         }
+
+        if(successDelete){
+            alert("Sucessfully Deleted");
+            setSelected([]);
+            dispatch({type: SERVICE_DELETE_RESET})
+            history.push("/menu/servicemanagement");
+        }
     }, [dispatch, successDelete])
 
     const [rows, setRows] = useState([]);
@@ -397,14 +404,16 @@ const Services = () =>{
     };
 
     const handleDelete = (ids) => {
-        ids.map((id) => {
-            dispatch(deleteService(id));
-        })
-
-        alert("Sucessfully Deleted");
-        setSelected([]);
-        dispatch({type: SERVICE_DELETE_RESET})
-        history.push("/menu/servicemanagement");
+        var dlt = window.confirm("All data related with this service will be deleted. Are you sure to delete instead of setting the status to inactive? ")
+        if(dlt){
+            ids.map((id) => {
+                dispatch(deleteService(id));
+            })
+        }
+        else{
+            return;
+        }
+        
     }
     
     return (

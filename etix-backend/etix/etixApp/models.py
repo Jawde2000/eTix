@@ -310,12 +310,12 @@ class Services(models.Model):
     servicedepartureTerminal = models.TextField(max_length=1000)
     servicearrivalTerminal = models.TextField(max_length=1000)
     # FK
-    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
-    seat = models.ForeignKey(Seat, on_delete=models.SET_NULL, null=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE, null=True)
     locationTo = models.ForeignKey(
-        Location, related_name='%(class)s_location_to', on_delete=models.SET_NULL, null=True)
+        Location, related_name='%(class)s_location_to', on_delete=models.CASCADE, null=True)
     locationFrom = models.ForeignKey(
-        Location, related_name='%(class)s_location_from', on_delete=models.SET_NULL, null=True)
+        Location, related_name='%(class)s_location_from', on_delete=models.CASCADE, null=True)
 
 
 class Cart(models.Model):
@@ -324,7 +324,8 @@ class Cart(models.Model):
     cartTotal = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True)
+        User, on_delete=models.CASCADE, null=True)
+
 
 class Payment(models.Model):
     payment_status = [
@@ -333,9 +334,10 @@ class Payment(models.Model):
     ]
     paymentID = models.TextField(
         default=generate_payment_id, primary_key=True, unique=True, editable=False, max_length=8)
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     paymentStatus = models.CharField(max_length=2, choices=payment_status)
     paymentDateTime = models.DateField(auto_now_add=True)
+
 
 class CartItems(models.Model):
     seat_type = [
@@ -345,22 +347,23 @@ class CartItems(models.Model):
     ]
     cartItemsID = models.TextField(
         default=generate_cart_items_id, primary_key=True, unique=True, editable=False, max_length=8)
-    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
+    service = models.ForeignKey(Services, on_delete=models.CASCADE, null=True)
     seat_Type = models.CharField(max_length=1, choices=seat_type)
     seat_price = models.DecimalField(
         max_digits=10, decimal_places=2
     )
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
+
 
 class Ticket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     ticketID = models.TextField(
         default=generate_ticket_id, primary_key=True, unique=True, editable=False, max_length=8)
-    service = models.ForeignKey(Services, on_delete=models.SET_NULL, null=True)
-    ownBy = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True)
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
+    service = models.ForeignKey(Services, on_delete=models.CASCADE, null=True)
+    ownBy = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     used = models.BooleanField(default=False)
     Token = models.TextField(
         default=get_token, unique=True, editable=False, max_length=32)
@@ -382,8 +385,8 @@ class HelpDesk(models.Model):
     )
     helpdeskDateTime = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True)
-    receiver = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+        User, on_delete=models.CASCADE, null=True)
+    receiver = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
     to_vendor = models.BooleanField(default=False)
     to_admin = models.BooleanField(default=False)
     helpdeskStatus = models.CharField(max_length=2, choices=help_desk_status)
@@ -393,8 +396,8 @@ class HelpResponse(models.Model):
     helpResponseID = models.TextField(
         default=generate_help_response_id, primary_key=True, unique=True, editable=False, max_length=8)
     helpdesk = models.ForeignKey(
-        HelpDesk, on_delete=models.SET_NULL, null=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+        HelpDesk, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     helpResponseDateTime = models.DateTimeField(auto_now_add=True)
     helpResponseMessage = models.TextField(
         max_length=10000, null=True, blank=True

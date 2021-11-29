@@ -19,6 +19,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { listUsers, deleteUsers } from '../../actions/userActions';
 import { useHistory } from 'react-router';
+import {USER_DELETE_RESET} from '../../constants/userConstants';
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
@@ -250,6 +251,13 @@ const UserManagement = () =>{
         else{
             history.push('/')
         }
+
+        if(successDelete){
+            alert("Sucessfully Deleted");
+            setSelected([]);
+            dispatch({type: USER_DELETE_RESET})
+            history.push("/menu/users");
+        }
     }, [dispatch, successDelete])
 
     const [rows, setRows] = useState([]);
@@ -382,20 +390,22 @@ const UserManagement = () =>{
 
     const handleDelete = (ids) => {
         var i=0;
-        ids.map((id) => {
-            if(id === userInfo.userID){
-                alert("You can't delete The account that you are currently logged in!");
-                return;
-            }
-            else{
-                dispatch(deleteUsers(id));
-                i+=1;
-            }
-        })
-
-        alert("Sucessfully Deleted");
-        setSelected([]);
-        history.push("/menu/users");
+        let dlt = window.confirm("All data related with selected user will be deleted. Are you sure to delete instead of setting the status to inactive?");
+        if(dlt){
+            ids.map((id) => {
+                if(id === userInfo.userID){
+                    alert("You can't delete The account that you are currently logged in!");
+                    return;
+                }
+                else{
+                    dispatch(deleteUsers(id));
+                    i+=1;
+                }
+            })
+        }
+        else {
+            return
+        }
     }
     
     return (

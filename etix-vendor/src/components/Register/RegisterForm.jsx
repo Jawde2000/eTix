@@ -16,6 +16,8 @@ import {useDispatch, useSelector} from 'react-redux'
 import {useHistory} from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
+import Alert from '@mui/material/Alert';
+import {USER_REGISTER_RESET} from '../../constants/registerConstants/registerConstants';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -86,13 +88,14 @@ function RegisterForm() {
   const [bankBrand, setBank] = useState();
 
   const userRegister = useSelector(state => state.userRegister)
-  const {success, loading} = userRegister
+  const {success, loading, error} = userRegister
   const dispatch = useDispatch()
   let history = useHistory()
 
   useEffect(() => {
     if(success) {
-        history.push('/register/registersuccess')
+      dispatch({type: USER_REGISTER_RESET});
+      history.push('/register/registersuccess');
     }
   }, [success])
 
@@ -137,7 +140,6 @@ function RegisterForm() {
       console.log(values.confirmPassword);
       dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username))
     }
-    
   }
 
   const banks = [

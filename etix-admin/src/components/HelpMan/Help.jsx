@@ -21,6 +21,7 @@ import { deleteHelp, listHelp } from '../../actions/helpActions';
 import { useEffect } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { HELP_DELETE_RESET } from '../../constants/helpConstants';
 
 //a npm package for generating PDF tables 
 import jsPDF from 'jspdf'
@@ -266,6 +267,13 @@ const Help = () =>{
         else{
             history.push('/')
         }
+
+        if(successDelete){
+            alert("Sucessfully Deleted");
+            setSelected([]);
+            dispatch({type: HELP_DELETE_RESET})
+            history.push("/menu/helpdesk");
+        }
     }, [dispatch, successDelete])
 
     const [rows, setRows] = useState([]);
@@ -402,13 +410,16 @@ const Help = () =>{
     };
 
     const handleDelete = (ids) => {
-        ids.map((id) => {
-            dispatch(deleteHelp(id));
-        })
-
-        alert("Sucessfully Deleted");
-        setSelected([]);
-        history.push("/menu/helpdesk");
+        let dlt = window.confirm("All data related with this helps will be deleted. Are you sure to delete instead of setting the status to inactive?")
+        
+        if(dlt){
+            ids.map((id) => {
+                dispatch(deleteHelp(id));
+            })
+        } else{
+            return;
+        }
+        
     }
     
     return (

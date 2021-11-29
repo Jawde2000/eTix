@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: "cover",
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
-        minHeight: 500,
+        minHeight: 600,
         fontFamily: ['rubik', 'sans-serif'].join(','),
         padding: 20
     },
@@ -271,7 +271,14 @@ const UserDetail = ({props}) => {
             return;
         }
         else{
-            dispatch(deleteUsers(id));
+            let dlt = window.confirm("All data related with this user will be deleted. Are you sure to delete instead of setting the status to inactive?")
+            if(dlt){
+                dispatch(deleteUsers(id));
+            }
+            else {
+                return;
+            }
+            
         }
 
         alert("Sucessfully Deleted");

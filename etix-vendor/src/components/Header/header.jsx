@@ -1,9 +1,9 @@
-import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container, useIsFocusVisible} from '@mui/material';
+import { AppBar, Grid, Typography, Button, Menu, MenuItem, Fade, Container, useIsFocusVisible, Link} from '@mui/material';
 import { makeStyles} from '@mui/styles';
 import React, {useEffect, useState} from 'react';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 // import NotificationsIcon from '@material-ui/icons/Notifications';
-import { useHistory } from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import { logout, getUser } from '../../actions/userActions/userActions'
 import Avatar from '@mui/material/Avatar';
@@ -74,6 +74,10 @@ menuItem: {
 },
 menu: {
     textDecoration: "none"
+},
+loginRegister: {
+  fontFamily: ['rubik', 'sans-serif'].join(','),
+  justifyContent: "flex-start",
 }
   
 }));
@@ -131,6 +135,13 @@ const Header = (props) => {
     setID(userInfo? userInfo.userID:null);
   }, [userInfo])
 
+  const MouseOver = (event) => {
+    event.target.style.color = 'white';
+  }
+
+  const MouseOut = (event) => {
+    event.target.style.color="#F5CB5C";
+  }
 
   return (
           <AppBar className={defaultStyle.customizeAppbar} position="relative">
@@ -139,7 +150,7 @@ const Header = (props) => {
               <Grid xs={12}>
                 <Grid item className={defaultStyle.rightItem} direction="row" display="flex">       
                 <Grid item sm={5} md={7}>
-                <div>
+               {userInfo?<div>
                 {/*<Tooltip title="User">*/}
                 <Container>
                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex"
@@ -152,7 +163,7 @@ const Header = (props) => {
                    </Typography>
                 </Button>
                 </Container>
-                {anchorEl? (<Menu
+                <Menu
                 id="account"
                 MenuListProps={{
                   'aria-labelledby': 'fade-button',
@@ -163,32 +174,37 @@ const Header = (props) => {
                 TransitionComponent={Fade}
                 >
                 <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Notification</MenuItem>
                 <MenuItem onClick={handleLogOut}>Logout</MenuItem>
-                </Menu>)
-                :
-                (<Dialog
-                fullScreen={fullScreen}
-                open={openD}
-                onClose={handleCloseD}
-                aria-labelledby="responsive-dialog-title"
-                >
-                <DialogTitle id="responsive-dialog-title">
-                  {"Notification"}
-                </DialogTitle>
-                <DialogContent>
-                <DialogContentText>
-                  Please log In to use this action
-                </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                <Button onClick={handleCloseD} autoFocus>
-                  OK
-                </Button>
-                </DialogActions>
-                </Dialog>)
-                }
+                </Menu>
                 </div>
+                :
+                <Grid xs={12} direction="column">
+                  <Grid xs={12} display="flex">
+                      <Grid item className={defaultStyle.rightItem} direction="row" display="flex">   
+                        <Link href="http://localhost:3000" style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C', whiteSpace: 'nowrap'}}>
+                          <Typography onMouseOver={MouseOver} onMouseOut={MouseOut}>
+                            Become our customer!
+                          </Typography>
+                        </Link> 
+                        <Link href="http://localhost:3500" style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C', cursor: 'pointer', paddingTop: '11px', paddingLeft: '35px', paddingRight: '35px'}}>
+                        <Typography style={{whiteSpace: 'nowrap', display: 'flex',}}>
+                          <Link href="/" style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C', cursor: 'pointer',}} onMouseOver={MouseOver} onMouseOut={MouseOut}>
+                            Login 
+                          </Link > 
+                          <Typography variant="title" color="inherit" noWrap>&nbsp;</Typography>
+                          <Typography>
+                            |
+                          </Typography>
+                          <Typography variant="title" color="inherit" noWrap>&nbsp;</Typography>
+                          <Link className={defaultStyle.loginRegister} href='/register' style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C', cursor: 'pointer',}} onMouseOver={MouseOver} onMouseOut={MouseOut}>
+                            Register
+                          </Link>
+                        </Typography>
+                        </Link>
+                      </Grid>
+                  </Grid>
+                  </Grid>
+                }
                 </Grid>
                 </Grid>
               </Grid>

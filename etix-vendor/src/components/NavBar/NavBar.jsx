@@ -65,7 +65,8 @@ function NavBar() {
                 style={{ textDecorationLine: 'none', display: "flex",}}>        
                   <img src={etixLogo} className={defaultStyle.resizePic}/>
                   <Typography className={defaultStyle.resizeLogo} variant="h2" sx={{ flexGrow: 1 }} style={{fontFamily: ['rubik', 'sans-serif'].join(','),textShadow: '1px 1px 2px black'}} display="flex">
-                    e<div style={{color: '#F5CB5C'}}>T</div><div style={{color: '#add8e6'}}>i</div><div style={{color: '#ffcccb'}}>x</div>
+                    {/* e<div style={{color: '#F5CB5C'}}>T</div><div style={{color: '#add8e6'}}>i</div><div style={{color: '#ffcccb'}}>x</div> */}
+                    eTix
                   </Typography>
               </Link>
               </Grid>
