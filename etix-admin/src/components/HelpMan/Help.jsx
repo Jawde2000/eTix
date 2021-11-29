@@ -410,9 +410,16 @@ const Help = () =>{
     };
 
     const handleDelete = (ids) => {
-        ids.map((id) => {
-            dispatch(deleteHelp(id));
-        })
+        let dlt = window.confirm("All data related with this helps will be deleted. Are you sure to delete instead of setting the status to inactive?")
+        
+        if(dlt){
+            ids.map((id) => {
+                dispatch(deleteHelp(id));
+            })
+        } else{
+            return;
+        }
+        
     }
     
     return (

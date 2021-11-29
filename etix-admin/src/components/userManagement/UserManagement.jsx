@@ -390,16 +390,22 @@ const UserManagement = () =>{
 
     const handleDelete = (ids) => {
         var i=0;
-        ids.map((id) => {
-            if(id === userInfo.userID){
-                alert("You can't delete The account that you are currently logged in!");
-                return;
-            }
-            else{
-                dispatch(deleteUsers(id));
-                i+=1;
-            }
-        })
+        let dlt = window.confirm("All data related with selected user will be deleted. Are you sure to delete instead of setting the status to inactive?");
+        if(dlt){
+            ids.map((id) => {
+                if(id === userInfo.userID){
+                    alert("You can't delete The account that you are currently logged in!");
+                    return;
+                }
+                else{
+                    dispatch(deleteUsers(id));
+                    i+=1;
+                }
+            })
+        }
+        else {
+            return
+        }
     }
     
     return (

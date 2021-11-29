@@ -186,7 +186,13 @@ const Service = ({props}) => {
     };
 
     const handleDelete = () => {
-        dispatch(deleteService(id))
+        var dlt = window.confirm("All data related with this service will be deleted. Are you sure to delete instead of setting the status to inactive? ")
+        if(dlt){
+            dispatch(deleteService(id))
+        }
+        else{
+            return;
+        }
     }
 
     useEffect(() => {
