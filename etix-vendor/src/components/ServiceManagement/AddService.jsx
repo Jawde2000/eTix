@@ -84,6 +84,9 @@ const AddService = () => {
     const [seat, setSeat] = useState();
     const [service, setService] = useState();
     const [fillAll, setFillAll] = useState(false);
+    const [startEnd, setStartEnd] = useState(false);
+    const [loadingSub, setLoadingSub] = useState(false);
+    const [submit, setSubmit] = useState(false);
 
     useEffect(() => {
         if(!userInfo){
@@ -105,7 +108,7 @@ const AddService = () => {
             return;
         }
         if(!startDate || !endDate){
-            alert("Service start date and end date is required");
+            setStartEnd(true);
             return;
         }
 
@@ -154,21 +157,23 @@ const AddService = () => {
             for(let i in seat){
                 dispatch(addNewService(seat[i], service[i]))
             }
+            setLoadingSub(true);
         }
         
     }, [service])
 
     useEffect(() => {
         if(addSuccess){
-            alert("Successfully added");
-            dispatch({type: LOCATION_DETAIL_RESET})
-            dispatch({type: SERVICE_ADD_RESET})
-            history.push('/menu/servicemanagement')
+            if(loadingSub){
+                setSubmit(true);
+            }
+            // alert("Successfully added");
+        }else{
+            if(loadingSub){
+                setSubmit(true);
+            }
         }
     }, [serviceAdd])
-
-
-
     
     const [status, setStatus] = useState("X")
     const [fPrice, setFPrice] = useState()
@@ -186,6 +191,7 @@ const AddService = () => {
     const [locationTo, setLocationTo] = useState("")
     const [departure, setDeparture] = useState("")
     const [arrival, setArrival] = useState("")
+    const [enddate, setendDate] = useState(false);
     var tomorrow = moment().add(1, 'days').format(moment.HTML5_FMT.DATE);
 
     const handleChangeStatus = () => {
@@ -196,6 +202,95 @@ const AddService = () => {
             setStatus("O")
         }
     }
+
+    const DialogEnd = () => {
+        const handleClose = () => {
+          setendDate(false);
+          setEndDate("")
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={enddate}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  End date can't be earlier than start date!
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                <Typography color="red">OK</Typography>
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
+
+      const DialogStartEnd = () => {
+        const handleClose = () => {
+          setStartEnd(false);
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={startEnd}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                 Service start date and end date is required
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                <Typography color="red">OK</Typography>
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
+
+      const DialogSubmit = () => {
+        const handleClose = () => {
+          setStartEnd(false);
+          setLoadingSub(false);
+          dispatch({type: LOCATION_DETAIL_RESET})
+          dispatch({type: SERVICE_ADD_RESET})
+          history.push('/menu/servicemanagement')
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={submit}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                {addSuccess?"Successfully added":"Fail to add"}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                <Typography color={addSuccess?"green":"red"}>OK</Typography>
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
 
     const handleChangeFrom = (e) => {
         setLocationFrom(e.target.value)
@@ -213,8 +308,7 @@ const AddService = () => {
             setEndDate(e.target.value)
         }
         else {
-            alert("End date can't be earlier than start date!")
-            setEndDate("")
+            setendDate(true);
         }
     }
 
@@ -671,6 +765,15 @@ const AddService = () => {
             </Box>
             {
                 fillAll?<DialogNotFillAll />:null
+            }
+            {
+                enddate?<DialogEnd />:null
+            }
+            {
+                startEnd?<DialogStartEnd />:null
+            }
+            {
+                submit?<DialogSubmit />:null
             }
             </Container>
         </Container>
