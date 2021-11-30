@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
+import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Toolbar, Divider} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -18,6 +18,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import Alert from '@mui/material/Alert';
 import {USER_REGISTER_RESET} from '../../constants/registerConstants/registerConstants';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -86,9 +91,13 @@ function RegisterForm() {
   const defaultStyle = useStyles();
   const [phone, setPhone] = useState();
   const [bankBrand, setBank] = useState();
+  const [wEmail, setwEmail] = useState(false);
+  const [passDiff, setpassDiff] = useState(false);
+  const [isEmailExist, setEmailX] = useState();
+  const [valid, setValid] = useState(false);
 
   const userRegister = useSelector(state => state.userRegister)
-  const {success, loading, error} = userRegister
+  const {success, loading} = userRegister
   const dispatch = useDispatch()
   let history = useHistory()
 
@@ -127,20 +136,118 @@ function RegisterForm() {
   const submit = (event) => {
     event.preventDefault();
     if (values.password !== values.confirmPassword) {
-      alert("Password doesnt match")
+      setpassDiff(true);
     }
     else {
-      console.log(values.username);
-      console.log(values.email);
-      console.log(values.businessId);
-      console.log(bankBrand);
-      console.log(values.bank);
-      console.log(phone);
-      console.log(values.password);
-      console.log(values.confirmPassword);
-      dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username))
+      const httpGetAsync = (url) => {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200){
+              var json = JSON.parse(xmlHttp.responseText);
+              var results = json.is_free_email.value;
+              if(results === false){
+                setValid(false);
+              }else{
+                setValid(true);
+              }
+              // console.log(results.is_free_email.value);
+              if(results !== false){
+                dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
+              }
+            }
+        }
+        xmlHttp.open("GET", url, true); // true for asynchronous
+        console.log(url);
+        xmlHttp.send(null);
+      }
+      var url = "https://emailvalidation.abstractapi.com/v1/?api_key=4261648ec1aa4b8292b186606132c4da&email=" + values.email;
+      httpGetAsync(url);
     }
   }
+
+  const DialogWrongEmail = () => {
+      const handleClose = () => {
+        setwEmail(false);
+      };
+
+      return (
+        <Toolbar>
+          <Dialog
+            open={wEmail}
+            onClose={handleClose}
+          >
+            <DialogTitle id="alert-dialog-title">
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                The email is exist. Please try another email
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} autoFocus>
+              <Typography color="red">OK</Typography>
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+  }
+
+  const DialogValidEmail = () => {
+    const handleClose = () => {
+      setValid(true);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={valid === false}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              This is not a valid email. Please enter a valid email
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+            <Typography color="red">OK</Typography>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+}
+
+  const DialogDifferentPass = () => {
+    const handleClose = () => {
+      setpassDiff(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={passDiff}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              The password doesn't match. Please try again
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus >
+              <Typography color="red">OK</Typography>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+}
 
   const banks = [
     "Maybank", "OCBC", "CIMB", "Affin", "RHB", "HSBC", "AmBank"
@@ -284,6 +391,15 @@ function RegisterForm() {
           <CircularProgress  style={{color: '#F5CB5C'}}/>
           </Backdrop>
           :null
+          }
+          {
+            wEmail?<DialogWrongEmail />:null
+          }
+          {
+            passDiff?<DialogDifferentPass />:null
+          }
+          {
+            valid === false?<DialogValidEmail />:null
           }
         </Grid>
         </form>
