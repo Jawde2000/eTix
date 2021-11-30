@@ -36,6 +36,7 @@ import { getLocations, vendorList, getAllRoutes } from '../../state/actions/acti
 import * as actions from '../../state/actions/actions'; 
 import moment from 'moment';
 
+
 const useStyles = makeStyles((theme) => ({
     whole: {
       backgroundImage: `url(${images()})`,
@@ -106,6 +107,9 @@ export default function RouteQuery() {
     const [loggedIn, SetLoggedIn] = useState(false);
     const [cartItems, setCartItems] = useState();
     var tomorrow = moment().add(1, 'days').format(moment.HTML5_FMT.DATE);
+    const [emptyFrom, setEmptyFrom] = useState(false);
+    const [emptyTo, setEmptyTo] = useState(false);
+    const [emptyDate, setEmptyDate] = useState(false);
 
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
@@ -251,18 +255,18 @@ export default function RouteQuery() {
       e.preventDefault();
       console.log(from, to)
       if(!to){
-        alert("Please pick a location of arrival");
+        setEmptyTo(true);
         return;
       }
 
       if(!from){
-        alert("Please pick a location of departure");
+        setEmptyFrom(true);
         return;
       }
 
 
       if(departureDate === null){
-        alert("Please pick a date of departure");
+        setEmptyDate(true);
         return;
       }
       process(from, to)
@@ -312,6 +316,90 @@ export default function RouteQuery() {
           </Toolbar>
         );
     }
+
+    const DialogFromEmpty = () => {
+        const handleClose = () => {
+          setEmptyFrom(false);
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={emptyFrom}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Please enter departure state</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
+    
+      const DialogToEmpty = () => {
+        const handleClose = () => {
+          setEmptyTo(false);
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={emptyTo}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Please enter arrival state</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
+    
+      const DialogDateEmpty = () => {
+        const handleClose = () => {
+          setEmptyDate(false);
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={emptyDate}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Please enter departure Date</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
 
     const handleAddToCart = (item, selectedSeat) => {
         if(loggedIn){
@@ -819,6 +907,15 @@ export default function RouteQuery() {
                         }
                         {
                             openCartSuccess?<DialogCart />:null
+                        }
+                        {
+                        emptyFrom?<DialogFromEmpty />:null
+                        }
+                        {
+                        emptyTo?<DialogToEmpty />:null
+                        }
+                        {
+                        emptyDate?<DialogDateEmpty />:null
                         }
                     </Grid>
                 </Grid>
