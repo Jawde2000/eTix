@@ -185,6 +185,16 @@ const Service = ({props}) => {
        }
     };
 
+    const getTomorrow = () => {
+        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+        var day = currentDate.getDate()
+        var month = currentDate.getMonth() + 1
+        var year = currentDate.getFullYear()
+        var tomorrow = year + '-' + month + '-' + day
+
+        return(tomorrow)
+    }
+
     const handleDelete = () => {
         var dlt = window.confirm("All data related with this service will be deleted. Are you sure to delete instead of setting the status to inactive? ")
         if(dlt){
@@ -255,11 +265,30 @@ const Service = ({props}) => {
     }
 
     const handleChangeStart = (event) => {
-        setStartDate(event.target.value)
+        let tmr = getTomorrow();
+        let x = new Date(tmr);
+        let y = new Date(event.target.value)
+
+        if(y>=x){
+            setStartDate(event.target.value);
+        }
+        else {
+            return;
+        }
     }
 
     const handleChangeEnd = (event) => {
-        setEndDate(event.target.value)
+        let x = new Date(startDate);
+        let y = new Date(event.target.value);
+
+        if(y<x){
+            alert("End date cannot be greater than start date")
+        }
+        else{
+            setEndDate(event.target.value)
+        }
+
+        
     }
 
     const handleChangeTime = (event) => {
@@ -755,7 +784,7 @@ const Service = ({props}) => {
                                                         // margin="dense"
                                                         type="date"
                                                         size="small"
-                                                        InputProps={{
+                                                        inputProps={{
                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                                         }} 
                                                     />
