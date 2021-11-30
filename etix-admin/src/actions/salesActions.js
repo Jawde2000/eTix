@@ -72,18 +72,6 @@ export const listPayment = () => async (dispatch, getState) => {
             cartItems: Items[index].data
         }))
 
-        let result2 = []
-        for(let i of data){
-            let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartItems[0].service}/`, config);
-            result2.push(l);
-        }
-        
-        data = data.map((item, index) => ({
-            ...item,
-            serviceDetails: result2[index].data
-        }))
-
-        console.log(data)
 
         dispatch({
             type: PAYMENT_LIST_SUCCESS,
