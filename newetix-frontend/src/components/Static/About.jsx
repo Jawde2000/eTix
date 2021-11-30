@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'rgba(247, 213, 124, 0.75)',
         paddingTop: '50px',
         paddingBottom: '50px',
+        backgroundRepeat: 'no-repeat',
     },
     tf: {
         width: '550px'
@@ -34,8 +35,8 @@ function Privacy() {
     return (
         <Box className={classes.root}>
             <Grid container direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
-                <Grid item>
-                    <img src={eTixLogo} alt="logo" width="250px"/>
+                <Grid item alignItems="center" justifyContent='center' display='flex'>
+                    <img src={eTixLogo} alt="logo" width="160px" style={{textShadow: "1px 1px 1px black"}}/>
                     <Typography variant="h3" style={{paddingTop: '25px'}}>About eTix</Typography>
                 </Grid>
                 <Grid item sx={{width: '75%'}}>
