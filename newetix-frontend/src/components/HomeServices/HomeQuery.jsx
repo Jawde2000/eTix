@@ -127,7 +127,7 @@ function HomeQuery() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+            <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
               OK
             </Button>
           </DialogActions>
@@ -155,7 +155,7 @@ function HomeQuery() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+            <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
               OK
             </Button>
           </DialogActions>
@@ -183,7 +183,7 @@ function HomeQuery() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+            <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
               OK
             </Button>
           </DialogActions>
