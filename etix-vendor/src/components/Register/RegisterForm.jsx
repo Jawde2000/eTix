@@ -1,4 +1,4 @@
-import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, createMuiTheme, Divider} from '@mui/material';
+import { AppBar, Grid, Box, Container, IconButton, Link, Typography, Button, Icon, Toolbar, Divider} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -18,6 +18,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import Alert from '@mui/material/Alert';
 import {USER_REGISTER_RESET} from '../../constants/registerConstants/registerConstants';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
   inputbackground: {
@@ -86,9 +91,13 @@ function RegisterForm() {
   const defaultStyle = useStyles();
   const [phone, setPhone] = useState();
   const [bankBrand, setBank] = useState();
+  const [wEmail, setwEmail] = useState(false);
+  const [passDiff, setpassDiff] = useState(false);
+  const [isEmailExist, setEmailX] = useState();
+  const [valid, setValid] = useState(false);
 
   const userRegister = useSelector(state => state.userRegister)
-  const {success, loading, error} = userRegister
+  const {success, loading} = userRegister
   const dispatch = useDispatch()
   let history = useHistory()
 
@@ -127,23 +136,131 @@ function RegisterForm() {
   const submit = (event) => {
     event.preventDefault();
     if (values.password !== values.confirmPassword) {
-      alert("Password doesnt match")
+      setpassDiff(true);
     }
     else {
-      console.log(values.username);
-      console.log(values.email);
-      console.log(values.businessId);
-      console.log(bankBrand);
-      console.log(values.bank);
-      console.log(phone);
-      console.log(values.password);
-      console.log(values.confirmPassword);
-      dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username))
+      const httpGetAsync = (url) => {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState === 4 && xmlHttp.status === 200){
+              var json = JSON.parse(xmlHttp.responseText);
+              var results = json.is_free_email.value;
+              var delivery = json.is_smtp_valid.value;
+              var deliveribility = json.deliverability;
+              var mx_found = json.is_mx_found.value;
+              var quality_score = json.quality_score;
+              var formats = json.is_valid_format.value;
+              console.log(xmlHttp.responseText);
+              if(formats === false){
+                setValid(true);
+              }else{
+                // console.log(delivery);
+                  setValid(false);
+                  dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
+                  if(!success){
+                    setwEmail(true);
+                  }
+              }
+            }
+        }
+        xmlHttp.open("GET", url, true); // true for asynchronous
+        console.log(url);
+        xmlHttp.send(null);
+      }
+      var url = "https://emailvalidation.abstractapi.com/v1/?api_key=6f9323c274554881a997cc90a8e34c1f&email=" + values.email;
+      httpGetAsync(url);
     }
   }
 
+  const DialogWrongEmail = () => {
+      const handleClose = () => {
+        setwEmail(false);
+      };
+
+      return (
+        <Toolbar>
+          <Dialog
+            open={wEmail}
+            onClose={handleClose}
+          >
+            <DialogTitle id="alert-dialog-title">
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Username or email must be unique. Please try again
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} autoFocus>
+              <Typography color="red">OK</Typography>
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+  }
+
+  const DialogValidEmail = () => {
+    const handleClose = () => {
+      setValid(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={valid}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              This is not a valid email. Please enter a valid email
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+            <Typography color="red">OK</Typography>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+}
+
+  const DialogDifferentPass = () => {
+    const handleClose = () => {
+      setpassDiff(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={passDiff}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              The password doesn't match. Please try again
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus >
+              <Typography color="red">OK</Typography>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+}
+
   const banks = [
-    "Maybank", "OCBC", "CIMB", "Affin", "RHB", "HSBC", "AmBank"
+    "Maybank", "OCBC", "CIMB", "Affin", "RHB", "HSBC", "AmBank", 'Public Bank Berhad', "Hong Leong Bank", "UOB",
+    "Bank Islam Malaysia", "Affin Bank", "	Alliance Bank", "Standard Chartered Bank", 
+    "MBSB Bank Berhad", "Citibank", "BSN", "Bank Muamalat Malaysia Berhad", "	Agrobank", "Al-Rajhi Malaysia", 
+    "Co-op Bank Pertama", "Bank of Singapore"
   ]
 
   return (
@@ -162,7 +279,7 @@ function RegisterForm() {
         </Grid>
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
-          label={'email'} variant="filled" InputProps={{ disableUnderline: true }} type="email"
+          label={'email'} variant="filled" InputProps={{ disableUnderline: true }} 
           value={values.email} onChange={handleChange('email')} required
           ></TextField>
         </Grid>  
@@ -287,6 +404,15 @@ function RegisterForm() {
           }
         </Grid>
         </form>
+        {
+          wEmail?<DialogWrongEmail />:null
+        }
+        {
+          passDiff?<DialogDifferentPass />:null
+        }
+        {
+          valid?<DialogValidEmail />:null
+        }
       </Container>
   );
 

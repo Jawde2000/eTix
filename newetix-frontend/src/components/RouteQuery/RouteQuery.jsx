@@ -34,6 +34,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Backdrop from '@mui/material/Backdrop';
 import { getLocations, vendorList, getAllRoutes } from '../../state/actions/actions';
 import * as actions from '../../state/actions/actions'; 
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -104,6 +105,7 @@ export default function RouteQuery() {
     const [openCartSuccess, setBuySuccess] = useState(false);
     const [loggedIn, SetLoggedIn] = useState(false);
     const [cartItems, setCartItems] = useState();
+    var tomorrow = moment().add(1, 'days').format(moment.HTML5_FMT.DATE);
 
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
@@ -468,7 +470,7 @@ export default function RouteQuery() {
                             required
                             size="small"
                             inputProps={{
-                                min: todayDate,
+                                min: tomorrow,
                                 style: {fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: 'white'}                        
                             }}                                             
                           /> 

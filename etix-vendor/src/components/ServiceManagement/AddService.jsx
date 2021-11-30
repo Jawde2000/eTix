@@ -26,6 +26,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import "../Font/fonts.css"
 import { minWidth } from '@mui/system';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -185,6 +186,7 @@ const AddService = () => {
     const [locationTo, setLocationTo] = useState("")
     const [departure, setDeparture] = useState("")
     const [arrival, setArrival] = useState("")
+    var tomorrow = moment().add(1, 'days').format(moment.HTML5_FMT.DATE);
 
     const handleChangeStatus = () => {
         if(status === "O"){
@@ -318,6 +320,7 @@ const AddService = () => {
                                         type="date"
                                         size="small"
                                         InputProps={{
+                                            min: tomorrow,
                                             style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                         }} 
                                     />
@@ -339,6 +342,7 @@ const AddService = () => {
                                         type="date"
                                         size="small"
                                         InputProps={{
+                                            min: tomorrow,
                                             style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                         }} 
                                     />

@@ -130,6 +130,14 @@ function Top() {
         }
     };
 
+    const MouseOver = (event) => {
+        event.target.style.color = 'white';
+    }
+    
+    const MouseOut = (event) => {
+        event.target.style.color="#F5CB5C";
+    }
+
     return (
     <AppBar className={defaultStyle.customizeAppbar} position="relative">
         <Grid xs={12} container >
@@ -137,12 +145,13 @@ function Top() {
                 <Grid xs={12}>
                     <Grid item className={defaultStyle.rightItem} direction="row" display="flex">   
                         <Grid item className={defaultStyle.rightItem}>
-                            <Link href="http://localhost:3500" style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}}>Partner with us!</Link>
+                            <Link href="http://localhost:3500" style={{ textDecorationLine: 'none', display: "flex", paddingTop: '11px', color: '#F5CB5C'}} onMouseOver={MouseOver} onMouseOut={MouseOut}>Partner with us!</Link>
                         </Grid>    
+                        {userInfo?
                         <Grid item className={defaultStyle.rightItem}>
                             <div>
                                 <Button aria-controls="account" aria-haspopup="true" className={defaultStyle.LoginButton} display="flex" aria-expanded={openA ? 'true' : undefined} onClick={handleClickA}>
-                                    {userInfo? <Avatar sx={{ bgcolor: "#F5CB5C" }} alt={userInfo.username} src={imgSrc} sx={{ width: 32, height: 32 }}/> : <Typography className={defaultStyle.customizeText} style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C'}}>Register/Login</Typography> }
+                                    <Avatar sx={{ bgcolor: "#F5CB5C" }} alt={userInfo.username} src={imgSrc} sx={{ width: 32, height: 32 }}/>
                                     <Typography className={defaultStyle.customizeText} style={{fontFamily: ['rubik', 'sans-serif'].join(','),}}>
                                         {userInfo? userInfo.username : null} 
                                     </Typography>
@@ -154,6 +163,23 @@ function Top() {
                                 </Menu>
                             </div>
                         </Grid>
+                        :
+                        <Grid item className={defaultStyle.rightItem} paddingTop="9px">
+                            <Typography style={{whiteSpace: 'nowrap', display: 'flex',}}>
+                            <Link href="/passport" style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C', cursor: 'pointer',}} onMouseOver={MouseOver} onMouseOut={MouseOut}>
+                            Login 
+                            </Link > 
+                            <Typography variant="title" color="inherit" noWrap>&nbsp;</Typography>
+                            <Typography  style={{color: '#F5CB5C'}}>
+                            |
+                            </Typography>
+                            <Typography variant="title" color="inherit" noWrap>&nbsp;</Typography>
+                            <Link className={defaultStyle.loginRegister} href='/register' style={{textDecorationLine: 'none', display: "flex", color: '#F5CB5C', cursor: 'pointer',}} onMouseOver={MouseOver} onMouseOut={MouseOut}>
+                            Register
+                            </Link>
+                            </Typography>
+                        </Grid>
+                        }
                     </Grid>
                 </Grid>
             </Grid>

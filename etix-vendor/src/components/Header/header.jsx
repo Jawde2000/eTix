@@ -79,7 +79,6 @@ loginRegister: {
   fontFamily: ['rubik', 'sans-serif'].join(','),
   justifyContent: "flex-start",
 }
-  
 }));
 
 const Header = (props) => {

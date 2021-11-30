@@ -398,7 +398,7 @@ const DataGenerationService = () =>{
                                         </TableCell>
                                         <TableCell align="center">{row.route}</TableCell>
                                         <TableCell align="cemter">{row.serviceStartDate}</TableCell>
-                                        <TableCell align="center">{row.VendorNett}</TableCell>
+                                        <TableCell align="center">{new Intl.NumberFormat('my-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(row.VendorNett)}</TableCell>
                                         <TableCell align="center">{row.tax}</TableCell>
                                         </TableRow>
                                     );
