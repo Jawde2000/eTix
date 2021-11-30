@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: "cover",
         backgroundColor: "rgba(255,255,255,0.5)",
         backgroundBlendMode: "lighten",
-        minHeight: 600,
+        minHeight: 700,
         fontFamily: ['rubik', 'sans-serif'].join(','),
         padding: 20
     },
@@ -140,6 +140,7 @@ const UserDetail = ({props}) => {
                 vendorBankName: bankName,
                 vendorBankAcc: bankAcc,
                 vendorRegistrationNo: registrationNo,
+                vendorEmail: email,
             })
         }
 

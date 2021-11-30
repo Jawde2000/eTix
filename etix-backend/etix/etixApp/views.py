@@ -16,6 +16,8 @@ from rest_framework import status
 from etix.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
 
+from django.utils.crypto import get_random_string
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -70,7 +72,14 @@ def getUserByEmail(request, pk):
         message = {'detail': 'No record Found with given email'}
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
-# reset user password to default 123abc
+# reset user password
+
+
+def get_random_pass():
+
+    pwd = get_random_string(length=10)
+
+    return str(pwd)
 
 
 @api_view(['GET'])
@@ -80,12 +89,13 @@ def resetPassword(request, pk):
 
         user = User.objects.get(email=pk)
         serializer = UserSerializer(user, many=False)
-
-        user.password = make_password('123abc')
+        pwd = get_random_pass()
+        user.password = make_password(pwd)
         user.save()
 
         subject = 'Reset Password'
-        message = 'Dear customer, your password had been reseted to 123abc. Please login to your account and edit your password as soon as posible.'
+        message = 'Dear customer, your password had been reseted to ' + pwd + \
+            '. Please login to your account and edit your password as soon as posible.'
         recepient = str(pk)
         send_mail(subject, message, EMAIL_HOST_USER,
                   [recepient], fail_silently=False)
@@ -337,6 +347,12 @@ def updateVendor(request, pk):
     data = request.data
     vendor.vendorContact_Number = data['vendorContact_Number']
     vendor.vendorStatus = data['vendorStatus']
+    if data['vendorStatus'] == True:
+        subject = 'Account Status'
+        message = 'Dear partner, your account has been verified. You may start selling your ticket in our platform. Hope you will have a great experience on our platform.'
+        recepient = data['vendorEmail']
+        send_mail(subject, message, EMAIL_HOST_USER,
+                  [recepient], fail_silently=False)
     vendor.vendorName = data['vendorName']
     vendor.vendorBankName = data['vendorBankName']
     vendor.vendorBankAcc = data['vendorBankAcc']
