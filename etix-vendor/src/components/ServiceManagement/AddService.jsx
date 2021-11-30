@@ -220,7 +220,8 @@ const AddService = () => {
 
     const handleStartDate = (e) => {
         let x = new Date(e.target.value);
-        const today = new Date();
+
+        const today = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
         const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         let y = new Date(date);
 

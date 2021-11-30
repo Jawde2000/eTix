@@ -347,12 +347,13 @@ def updateVendor(request, pk):
     data = request.data
     vendor.vendorContact_Number = data['vendorContact_Number']
     vendor.vendorStatus = data['vendorStatus']
-    if data['vendorStatus'] == True:
-        subject = 'Account Status'
-        message = 'Dear partner, your account has been verified. You may start selling your ticket in our platform. Hope you will have a great experience on our platform.'
-        recepient = data['vendorEmail']
-        send_mail(subject, message, EMAIL_HOST_USER,
-                  [recepient], fail_silently=False)
+    if data['vendorEmail']:
+        if data['vendorStatus'] == True:
+            subject = 'Account Status'
+            message = 'Dear partner, your account has been verified. You may start selling your ticket in our platform. Hope you will have a great experience on our platform.'
+            recepient = data['vendorEmail']
+            send_mail(subject, message, EMAIL_HOST_USER,
+                      [recepient], fail_silently=False)
     vendor.vendorName = data['vendorName']
     vendor.vendorBankName = data['vendorBankName']
     vendor.vendorBankAcc = data['vendorBankAcc']
