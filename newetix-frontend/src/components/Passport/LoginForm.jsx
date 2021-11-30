@@ -1,4 +1,4 @@
-import { Grid, Container, IconButton,  Typography, Button, Box, CircularProgress, } from '@mui/material';
+import { Grid, Container, IconButton,  Typography, Button, Box, CircularProgress, Toolbar} from '@mui/material';
 import { makeStyles} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -93,7 +93,7 @@ function LoginForm() {
     const userLogin = useSelector(state => state.userLogin)
     const {errorLogin,  userInfo, success: loginSuccess, loading: loadingSuccess} = userLogin
     const dispatch = useDispatch()
-  
+    const [empty, setEmpty] = useState(false);
     let history = useHistory()
   
     useEffect(() => {
@@ -125,40 +125,40 @@ function LoginForm() {
   
     const handleLogin = (e) => {
       e.preventDefault()
-      dispatch(login(email, password))
+      if(email === "" || password === ""){
+        setEmpty(true);
+      }else{
+        dispatch(login(email, password));
+      }
     }  
 
-  //   const DialogResetSuccess = () => {
-  //     const handleClose = () => {
-  //       setPaymentFail(false);
-  //     };
+    const DialogEmpty = () => {
+      const handleClose = () => {
+        setEmpty(false);
+      };
 
-  //     return (
-  //       <Toolbar>
-  //         <Dialog
-  //           open={paymentFailure}
-  //           onClose={handleClose}
-  //         >
-  //           <DialogTitle id="alert-dialog-title">
-  //           </DialogTitle>
-  //           <DialogContent>
-  //             <DialogContentText id="alert-dialog-description">
-  //               {total <= 0?<Typography>You didn't have anything in the cart yet/Your cart is expired</Typography>:
-  //               <Typography>
-  //                   Payment failure, this is most likely to be a problem with your banking details, kindly check with PayPal
-  //               </Typography>
-  //               }
-  //             </DialogContentText>
-  //           </DialogContent>
-  //           <DialogActions>
-  //             <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
-  //               OK
-  //             </Button>
-  //           </DialogActions>
-  //         </Dialog>
-  //       </Toolbar>
-  //     );
-  // }
+      return (
+        <Toolbar>
+          <Dialog
+            open={empty}
+            onClose={handleClose}
+          >
+            <DialogTitle id="alert-dialog-title">
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Please don't let any field empty
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} autoFocus>
+              <Typography color="red">OK</Typography>
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
 
     return (
         <Container>
@@ -225,6 +225,9 @@ function LoginForm() {
             </Box>
           </Grid>
         </Grid>
+        {
+          empty?<DialogEmpty />:null
+        }
         </form>
         {
           loadingSuccess?

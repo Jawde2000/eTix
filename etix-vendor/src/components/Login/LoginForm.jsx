@@ -1,4 +1,4 @@
-import { Grid, Box, Container, IconButton, Link, Typography, Button, Paper} from '@mui/material';
+import { Grid, Box, Container, IconButton, Link, Typography, Button, Paper, Toolbar} from '@mui/material';
 import { makeStyles, styled} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -18,6 +18,11 @@ import {useDispatch, useSelector} from 'react-redux'
 import Alert from '@mui/material/Alert'
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -87,6 +92,7 @@ function LoginForm() {
   const {error,  userInfo, loading} = userLogin
   const [isLoading, setLoad] = useState(false);
   const [seconds, setSeconds] = useState(5);
+  const [empty, setEmpty] = useState(false);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -136,9 +142,41 @@ function LoginForm() {
 
   const loginBtn = (e) => {
     e.preventDefault();
-    console.log(values.email, values.password)
-    dispatch(login(values.email, values.password))
+    if(values.email === "" || values.password === ""){
+      setEmpty(true);
+    }else {
+      dispatch(login(values.email, values.password));
+    }
   }
+
+  const DialogEmpty = () => {
+    const handleClose = () => {
+      setEmpty(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={empty}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Please don't let any field empty
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+            <Typography color="red">OK</Typography>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+  }
+
 
 
   return (
@@ -210,6 +248,9 @@ function LoginForm() {
           <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress  style={{color: '#F5CB5C', fontSize: 10}}/>
           </Backdrop>:null
+          }
+          {
+            empty?<DialogEmpty />:null
           }
         </Grid>
         </form>
