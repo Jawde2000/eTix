@@ -185,6 +185,14 @@ export default function RouteQuery() {
         }
     }, [routeLookup])
 
+    const [uniqTerminal, setUniqTerminal] = useState("");
+
+    useEffect(() => {
+        if(serviceList){
+            setUniqTerminal(serviceList[0].serviceNameUniq);
+        }
+    }, [serviceList])
+
     useEffect(() => {
         if(cartData){
             if(cartData.length!==0){
@@ -219,8 +227,8 @@ export default function RouteQuery() {
 
     const handleClearFilter = () => {
         setFilteredList(null)
-        setMinPrice()
-        setMaxPrice()
+        setMinPrice(0)
+        setMaxPrice(0)
         setPriceFlt("")
         setTerminalFilter("")
 
@@ -235,6 +243,7 @@ export default function RouteQuery() {
         setMaxPrice()
         setPriceFlt("")
         setTerminalFilter("")
+        setUniqTerminal("")
         history.push(`/routes/${from}/${to}/${departureDate}`)
     }
 
@@ -551,6 +560,7 @@ export default function RouteQuery() {
                                         <Grid item xs={12} style={{fontWeight: 'bold', textDecorationLine: 'underline',}}>
                                             By Terminal
                                         </Grid>
+                                        {console.log(serviceList)}
                                         <Grid item xs={12} >
                                             <FormControl component="fieldset">
                                                 <RadioGroup
@@ -559,13 +569,14 @@ export default function RouteQuery() {
                                                     value={terminalFilter}
                                                     onChange={handleTerminalFilter}
                                                 >
-                                                    {serviceList?
+                                                    {uniqTerminal?
                                                         (
-                                                            serviceList.map((item) => {
+                                                            uniqTerminal.map((item) => {
                                                                 return(
-                                                                    <FormControlLabel value={`${item.servicedepartureTerminal} - ${item.servicearrivalTerminal}`} control={<Radio />} label={`${item.servicedepartureTerminal} - ${item.servicearrivalTerminal}`} />
+                                                                    <FormControlLabel value={item} control={<Radio />} label={item} />
                                                                 )
                                                             })
+                                                            
                                                         )
                                                         :
                                                         (

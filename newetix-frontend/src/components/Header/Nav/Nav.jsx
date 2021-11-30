@@ -57,6 +57,11 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         justifyContent:'center',
     },
+    hover: {
+        "&:hover": {
+          Color: '#F5CB5C'
+        }
+    },
 }));
 
 function Nav() {
@@ -153,9 +158,9 @@ function Nav() {
                 </Link>
             </Grid>
    
-            <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
-            <Grid onClick={handleAttract} item xs={3} className={defaultStyle.menuItems}><Link style={isAttract?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
-            <Grid onClick={handleService} item xs={3} className={defaultStyle.menuItems}><Link style={isServ?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
+            <Grid onClick={handleHome} item xs={3} className={defaultStyle.menuItems}><Link className={defaultStyle.hover} href='http://localhost:3000/' style={isHome?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>HOME</Link></Grid>
+            <Grid onClick={handleAttract} item xs={3} className={defaultStyle.menuItems}><Link className={defaultStyle.hover} style={isAttract?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>ATTRACTIONS</Link></Grid>
+            <Grid onClick={handleService} item xs={3} className={defaultStyle.menuItems}><Link className={defaultStyle.hover} style={isServ?{ textDecorationLine: 'none', color: '#f5cb5c', display: "flex",}:{ textDecorationLine: 'none', color: 'white', display: "flex",}}>SERVICE</Link>
             </Grid>     
             <Grid item xs={1} className={defaultStyle.auxContainer} justify="space-between">
                 {userInfo?<IconButton><Badge badgeContent={cartItemPax} color="primary">

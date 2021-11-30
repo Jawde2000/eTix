@@ -1,12 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button } from '@mui/material'
+import { Grid, Box, Typography, TextField, Button, Toolbar } from '@mui/material'
 import HelpIcon from '@mui/icons-material/Help';
 import ComposeForm from './ComposeForm'
 import images from '../globalAssets/scripts/bgchange';
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import { vendorList } from '../../state/actions/actions'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -39,6 +44,7 @@ function Landing() {
 
     const userLogin = useSelector(state => state.userLogin)
     const {error,  userInfo} = userLogin
+    const [openHelpC, setHelpC] = useState(false);
 
     const dispatch = useDispatch()
     
@@ -46,10 +52,40 @@ function Landing() {
 
     useEffect(() => {
         if(userInfo == null) {
-            history.push('/')
+            setHelpC(true);
         }
         dispatch(vendorList())
     },[userInfo])
+
+    const DialogHelpCannot = () => {
+        const handleClose = () => {
+          setHelpC(false);
+          history.push('/');
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={openHelpC}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Please sign in to view Help Center</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
+
     
     return (
         <Box className={classes.whole}>
@@ -80,6 +116,9 @@ function Landing() {
                 <Grid item xs={8}>
                     <ComposeForm />
                 </Grid>
+                {
+                openHelpC?<DialogHelpCannot />:null
+                }
             </Grid>
         </Box>
     );

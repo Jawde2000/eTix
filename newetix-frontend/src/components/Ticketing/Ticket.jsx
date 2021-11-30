@@ -134,7 +134,7 @@ export const Ticket = ({props}) => {
                                     <QRCode value={`id=${id}&token=${token}`} />
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="h3">{serviceName}</Typography>     
+                                    <Typography variant="h4">{serviceName}</Typography>     
                                     <Typography variant="h5">{fromLocation} - {toLocation}</Typography>     
                                     <Typography variant="h5">{vendorName}<br /><br /><br /></Typography>     
                                     <Typography variant="h6">{fName} {lName}</Typography>     
