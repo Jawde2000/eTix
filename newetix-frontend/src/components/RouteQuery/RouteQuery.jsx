@@ -110,6 +110,8 @@ export default function RouteQuery() {
     const [emptyFrom, setEmptyFrom] = useState(false);
     const [emptyTo, setEmptyTo] = useState(false);
     const [emptyDate, setEmptyDate] = useState(false);
+    const [max, setMax] = useState(false);
+    const [loginFirst, setLoginFirst] = useState(false);
 
     const handleFromInputChange = (event, value) =>  {
         setFrom(value);
@@ -401,6 +403,62 @@ export default function RouteQuery() {
         );
       }
 
+      const DialogMax = () => {
+        const handleClose = () => {
+          setMax(false);
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={max}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Maximum Quantity Reached</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
+
+      const DialogLoginF = () => {
+        const handleClose = () => {
+          setLoginFirst(false);
+        };
+    
+        return (
+          <Toolbar>
+            <Dialog
+              open={loginFirst}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Typography>Login or Register an account in order to add to cart</Typography>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+      }
+
     const handleAddToCart = (item, selectedSeat) => {
         if(loggedIn){
             console.log(cartItems);
@@ -435,7 +493,7 @@ export default function RouteQuery() {
                         return;
                     }
                     else {
-                        alert("Maximum Quantity Reached");
+                        setMax(true);
                     }
                 }
             }
@@ -450,9 +508,7 @@ export default function RouteQuery() {
             
             return;
         }
-
-        alert("Login or Register an account in order to add to cart!");
-        
+        setLoginFirst(true);
     }
 
     const handleClose = () => {
@@ -909,13 +965,19 @@ export default function RouteQuery() {
                             openCartSuccess?<DialogCart />:null
                         }
                         {
-                        emptyFrom?<DialogFromEmpty />:null
+                            emptyFrom?<DialogFromEmpty />:null
                         }
                         {
-                        emptyTo?<DialogToEmpty />:null
+                            emptyTo?<DialogToEmpty />:null
                         }
                         {
-                        emptyDate?<DialogDateEmpty />:null
+                            emptyDate?<DialogDateEmpty />:null
+                        }
+                        {
+                            loginFirst?<DialogLoginF />:null
+                        }
+                        {
+                            max?<DialogMax />:null
                         }
                     </Grid>
                 </Grid>
