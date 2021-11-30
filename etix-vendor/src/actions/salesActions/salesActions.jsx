@@ -61,33 +61,53 @@ export const listPayment = () => async (dispatch, getState) => {
         let Items = []
         for(let i of data){
             var I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.cartDetails.cartID}/`, config);
-            Items.push(I)
+            Items.push(I.data)
         }
 
         data = data.map((item, index) => (
         {
             ...item, 
-            cartItems: Items[index].data
+            cartItems: Items[index]
         }))
 
         console.log(data);
 
         let result2 = []
         for(let i of data){
-            let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartItems[0].service}/`, config);
-            result2.push(l);
+            if(i.cartItems.length!=0){
+                let l = await axios.get(`http://127.0.0.1:8000/api/service/${i.cartItems[0].service}/`, config);
+                result2.push(l);
+            }else{
+                result2.push(null);
+            }
+            
         }
 
-        data = data.map((item, index) => ({
-            ...item,
-            serviceDetails: result2[index].data
-        }))
+        console.log(result2)
+
+        data = data.map((item, index) => {
+            if(result2[index]){
+                return({
+                    ...item,
+                    serviceDetails: result2[index].data
+                })
+            }
+            else{
+                return ({
+                    ...item,
+                    serviceDetails: {
+                        vendor: 123
+                    }
+                })
+            }
+            })
 
         console.log(data);
-
         data = data.filter((item) => {
             return item.serviceDetails.vendor === userInfo.vendorInfo.vendorID;
         })
+
+        console.log(data)
         
         dispatch({
             type: PAYMENT_LIST_SUCCESS,
