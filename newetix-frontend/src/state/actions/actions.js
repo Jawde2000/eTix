@@ -25,6 +25,16 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
             return item.serviceStartDate === departureDate
         })
 
+        let serviceNamess = [];
+
+        for(let i of data){
+            serviceNamess.push(i.servicedepartureTerminal + " - " + i.servicearrivalTerminal);
+        }
+
+        var unique = serviceNamess.filter((v, i, a) => a.indexOf(v) === i)
+
+        console.log(unique);
+
         data = data.map((item) => ({
             ...item,
             searchedFrom: locationFrom,
@@ -94,6 +104,7 @@ export const findRoute = (locationFrom, locationTo, departureDate) => async(disp
         data = data.map((item,index) => ({
             ...item,
             minPrice : minprice[index],
+            serviceNameUniq: unique,
         }))
 
         dispatch({type: actions.SEARCH_LOCATION_REQUEST})
