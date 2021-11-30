@@ -68,6 +68,8 @@ function HelpManagement() {
     const [row, setRow] = useState([]);
     const [rows, setRows] = useState([]);
     const [openDel, setOpenDel] = useState(false);
+    const [del, setdel] = useState(false);
+    const [del2, setDel2] = useState(false);
 
     const columns = [
       { field: 'id', headerName: 'Help ID', headerAlign: 'center',width: 130 },
@@ -161,7 +163,12 @@ function HelpManagement() {
 
     useEffect(() => {
       if(successDelete){
-        setOpenDel(true);
+        if(del){
+          setOpenDel(true);
+        }
+        if(del2){
+          setOpenDel(true);
+        }
       }
     }, [successDelete])
 
@@ -210,10 +217,13 @@ function HelpManagement() {
       const handleClose = () => {
         ids = null;
         setOpen(false);
+        dispatch({type: HELP_DELETE_RESET});
       };
     
       const handleDelete = () => {
         dispatch(deleteHelp(ids.ids));
+        setDel2(true);
+        setdel(true);
         ids = null;
         setSelection([]);
       }
@@ -265,7 +275,7 @@ function HelpManagement() {
         select.map((ids) => {
           dispatch(deleteHelp(ids.id));
         })
-        
+        setDel2(true);
         setOpen(false);
         setSelection([]);
       }
@@ -311,8 +321,8 @@ function HelpManagement() {
 
     const DialogDel = () => {
       const handleClose = () => {
-        dispatch({type: HELP_DELETE_RESET});
         setOpenDel(false);
+        dispatch({type: HELP_DELETE_RESET});
         history.push(`/menu/helpmanage`);
       };
 
@@ -332,7 +342,7 @@ function HelpManagement() {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose} autoFocus>
-                OK
+                <Typography color="red">OK</Typography>
               </Button>
             </DialogActions>
           </Dialog>
