@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Toolbar} from '@mui/material';
+import { Grid, Container, Box, Tooltip, IconButton, TextField, Button, Toolbar, Typography} from '@mui/material';
 import {makeStyles} from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
@@ -54,6 +54,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+
+
 const HelpdeskDetail = ({props}) => {
     const classes = useStyles();
 
@@ -73,10 +75,10 @@ const HelpdeskDetail = ({props}) => {
     const {loading: loadingSender, userD: senderD} = userDetail
 
     const helpSave = useSelector(state => state.helpSave)
-    const {success: saveSuccess} = helpSave
+    const {success: saveSuccess, loading: saveLoading} = helpSave
 
     const helpSend = useSelector(state => state.helpSend)
-    const {success: sendSuccess} = helpSend
+    const {success: sendSuccess, loading: sendLoading} = helpSend
 
     const deleteHelplist = useSelector(state => state.deleteHelplist)
     const {success: deleteSuccess, error: deleteError} = deleteHelplist
@@ -121,20 +123,68 @@ const HelpdeskDetail = ({props}) => {
         }
     }, [helpD, id, senderD])
 
+    const [sendR, setSendR] = useState(false);
+
     useEffect(() => {
         if(sendRes && !sendSuccess){
             dispatch(sendResponse(sendRes, status, id))
         }
 
         if(sendSuccess){
-            alert("Send Respond Success")
-            dispatch({type: HELP_SEND_RESPONSE_RESET});
-            dispatch({type: USER_DETAIL_RESET});
-            dispatch({type: HELP_DETAIL_RESET});
-            history.push(`/menu/helpmanage`)
+            setSendR(true);
         }
 
     }, [sendRes, sendSuccess])
+
+    const DialogResetSuccess = () => {
+        const handleClose = () => {
+          setSendR(false);
+          dispatch({type: HELP_SEND_RESPONSE_RESET});
+            dispatch({type: USER_DETAIL_RESET});
+            dispatch({type: HELP_DETAIL_RESET});
+          history.push('/menu/helpmanage');
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={sendR}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              {sendSuccess?
+              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Successful Password Reset</div>:
+              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Fail to Password Reset</div>
+              }
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {sendSuccess?
+                  <div>    
+                  <Typography>Response sent to user!</Typography>
+                  </div>
+                  :
+                  <Typography>
+                      Fail to send response.
+                  </Typography>
+                  }
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                {sendSuccess?
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+                :
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+                }
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
 
     useEffect(() => {
         if(respondedUser)
@@ -145,14 +195,63 @@ const HelpdeskDetail = ({props}) => {
         
     }, [respondedUser])
 
+    const [saveR, setSaveR] = useState(false);
+
     useEffect(() => {
         if(saveSuccess && !sendSuccess){
-            alert("Saved successfully!");
-            dispatch({type: HELP_SAVE_RESET});
-            history.push(`/menu/helpdesk/${id}`)
+            setSaveR(true);
+           
         }
         
     }, [saveSuccess])
+
+    const DialogSaveSuccess = () => {
+        const handleClose = () => {
+          setSaveR(false);
+          dispatch({type: HELP_SAVE_RESET});
+          history.push(`/menu/helpmanage/${id}`)
+        };
+  
+        return (
+          <Toolbar>
+            <Dialog
+              open={saveR}
+              onClose={handleClose}
+            >
+              <DialogTitle id="alert-dialog-title">
+              </DialogTitle>
+              {saveSuccess?
+              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Successful save status</div>:
+              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Fail to save status</div>
+              }
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {saveSuccess?
+                  <div>    
+                  <Typography>Saved Helps</Typography>
+                  </div>
+                  :
+                  <Typography>
+                      Fail to save
+                  </Typography>
+                  }
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                {saveSuccess?
+                <Button onClick={handleClose} autoFocus style={{color: 'green'}}>
+                  OK
+                </Button>
+                :
+                <Button onClick={handleClose} autoFocus style={{color: 'red'}}>
+                  OK
+                </Button>
+                }
+              </DialogActions>
+            </Dialog>
+          </Toolbar>
+        );
+    }
 
     const DialogDelete = () => {
       
@@ -547,6 +646,33 @@ const HelpdeskDetail = ({props}) => {
             }
             
         </Container>
+        {
+            sendLoading?
+            <Box sx={{ display: 'flex' }}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress  style={{color: '#F5CB5C'}}/>    
+            </Backdrop>
+            </Box>
+            :
+            null
+            }
+            {
+                sendR?<DialogResetSuccess />:null
+            }
+
+        {
+            saveLoading?
+            <Box sx={{ display: 'flex' }}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress  style={{color: '#F5CB5C'}}/>    
+            </Backdrop>
+            </Box>
+            :
+            null
+            }
+            {
+                saveR?<DialogSaveSuccess />:null
+            }
         </Container>
     )
 }
