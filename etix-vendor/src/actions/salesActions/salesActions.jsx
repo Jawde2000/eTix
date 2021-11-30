@@ -49,8 +49,6 @@ export const listPayment = () => async (dispatch, getState) => {
             let r = await axios.get(`http://127.0.0.1:8000/api/cart/${i.cart}/`, config);
             result.push(r)
         } 
-
-        console.log(result);
         
         data = data.map((item, index) => (
         {
@@ -59,15 +57,12 @@ export const listPayment = () => async (dispatch, getState) => {
         }))
         
         console.log(result);
-        console.log(data);
 
         let Items = []
         for(let i of data){
-            var I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.cartDetails.cart}/`, config);
-            Items.push(I)
+            var I = await axios.get(`http://127.0.0.1:8000/api/cart/retrieve/${i.cartDetails.cartID}/`, config);
+            Items.push(I.data)
         }
-
-        console.log(Items);
 
         data = data.map((item, index) => (
         {
