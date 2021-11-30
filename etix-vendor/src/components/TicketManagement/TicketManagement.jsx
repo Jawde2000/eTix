@@ -527,7 +527,7 @@ function TicketManagement() {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                The message(s) is deleted
+                The ticket(s) is deleted
               </DialogContentText>
             </DialogContent>
             <DialogActions>

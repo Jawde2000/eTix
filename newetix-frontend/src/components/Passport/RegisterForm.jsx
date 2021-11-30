@@ -201,7 +201,7 @@ function RegisterForm() {
     return (
         <Container>
         {valid && <Grid sx={{maxWidth: 350, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">The email is not a valid email</Alert></Grid>}
-        {errorRegister && <Grid sx={{maxWidth: 350, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">Username or email must be unique</Alert></Grid>}
+        {errorRegister && <Grid sx={{maxWidth: 350, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">Username or email already exist</Alert></Grid>}
         <Grid xs={12} container>
             <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
             label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}

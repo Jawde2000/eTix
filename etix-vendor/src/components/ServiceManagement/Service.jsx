@@ -24,6 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Backdrop from '@mui/material/Backdrop';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -166,6 +167,7 @@ const Service = ({props}) => {
     const [seat, setSeat] = useState()
     const [locationFrom, setLocationFrom] = useState()
     const [locationTO, setLocationTO] = useState()
+    var tomorrow = moment().add(1, 'days').format(moment.HTML5_FMT.DATE);
 
     useEffect(() => {
         if(successSave ){
@@ -859,6 +861,7 @@ const Service = ({props}) => {
                                                         type="date"
                                                         size="small"
                                                         InputProps={{
+                                                            min: tomorrow,
                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                                         }} 
                                                     />
@@ -878,6 +881,7 @@ const Service = ({props}) => {
                                                         type="date"
                                                         size="small"
                                                         InputProps={{
+                                                            min: tomorrow,
                                                             style: {fontFamily: ['rubik', 'sans-serif'].join(',')}
                                                         }} 
                                                     />

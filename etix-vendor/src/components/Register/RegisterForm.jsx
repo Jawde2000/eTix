@@ -149,22 +149,17 @@ function RegisterForm() {
               var deliveribility = json.deliverability;
               var mx_found = json.is_mx_found.value;
               var quality_score = json.quality_score;
+              var formats = json.is_valid_format.value;
               console.log(xmlHttp.responseText);
-              if(deliveribility === 'UNDELIVERABLE'){
+              if(formats === false){
                 setValid(true);
-                // console.log(valid);
               }else{
                 // console.log(delivery);
-                if(delivery === true){
-                  if(mx_found === true){
-                    setValid(false);
-                    dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
-                  }else{
-                    setValid(true);
+                  setValid(false);
+                  dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
+                  if(!success){
+                    setwEmail(true);
                   }
-                }else{
-                  setValid(true);
-                }
               }
             }
         }
@@ -284,7 +279,7 @@ function RegisterForm() {
         </Grid>
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
-          label={'email'} variant="filled" InputProps={{ disableUnderline: true }} type="email"
+          label={'email'} variant="filled" InputProps={{ disableUnderline: true }} 
           value={values.email} onChange={handleChange('email')} required
           ></TextField>
         </Grid>  
