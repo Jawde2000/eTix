@@ -93,8 +93,9 @@ function RegisterForm() {
   const [bankBrand, setBank] = useState();
   const [wEmail, setwEmail] = useState(false);
   const [passDiff, setpassDiff] = useState(false);
-  const [isEmailExist, setEmailX] = useState();
+  const [isLoading, setLoading] = useState(false);
   const [valid, setValid] = useState(false);
+  const [empty, setEmpty] = useState(false);
 
   const userRegister = useSelector(state => state.userRegister)
   const {success, loading} = userRegister
@@ -105,6 +106,11 @@ function RegisterForm() {
     if(success) {
       dispatch({type: USER_REGISTER_RESET});
       history.push('/register/registersuccess');
+    }
+    if(!success){
+      if(isLoading === true){
+        setwEmail(true);
+      }
     }
   }, [success])
 
@@ -137,6 +143,8 @@ function RegisterForm() {
     event.preventDefault();
     if (values.password !== values.confirmPassword) {
       setpassDiff(true);
+    } else if(values.email === "" || values.password === "" || values.businessId === "" || bankBrand === "" || phone === "" || values.username === "") {
+      setEmpty(true)
     }
     else {
       const httpGetAsync = (url) => {
@@ -157,9 +165,7 @@ function RegisterForm() {
                 // console.log(delivery);
                   setValid(false);
                   dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
-                  if(!success){
-                    setwEmail(true);
-                  }
+                  setLoading(true);
               }
             }
         }
@@ -172,9 +178,39 @@ function RegisterForm() {
     }
   }
 
+  const DialogEmpty = () => {
+    const handleClose = () => {
+      setEmpty(false);
+    };
+
+    return (
+      <Toolbar>
+        <Dialog
+          open={empty}
+          onClose={handleClose}
+        >
+          <DialogTitle id="alert-dialog-title">
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Please don't let any field empty
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+            <Typography color="red">OK</Typography>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Toolbar>
+    );
+  }
+
+
   const DialogWrongEmail = () => {
       const handleClose = () => {
         setwEmail(false);
+        setLoading(false);
       };
 
       return (
@@ -265,7 +301,6 @@ function RegisterForm() {
 
   return (
       <Container>
-        <form onSubmit={submit}>
         <Grid xs={12} container padding={2} justifyContent="center" justifyItems="center">
             <Typography style={{fontSize: 15, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
                 Create your eTix business account 
@@ -274,19 +309,19 @@ function RegisterForm() {
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Company'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.username} onChange={handleChange('username')} required
+          value={values.username} onChange={handleChange('username')} 
           ></TextField>
         </Grid>
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'email'} variant="filled" InputProps={{ disableUnderline: true }} 
-          value={values.email} onChange={handleChange('email')} required
+          value={values.email} onChange={handleChange('email')} 
           ></TextField>
         </Grid>  
         <Grid xs={12} container padding={2}>
           <TextField sx={{ m: 1, width: '40ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Business Number'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.businessId} onChange={handleChange('businessId')} required 
+          value={values.businessId} onChange={handleChange('businessId')} 
           inputProps={{
             maxLength: 15,
             minLength: 7,
@@ -307,7 +342,7 @@ function RegisterForm() {
           <Grid xs={8} item>
           <TextField sx={{ m: 1, width: '26.5ch', height: "5.6ch"}} className={defaultStyle.inputbackground}
           label={'Bank Number'} variant="filled" InputProps={{ disableUnderline: true }}
-          value={values.bank} onChange={handleChange('bank')} required
+          value={values.bank} onChange={handleChange('bank')} 
           inputProps={{
             maxLength: 16,
             minLength: 6,
@@ -322,7 +357,7 @@ function RegisterForm() {
         data-cy="user-phone"
         defaultCountry={"my"}
         onlyCountries={["my", "sg"]}
-        value={phone} required
+        value={phone} 
         onChange={setPhone}
         sx={{ m: 1, width: '39ch', height: "5.6ch"}} className={defaultStyle.phonebackground}
           label={'Phone Number'} variant="filled" InputProps={{ disableUnderline: true }}
@@ -333,7 +368,7 @@ function RegisterForm() {
           <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
           <FilledInput         
             disableUnderline="true"
-            variant="filled" required
+            variant="filled" 
             id="filled-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}
@@ -358,7 +393,7 @@ function RegisterForm() {
           <InputLabel htmlFor="filled-adornment-password">Confirm your password</InputLabel>
           <FilledInput         
             disableUnderline="true"
-            variant="filled" required
+            variant="filled" 
             id="filled-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.confirmPassword}
@@ -388,6 +423,7 @@ function RegisterForm() {
            variant="contained"
            style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
            startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
+           onClick={submit}
            >
           <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
             Sign Up
@@ -396,23 +432,25 @@ function RegisterForm() {
           </Grid>
         </Grid>
         <Grid>
-          {loading? 
+        </Grid>
+        { loading? 
           <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress  style={{color: '#F5CB5C'}}/>
           </Backdrop>
           :null
           }
-        </Grid>
-        </form>
-        {
-          wEmail?<DialogWrongEmail />:null
-        }
-        {
+          {
           passDiff?<DialogDifferentPass />:null
-        }
-        {
+          }
+          {
           valid?<DialogValidEmail />:null
-        }
+          }
+          {
+          empty?<DialogEmpty />:null
+          }
+          {
+            wEmail?<DialogWrongEmail />:null
+          }
       </Container>
   );
 
