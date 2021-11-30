@@ -1,11 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@mui/styles';
-import { Grid, Box, Typography, TextField, Button, Autocomplete } from '@mui/material'
+import { Grid, Box, Typography, TextField, Button, Autocomplete, Toolbar } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
 import { borderRadius } from '@mui/system';
-
 
 const useStyles = makeStyles((theme) => ({
     whole: {
@@ -59,13 +58,6 @@ function Compose() {
     const handleSubjectChanges = (event) => {
         setSubject(event.target.value)
     }
-
-    useEffect(() => {
-        if(!userInfo) {
-            history.push('/')
-            alert("Please sign in to view Help Center")
-        }
-    })
 
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>

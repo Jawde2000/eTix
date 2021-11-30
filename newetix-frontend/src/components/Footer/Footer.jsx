@@ -1,7 +1,13 @@
 import React from 'react'
 import { Link, Container, Grid, Box } from '@mui/material'
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 function Footer() {
+    
     return (
         <footer>
             <Box px={{xs: 3, sm:7}} py={{xs:5, sm:7}} style={{background: 'linear-gradient(to right, #0f0c29, #302b63, #24243e)', fontFamily: ['rubik', 'sans-serif'].join(','), color: 'white'}}>
