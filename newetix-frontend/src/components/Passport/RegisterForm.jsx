@@ -139,27 +139,16 @@ function RegisterForm() {
                 if (xmlHttp.readyState === 4 && xmlHttp.status === 200){
                   console.log(xmlHttp.responseText);
                   var json = JSON.parse(xmlHttp.responseText);
-                  var results = json.is_free_email.value;
-                  var delivery = json.is_smtp_valid.value;
-                  var deliveribility = json.deliverability;
-                  var mx_found = json.is_mx_found.value;
-                  var quality_score = json.quality_score;
-                  console.log(results);
-                  if(deliveribility === 'UNDELIVERABLE'){
+                  var formats = json.is_valid_format.value;
+                  console.log(xmlHttp.responseText);
+                  if(formats === false){
                     setValid(true);
                   }else{
-                    if(delivery === true){
-                      if(mx_found === true){
-                        setValid(false);
-                        dispatch(register(email, password, username, phonenumber));
-                      }else{
-                        setValid(true);
-                      }
-                    }else{
-                      setValid(true);
-                    }
+                // console.log(delivery);
+                  setValid(false);
+                  dispatch(register(email, values.password, username, phonenumber));
                   }
-                }
+                  }
             }
             xmlHttp.open("GET", url, true); // true for asynchronous
             // console.log(url);
@@ -264,6 +253,16 @@ function RegisterForm() {
                 Register
             </Typography>
             </Button>
+            {
+            loadingRe?
+            <Box sx={{ display: 'flex' }}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+            <CircularProgress  style={{color: '#F5CB5C'}}/>    
+            </Backdrop>
+            </Box>
+            :
+            null
+            }
         </Grid>
         <Grid item xs={12} >
             <Link to="/passport" className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 18}}>Already have an Account?</Link>
@@ -271,16 +270,6 @@ function RegisterForm() {
         </Grid>
         {
           empty?<DialogEmpty />:null
-        }
-        {
-          loadingRe?
-          <Box sx={{ display: 'flex' }}>
-          <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
-          <CircularProgress  style={{color: '#F5CB5C'}}/>    
-          </Backdrop>
-          </Box>
-          :
-          null
         }
         </Container>
     );

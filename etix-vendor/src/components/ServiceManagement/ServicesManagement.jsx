@@ -323,7 +323,7 @@ function ServicesManagement() {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                The message(s) is deleted
+                The service(s) is deleted
               </DialogContentText>
             </DialogContent>
             <DialogActions>
