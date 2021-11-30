@@ -316,12 +316,42 @@ const Service = ({props}) => {
         setServiceDesc(event.target.value)
     }
 
+    const getTomorrow = () => {
+        var currentDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+        var day = currentDate.getDate()
+        var month = currentDate.getMonth() + 1
+        var year = currentDate.getFullYear()
+        var tomorrow = year + '-' + month + '-' + day
+
+        return(tomorrow)
+    }
+
+
     const handleChangeStart = (event) => {
-        setStartDate(event.target.value)
+        let tmr = getTomorrow();
+        let x = new Date(tmr);
+        let y = new Date(event.target.value)
+
+        console.log(tmr)
+
+        if(y>=x){
+            setStartDate(event.target.value);
+        }
+        else {
+            return;
+        }
     }
 
     const handleChangeEnd = (event) => {
-        setEndDate(event.target.value)
+        let x = new Date(startDate);
+        let y = new Date(event.target.value);
+
+        if(y<x){
+            alert("End date cannot be greater than start date")
+        }
+        else{
+            setEndDate(event.target.value)
+        }
     }
 
     const handleChangeTime = (event) => {
