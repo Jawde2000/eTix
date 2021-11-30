@@ -96,6 +96,7 @@ const AddComment = ({props}) => {
       
         const handleClose = () => {
           setOpen(false);
+          dispatch({type: HELP_SEND_HELP_RESET});
           history.push(`/menu/helpmanage`);
         };
 
