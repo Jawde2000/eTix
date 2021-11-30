@@ -1,4 +1,4 @@
-import { Grid, Container, IconButton,  Typography, Button} from '@mui/material';
+import { Grid, Container, IconButton,  Typography, Button, Toolbar, Box, CircularProgress} from '@mui/material';
 import { makeStyles} from '@mui/styles';
 import React, {useState, useEffect} from 'react';
 import FilledInput from '@mui/material/FilledInput';
@@ -80,9 +80,10 @@ function RegisterForm() {
       password: '',
       showPassword: false,
     });
-    const [registerSucc, setRegisterSucc] = useState(false);
-    const userLogin = useSelector(state => state.register)
-    const {errorRegister,  userInfo, loading: loadingRe, success: successRe} = userLogin
+    const [empty, setEmpty] = useState(false);
+    const [valid, setValid] = useState(false);
+    const Register = useSelector(state => state.register)
+    const {errorRegister,  userInfo, loading: loadingRe, success: successRe} = Register
     const dispatch = useDispatch()
     let history = useHistory()
   
@@ -126,47 +127,81 @@ function RegisterForm() {
     const handleChangeHP = (event) => {
         setPhonenumber(event.target.value);
     }
+
     const handleLogin = (e) => {
         e.preventDefault()
-        dispatch(register(email, password, username, phonenumber))
+        if(email === "" || values.password === "" || phonenumber === "" || username === ""){
+          setEmpty(true);
+        }else{
+          const httpGetAsync = (url) => {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState === 4 && xmlHttp.status === 200){
+                  console.log(xmlHttp.responseText);
+                  var json = JSON.parse(xmlHttp.responseText);
+                  var results = json.is_free_email.value;
+                  var delivery = json.is_smtp_valid.value;
+                  var deliveribility = json.deliverability;
+                  var mx_found = json.is_mx_found.value;
+                  var quality_score = json.quality_score;
+                  console.log(results);
+                  if(deliveribility === 'UNDELIVERABLE'){
+                    setValid(true);
+                  }else{
+                    if(delivery === true){
+                      if(mx_found === true){
+                        setValid(false);
+                        dispatch(register(email, password, username, phonenumber));
+                      }else{
+                        setValid(true);
+                      }
+                    }else{
+                      setValid(true);
+                    }
+                  }
+                }
+            }
+            xmlHttp.open("GET", url, true); // true for asynchronous
+            // console.log(url);
+            xmlHttp.send(null);
+          }
+          var url = "https://emailvalidation.abstractapi.com/v1/?api_key=6f9323c274554881a997cc90a8e34c1f&email=" + email;
+          httpGetAsync(url);
+        }
     }  
 
-    // const DialogRegisterSuccess = () => {
-    //   const handleClose = () => {
-    //     setPaymentFail(false);
-    //   };
+    const DialogEmpty = () => {
+      const handleClose = () => {
+        setEmpty(false);
+      };
 
-    //   return (
-    //     <Toolbar>
-    //       <Dialog
-    //         open={paymentFailure}
-    //         onClose={handleClose}
-    //       >
-    //         <DialogTitle id="alert-dialog-title">
-    //         </DialogTitle>
-    //         <DialogContent>
-    //           <DialogContentText id="alert-dialog-description">
-    //             {successRe?
-    //             <Typography>Register Success</Typography>:
-    //             <Typography>
-    //                 Register Fail
-    //             </Typography>
-    //             }
-    //           </DialogContentText>
-    //         </DialogContent>
-    //         <DialogActions>
-    //           <Button onClick={handleClose} autoFocus style={success?{color: 'green'}:{color: 'red'}}>
-    //             OK
-    //           </Button>
-    //         </DialogActions>
-    //       </Dialog>
-    //     </Toolbar>
-    //   );
-    // }
+      return (
+        <Toolbar>
+          <Dialog
+            open={empty}
+            onClose={handleClose}
+          >
+            <DialogTitle id="alert-dialog-title">
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Please don't let any field empty
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} autoFocus>
+              <Typography color="red">OK</Typography>
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
 
     return (
         <Container>
-        {errorRegister && <Grid sx={{maxWidth: 290, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">User with this email already exist</Alert></Grid>}
+        {valid && <Grid sx={{maxWidth: 350, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">The email is not a valid email</Alert></Grid>}
+        {errorRegister && <Grid sx={{maxWidth: 350, maxHeight: 30, marginBottom: 1.5}} item><Alert severity="error">Username or email must be unique</Alert></Grid>}
         <Grid xs={12} container>
             <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
             label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
@@ -208,6 +243,9 @@ function RegisterForm() {
             <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="text"
             label={'Phone Number'} variant="filled" InputProps={{ disableUnderline: true }}
             value={phonenumber} onChange={handleChangeHP}
+            inputProps={{
+              maxLength: 10,
+            }}
             ></TextField>
         </Grid>
         <Grid item xs={12}>
@@ -218,8 +256,7 @@ function RegisterForm() {
             type="submit"
             color='primary'
             variant="contained"
-            autoFocus
-            onClick={handleLogin}
+            autoFocus onClick={handleLogin}
             style={{fontFamily: ['rubik', 'sans-serif'].join(','), backgroundColor: '#F5CB5C'}}
             startIcon={<ArrowForwardIosIcon style={{fontSize: 25, color: "black"}}/>}
             >
@@ -232,7 +269,19 @@ function RegisterForm() {
             <Link to="/passport" className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 18}}>Already have an Account?</Link>
           </Grid>
         </Grid>
-
+        {
+          empty?<DialogEmpty />:null
+        }
+        {
+          loadingRe?
+          <Box sx={{ display: 'flex' }}>
+          <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress  style={{color: '#F5CB5C'}}/>    
+          </Backdrop>
+          </Box>
+          :
+          null
+        }
         </Container>
     );
 

@@ -145,14 +145,26 @@ function RegisterForm() {
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200){
               var json = JSON.parse(xmlHttp.responseText);
               var results = json.is_free_email.value;
-              if(results === false){
-                setValid(false);
-              }else{
+              var delivery = json.is_smtp_valid.value;
+              var deliveribility = json.deliverability;
+              var mx_found = json.is_mx_found.value;
+              var quality_score = json.quality_score;
+              console.log(xmlHttp.responseText);
+              if(deliveribility === 'UNDELIVERABLE'){
                 setValid(true);
-              }
-              // console.log(results.is_free_email.value);
-              if(results !== false){
-                dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
+                // console.log(valid);
+              }else{
+                // console.log(delivery);
+                if(delivery === true){
+                  if(mx_found === true){
+                    setValid(false);
+                    dispatch(register(values.email, values.password, values.businessId, values.bank, bankBrand, phone, values.username));
+                  }else{
+                    setValid(true);
+                  }
+                }else{
+                  setValid(true);
+                }
               }
             }
         }
@@ -160,7 +172,7 @@ function RegisterForm() {
         console.log(url);
         xmlHttp.send(null);
       }
-      var url = "https://emailvalidation.abstractapi.com/v1/?api_key=4261648ec1aa4b8292b186606132c4da&email=" + values.email;
+      var url = "https://emailvalidation.abstractapi.com/v1/?api_key=6f9323c274554881a997cc90a8e34c1f&email=" + values.email;
       httpGetAsync(url);
     }
   }
@@ -180,7 +192,7 @@ function RegisterForm() {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                The email is exist. Please try another email
+                Username or email must be unique. Please try again
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -195,13 +207,13 @@ function RegisterForm() {
 
   const DialogValidEmail = () => {
     const handleClose = () => {
-      setValid(true);
+      setValid(false);
     };
 
     return (
       <Toolbar>
         <Dialog
-          open={valid === false}
+          open={valid}
           onClose={handleClose}
         >
           <DialogTitle id="alert-dialog-title">
@@ -250,7 +262,10 @@ function RegisterForm() {
 }
 
   const banks = [
-    "Maybank", "OCBC", "CIMB", "Affin", "RHB", "HSBC", "AmBank"
+    "Maybank", "OCBC", "CIMB", "Affin", "RHB", "HSBC", "AmBank", 'Public Bank Berhad', "Hong Leong Bank", "UOB",
+    "Bank Islam Malaysia", "Affin Bank", "	Alliance Bank", "Standard Chartered Bank", 
+    "MBSB Bank Berhad", "Citibank", "BSN", "Bank Muamalat Malaysia Berhad", "	Agrobank", "Al-Rajhi Malaysia", 
+    "Co-op Bank Pertama", "Bank of Singapore"
   ]
 
   return (
@@ -392,17 +407,17 @@ function RegisterForm() {
           </Backdrop>
           :null
           }
-          {
-            wEmail?<DialogWrongEmail />:null
-          }
-          {
-            passDiff?<DialogDifferentPass />:null
-          }
-          {
-            valid === false?<DialogValidEmail />:null
-          }
         </Grid>
         </form>
+        {
+          wEmail?<DialogWrongEmail />:null
+        }
+        {
+          passDiff?<DialogDifferentPass />:null
+        }
+        {
+          valid?<DialogValidEmail />:null
+        }
       </Container>
   );
 
