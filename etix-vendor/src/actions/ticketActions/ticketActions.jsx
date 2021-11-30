@@ -203,7 +203,7 @@ export const ticketUsed = (info) => async (dispatch, getState) => {
         
 
         isTicketExist = ticket.data.filter((tk) => {
-            if (tk.used === false && tk.ticketID === ticketid && tk.vendor == userInfo.vendorInfo.vendorID) {
+            if (tk.used === false && tk.ticketID === ticketid && tk.vendor == userInfo.vendorInfo.vendorID && tk.Token === token) {
                 return true;
             }    
         })
