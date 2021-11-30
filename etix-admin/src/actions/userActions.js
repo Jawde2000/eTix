@@ -546,6 +546,7 @@ export const updateVendor = (user, vendor, id) => async (dispatch, getState) => 
             config
         )
 
+        console.log(vendor);
         var { data2 } = await axios.put(
             `http://127.0.0.1:8000/api/user/vendor/update/${id}/`,
             vendor,

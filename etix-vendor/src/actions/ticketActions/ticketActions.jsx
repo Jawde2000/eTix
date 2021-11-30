@@ -58,7 +58,7 @@ export const ticketlist = () => async (dispatch, getState) => {
         )
 
         data2 = data2.data;
-        console.log(data2);
+        //console.log(data2);
 
         var seatInfo = [];
         var locationFD = [];
@@ -68,29 +68,39 @@ export const ticketlist = () => async (dispatch, getState) => {
         var cartItem = [];
         var userDetails = [];
 
-        // console.log(data);
+        //console.log(data);
+
 
         for(let item of data){
             let carts = await axios.get(`http://127.0.0.1:8000/api/cart/${item.cart}/`, config);
             cart.push(carts.data);
         } 
         
-        // console.log(cart);
+        //console.log(cart);
 
         for(let item of cart){
             let cartI = await axios.get(`http://127.0.0.1:8000/api/user/cartitems/${item.cartID}/`, config);
-            cartItem.push(cartI.data);
+            
+            if ((cartI.data).length == 1) {
+                cartItem.push(cartI.data[0]);
+            } else if ((cartI.data).length > 1) {
+                for (let cItem in cartI.data){
+                    cartItem.push(cartI.data[cItem])
+                }
+            } 
 
             let UserInfo = await axios.get(`http://127.0.0.1:8000/api/user/${item.user}/`, config);
             userDetails.push(UserInfo.data)
         }
+
+        //console.log(cartItem)
 
         for(let item of cartItem){
             let services = await axios.get(`http://127.0.0.1:8000/api/service/${item.service}/`, config);
             service.push(services.data);
         }
 
-        console.log(service);
+        //console.log(service);
 
         for(let item of service){
             let seat = await axios.get(`http://127.0.0.1:8000/api/seat/${item.seat}/`, config);
@@ -109,6 +119,7 @@ export const ticketlist = () => async (dispatch, getState) => {
         // console.log(cartItem);
         // console.log(service);
         // console.log(userDetails)
+        //console.log(data)
 
         data = data.map((item, index) => ({
             ...item,
@@ -118,6 +129,7 @@ export const ticketlist = () => async (dispatch, getState) => {
             serviceInfo: service[index],
             customerDetails: userDetails[index],
         }))
+
 
         // console.log(data);
 
