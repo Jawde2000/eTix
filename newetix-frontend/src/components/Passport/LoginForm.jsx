@@ -13,6 +13,7 @@ import {Link, useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
 import Alert from '@mui/material/Alert'
 import { login } from '../../state/actions/actions'
+import { USER_LOGOUT } from '../../state/actions/actionConstants';
 import Backdrop from '@mui/material/Backdrop';
 import DeleteOutlineSharpIcon from '@mui/icons-material/DeleteOutlineSharp';
 import DialogActions from '@mui/material/DialogActions';
@@ -94,6 +95,7 @@ function LoginForm() {
     const {errorLogin,  userInfo, success: loginSuccess, loading: loadingSuccess} = userLogin
     const dispatch = useDispatch()
     const [empty, setEmpty] = useState(false);
+    const [valid, setValid] = useState(false);
     let history = useHistory()
   
     useEffect(() => {
@@ -124,13 +126,27 @@ function LoginForm() {
     }
   
     const handleLogin = (e) => {
-      e.preventDefault()
+      e.preventDefault();
+      if(errorLogin){
+        dispatch({type: USER_LOGOUT});
+      }
+
       if(email === "" || password === ""){
         setEmpty(true);
+      }else if(isEmail(email)){
+        setValid(true);
       }else{
         dispatch(login(email, password));
       }
     }  
+
+    function isEmail(val) {
+      let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if(!regEmail.test(val)){
+        return true;
+      }
+      return false;
+    }
 
     const DialogEmpty = () => {
       const handleClose = () => {
@@ -160,12 +176,40 @@ function LoginForm() {
       );
     }
 
+    const DialogValid = () => {
+      const handleClose = () => {
+        setValid(false);
+      };
+
+      return (
+        <Toolbar>
+          <Dialog
+            open={valid}
+            onClose={handleClose}
+          >
+            <DialogTitle id="alert-dialog-title">
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+              The email is not a valid email
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} autoFocus>
+              <Typography color="red">OK</Typography>
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Toolbar>
+      );
+    }
+
     return (
         <Container>
         {errorLogin && <Grid sx={{maxWidth: 290}} container><Alert severity="error">No active account found with the give credentials.</Alert></Grid>}
         <form onSubmit={handleLogin}>
         <Grid xs={12} container>
-            <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground} type="email"
+            <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
             label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
             value={email} onChange={handleChangeEmail}
             ></TextField>
@@ -225,10 +269,10 @@ function LoginForm() {
             </Box>
           </Grid>
         </Grid>
+        <Grid item xs={12}>
         {
           empty?<DialogEmpty />:null
         }
-        </form>
         {
           loadingSuccess?
           <Box sx={{ display: 'flex' }}>
@@ -239,6 +283,11 @@ function LoginForm() {
           :
           null
         }
+        {
+          valid?<DialogValid />:null
+        }
+        </Grid>
+        </form>
         </Container>
     );
 
