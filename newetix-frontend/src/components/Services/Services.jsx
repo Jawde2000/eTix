@@ -82,7 +82,6 @@ export const Services = () =>{
 
     const servicesList = useSelector(state => state.servicesList);
     const {success: listServicesSuccess, services, error: listError, loading} = servicesList
-
     const [allService, setAllService] = useState();
 
     const [imgSrc, setImgSrc] = useState([]);
@@ -114,12 +113,11 @@ export const Services = () =>{
         } 
 
         if(listServicesSuccess){
-            setAllService(services)
+            setAllService(services);
 
             let imgs = [];
-
             services.map((item) => {
-                imgs.push(findImg(item.userID));
+                    imgs.push(findImg(item.userID));
             })
 
             setImgSrc(imgs);

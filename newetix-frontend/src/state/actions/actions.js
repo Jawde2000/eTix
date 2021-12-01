@@ -138,6 +138,8 @@ export const vendorList = () => async(dispatch) => {
 
         const { data } = await axios.post('http://127.0.0.1:8000/api/vendor/list')
 
+        console.log(data);
+
         dispatch({
             type: actions.VENDOR_LIST_SUCCESS,
             payload: data
@@ -1221,16 +1223,25 @@ export const listService = () => async (dispatch) => {
         var { data } = await axios.get('http://127.0.0.1:8000/api/user/vendordetails')
 
         var serviceName = [];
+        var vendorStatus = [];
 
         for(let i of data){
             let rst = await axios.get(`http://127.0.0.1:8000/api/user/vendor/${i.userID}/`);
             serviceName.push(rst.data.vendorName);
+            vendorStatus.push(rst.data.vendorStatus);
         }
 
         data = data.map((item, index) => ({
             ...item,
             serviceName: serviceName[index],
+            vendorStatus: vendorStatus[index],
         }))
+
+        console.log(data);
+
+        data = data.filter((item) => {
+            return item.vendorStatus === true;
+        })
 
         dispatch({
             type: actions.LIST_SERVICE_SUCCESS,
