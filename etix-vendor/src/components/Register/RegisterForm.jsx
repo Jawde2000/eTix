@@ -430,10 +430,7 @@ function RegisterForm() {
           </Typography>
           </Button>
           </Grid>
-        </Grid>
-        <Grid>
-        </Grid>
-        { loading? 
+          { loading? 
           <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress  style={{color: '#F5CB5C'}}/>
           </Backdrop>
@@ -451,6 +448,9 @@ function RegisterForm() {
           {
             wEmail?<DialogWrongEmail />:null
           }
+        </Grid>
+        <Grid>
+        </Grid>
       </Container>
   );
 
