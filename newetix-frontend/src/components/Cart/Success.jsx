@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles';
 import { Grid, Box, Typography, TextField, Button, Autocomplete } from '@mui/material'
 import {useHistory} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { helpdeskCreate, helpdeskList } from '../../state/actions/actions';
+import { helpdeskCreate, helpdeskList, viewCartData } from '../../state/actions/actions';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +25,9 @@ function Success() {
     const {customerInfo} = cD
     const userLogin = useSelector(state => state.userLogin);
     const {userInfo} = userLogin;
-    const [fn, setFN] = useState('name')
+    const [fn, setFN] = useState('name');
+    const cartAdd = useSelector(state => state.cartAdd);
+    const {success} = cartAdd;
 
     useEffect(() => {
         if(typeof(cD) !== 'undefined' && cD !== null){
@@ -38,6 +40,10 @@ function Success() {
         }
         }
     })
+
+    useEffect(() => {
+        dispatch(viewCartData());
+    }, [success])
 
     return (
         <Grid container direction="column" direction="column" justifyContent="center" alignItems="center" spacing={4} className={classes.whole}>
