@@ -173,7 +173,7 @@ function RegisterForm() {
         console.log(url);
         xmlHttp.send(null);
       }
-      var url = "https://emailvalidation.abstractapi.com/v1/?api_key=6f9323c274554881a997cc90a8e34c1f&email=" + values.email;
+      var url = "https://emailvalidation.abstractapi.com/v1/?api_key=74f1075994814726a52a7b47894ef7c8&email=" + values.email;
       httpGetAsync(url);
     }
   }
