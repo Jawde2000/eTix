@@ -636,15 +636,15 @@ export default function RouteQuery() {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} container>
-                        <Grid item xs={4} container style={{backgroundColor: "grey", minHeight: 50, padding: 20}}>
-                            <Grid item xs={12} style={{backgroundColor: "green", maxHeight: "Fixed", maxWidth: "Fixed"}}>
+                        <Grid item xs={4} container style={{backgroundColor: "#f5cb58", minHeight: 50, padding: 20}}>
+                            <Grid item xs={12} style={{backgroundColor: "#f5cb58", maxHeight: "Fixed", maxWidth: "Fixed"}}>
                                 <iframe width="345" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
                                 src={"https://www.openstreetmap.org/export/embed.html?bbox="+longF+"%2C"+latF+"%2C"+longTo+"%2C"+latTo+"&amp;layer=mapnik"}
                                 ></iframe>
                             </Grid>
                         </Grid>
-                        <Grid item xs={8} container style={{backgroundColor: 'grey', minHeight: 50, padding: 20}}>
-                                    <Grid item xs={4} container style={{backgroundColor: 'green', padding: 10, fontFamily: ['rubik', 'sans-serif'].join(','),}}>
+                        <Grid item xs={8} container style={{backgroundColor: '#f5cb58', minHeight: 50, padding: 20}}>
+                                    <Grid item xs={4} container style={{backgroundColor: 'white', padding: 10, fontFamily: ['rubik', 'sans-serif'].join(','),}}>
                                         <Grid item xs={12} style={{fontWeight: 'bold', textDecorationLine: 'underline',}}>
                                             By Price
                                         </Grid>
@@ -700,7 +700,7 @@ export default function RouteQuery() {
                                              
                                         </Grid>
                                     </Grid>
-                                    <Grid item xs={4} container style={{backgroundColor: 'green', padding: 10, fontFamily: ['rubik', 'sans-serif'].join(','),}}>
+                                    <Grid item xs={4} container style={{backgroundColor: 'white', padding: 10, fontFamily: ['rubik', 'sans-serif'].join(','),}}>
                                         <Grid item xs={12} style={{fontWeight: 'bold', textDecorationLine: 'underline',}}>
                                             By Terminal
                                         </Grid>
@@ -736,7 +736,7 @@ export default function RouteQuery() {
                                         <Grid item xs={12} />
                                         <Grid item xs={12} />
                                     </Grid>
-                                    <Grid item xs={4} container style={{backgroundColor: 'green'}}>
+                                    <Grid item xs={4} container style={{backgroundColor: 'white'}}>
                                     
                                     </Grid>
                                     <Grid item xs={12} container style={{textAlign: 'right', paddingTop: 10}}>
