@@ -220,16 +220,10 @@ const HelpdeskDetail = ({props}) => {
             >
               <DialogTitle id="alert-dialog-title">
               </DialogTitle>
-              {saveSuccess?
-              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Successful save status</div>:
-              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Fail to save status</div>
-              }
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  {saveSuccess?
-                  <div>    
-                  <Typography>Saved Helps</Typography>
-                  </div>
+                  {saveSuccess?  
+                  <Typography>Help is saved</Typography>
                   :
                   <Typography>
                       Fail to save

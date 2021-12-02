@@ -186,7 +186,7 @@ function LoginForm() {
         <Grid xs={12} container>
           <TextField sx={{ m: 1, width: '35ch' }} className={defaultStyle.inputbackground}
           label={'Email'} variant="filled" InputProps={{ disableUnderline: true }}
-          type="email" value={values.email} onChange={handleChange('email')}
+          name="email" value={values.email} onChange={handleChange('email')}
           ></TextField>
         </Grid>
         <Grid container  xs={12} >        
@@ -195,6 +195,7 @@ function LoginForm() {
           <FilledInput         
             disableUnderline="true"
             variant="filled"
+            name="password"
             id="filled-adornment-password"
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}

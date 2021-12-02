@@ -13,6 +13,7 @@ import {useHistory, Link} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import Alert from '@mui/material/Alert';
 import { register, login } from '../../state/actions/actions';
+import { USER_REGISTER_RESET } from '../../state/actions/actionConstants';
 import Backdrop from '@mui/material/Backdrop';
 import DeleteOutlineSharpIcon from '@mui/icons-material/DeleteOutlineSharp';
 import DialogActions from '@mui/material/DialogActions';
@@ -129,6 +130,14 @@ function RegisterForm() {
     }
 
     const handleLogin = (e) => {
+        if (errorRegister){
+          dispatch({type: USER_REGISTER_RESET});
+        }
+
+        if(valid){
+          setValid(false);
+        }
+        
         e.preventDefault()
         if(email === "" || values.password === "" || phonenumber === "" || username === ""){
           setEmpty(true);
@@ -252,7 +261,6 @@ function RegisterForm() {
             <Typography style={{fontSize: 20, fontFamily: ['rubik', 'sans-serif'].join(','), color: "black"}}>
                 Register
             </Typography>
-            </Button>
             {
             loadingRe?
             <Box sx={{ display: 'flex' }}>
@@ -263,6 +271,7 @@ function RegisterForm() {
             :
             null
             }
+            </Button>
         </Grid>
         <Grid item xs={12} >
             <Link to="/passport" className={defaultStyle.forgot} style={{textDecoration: "none", textShadow: '1px 1px 2px black', fontSize: 18}}>Already have an Account?</Link>
