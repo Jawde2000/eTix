@@ -154,8 +154,8 @@ const HelpdeskDetail = ({props}) => {
               <DialogTitle id="alert-dialog-title">
               </DialogTitle>
               {sendSuccess?
-              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Successful Password Reset</div>:
-              <div style={{fontSize: 20, fontWeight: 'bolder', textAlign: 'center'}}>Fail to Password Reset</div>
+              <div style={{fontSize: 15, fontWeight: 'bolder', textAlign: 'center'}}>Successful Send Response</div>:
+              <div style={{fontSize: 15, fontWeight: 'bolder', textAlign: 'center'}}>Failed to Send Response</div>
               }
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">

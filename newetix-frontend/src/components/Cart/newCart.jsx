@@ -582,7 +582,7 @@ function NewCart() {
                                             </Grid>
 
                                         :
-                                            <Alert severity="error" sx={{marginLeft: '35px', width: '350px'}}>Important info is missing, please go to your profile to provide them!</Alert>
+                                            <Alert severity="error" sx={{marginTop: '30px', marginLeft: '35px', width: '350px'}}>Important info is missing, please go to your profile to provide them!</Alert>
                                         }
                                     </Grid>
                                 </Grid>
